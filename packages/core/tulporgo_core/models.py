@@ -1,7 +1,19 @@
 """TulporGo domain model (decisions 1–53). Portable across PostgreSQL / SQLite / MySQL: string enums, JSON, naive UTC."""
 from datetime import datetime
 
-from sqlalchemy import JSON, BigInteger, Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import (
+    JSON,
+    BigInteger,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    LargeBinary,
+    String,
+    Text,
+    UniqueConstraint,
+)
+from sqlalchemy.dialects.mysql import LONGBLOB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base, utcnow
@@ -87,6 +99,22 @@ class Driver(Base):
     @property
     def rating(self) -> float | None:
         return round(self.rating_sum / self.rating_count, 2) if self.rating_count else None
+
+
+class DriverDocument(Base):
+    """Encrypted server copy of a driver document (decision 57). One row per (driver, kind); a new upload replaces it.
+    `data_encrypted` is a Fernet token, never plaintext; `sha256` is the hash of the plaintext (integrity check)."""
+    __tablename__ = "driver_documents"
+    __table_args__ = (UniqueConstraint("driver_id", "kind"),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"), index=True)
+    kind: Mapped[str] = mapped_column(String(16))                            # 'license' | 'techpass'
+    content_type: Mapped[str] = mapped_column(String(64))
+    size: Mapped[int] = mapped_column(Integer)                               # plaintext bytes
+    sha256: Mapped[str] = mapped_column(String(64))
+    # LONGBLOB on MySQL (plain BLOB tops out at 64 KB), BYTEA on PostgreSQL, BLOB on SQLite
+    data_encrypted: Mapped[bytes] = mapped_column(LargeBinary().with_variant(LONGBLOB(), "mysql"))
+    created_at: Mapped[datetime] = _now_col()
 
 
 class RideRequest(Base):

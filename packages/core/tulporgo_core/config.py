@@ -36,6 +36,9 @@ class Settings(BaseSettings):
 
     # userbot (decision 8 / 48)
     userbot_encryption_key: str = ""               # Fernet key; sessions are stored encrypted
+    # driver documents kept encrypted on our server (decision 57). Fernet key, separate from the userbot key. Empty =
+    # no server copy (development only); production MUST set it (TULPORGO_DOCUMENTS_ENCRYPTION_KEY).
+    documents_encryption_key: str = ""
     userbot_min_interval_minutes: int = 45
     userbot_jitter_minutes: int = 15
 

@@ -4,15 +4,15 @@ normal user does nothing."""
 from aiogram import Bot, F, Router
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.methods import SendPhoto
-from aiogram.types import CallbackQuery, Message
+from aiogram.methods import SendDocument, SendPhoto
+from aiogram.types import BufferedInputFile, CallbackQuery, Message
 from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core.config import Settings
 from tulporgo_core.enums import ComplaintStatus
 from tulporgo_core.errors import Forbidden, NotFound
 from tulporgo_core.models import Complaint, Driver, User
-from tulporgo_core.services import drivers, feedback, kpi, users
+from tulporgo_core.services import documents, drivers, feedback, kpi, users
 from tulporgo_core.text.alphabet import convert
 
 from .. import delivery
@@ -79,10 +79,31 @@ async def docs_list(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: Us
             continue
         await delivery.call(bot, SendPhoto(chat_id=cb.from_user.id, photo=d.license_file_id))
         caption = f"{person(d.user)} · {esc(d.car_make)} {esc(d.car_plate)}\n{esc(d.user.phone or '')}"
+        keys = [[btn(f"✅ {t('bot.admin.approve')}", f"ad:dv:{d.id}", style="success"),
+                 btn(f"✖ {t('bot.admin.reject')}", f"ad:dr:{d.id}", style="danger")]]
+        if await documents.has_server_copy(session, d):
+            keys.append([btn(f"🔐 {t('bot.admin.server_copy')}", f"ad:dl:{d.id}")])
         await delivery.call(bot, SendPhoto(chat_id=cb.from_user.id, photo=d.techpass_file_id, caption=caption,
-                                           parse_mode="HTML", reply_markup=kb(
-            [btn(f"✅ {t('bot.admin.approve')}", f"ad:dv:{d.id}", style="success"),
-             btn(f"✖ {t('bot.admin.reject')}", f"ad:dr:{d.id}", style="danger")])))
+                                           parse_mode="HTML", reply_markup=kb(*keys)))
+
+
+@router.callback_query(F.data.startswith("ad:dl:"))
+async def server_copy(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: User, settings: Settings, t) -> None:
+    """Decrypt the server copy and send it as a document to the admin who asked (decision 57); nobody else."""
+    need_admin(user, settings)
+    d = await _driver(session, cb)
+    sent = 0
+    for kind in documents.KINDS:
+        try:
+            data, ctype = await documents.load(session, d, kind, settings)
+        except NotFound:
+            continue
+        ext = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "application/pdf": "pdf"}[ctype]
+        await delivery.call(bot, SendDocument(
+            chat_id=cb.from_user.id, document=BufferedInputFile(data, f"{kind}-{d.id}.{ext}"), protect_content=True,
+            caption=t("bot.admin.server_copy_caption", kind=kind, id=d.id)))
+        sent += 1
+    await cb.answer(None if sent else t("bot.admin.server_copy_none"), show_alert=not sent)
 
 
 async def _driver(session: AsyncSession, cb: CallbackQuery) -> Driver:
@@ -114,6 +135,7 @@ async def reject(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: User,
     if d.verified:
         raise Forbidden("already_verified")
     d.license_file_id = d.techpass_file_id = None        # the driver can send clearer photos
+    await documents.delete_for_driver(session, d)        # the rejected server copy goes too
     await cb.answer(t("bot.admin.rejected"))
     await _drop_buttons(cb)
     await delivery.send(bot, d.user.tg_id, f"✖ {user_t(d.user)('bot.docs.rejected')}",

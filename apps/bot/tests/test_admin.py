@@ -46,7 +46,7 @@ async def test_every_admin_button_refuses_normal_users(env):
     cid = await complaint(env)
     victim = (await user_of(env, 2)).id
     for data in ("ad:menu", "ad:docs", f"ad:dv:{d}", f"ad:dr:{d}", "ad:cp", f"ad:cr:{cid}:1", "ad:bl",
-                 f"ad:bu:{victim}", f"ad:ub:{victim}", "ad:kpi"):
+                 f"ad:bu:{victim}", f"ad:ub:{victim}", "ad:kpi", f"ad:dl:{d}"):
         await env.press(1, data)
         assert env.alerts()[-1] == tx("bot.err.admin_only"), data
     assert (await user_of(env, 2)).is_blocked is False

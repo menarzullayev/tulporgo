@@ -1,4 +1,6 @@
 """Driver side: registration, document upload (-> Telegram file ids), the driver's own offers (decision 12)."""
+import logging
+
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from pydantic import BaseModel, Field
 from sqlalchemy import select
@@ -7,7 +9,7 @@ from starlette.formparsers import MultiPartParser
 from tulporgo_core.config import Settings
 from tulporgo_core.errors import DomainError, Forbidden, Invalid, NotFound
 from tulporgo_core.models import Offer, Place, RideRequest, Trip, User
-from tulporgo_core.services import drivers
+from tulporgo_core.services import documents, drivers
 from tulporgo_core.services.referral import code_from_start
 from tulporgo_core.services.users import set_phone
 
@@ -16,6 +18,7 @@ from ..telegram_api import TelegramUploader
 from .common import Outbox, commit_and_publish, get_outbox, iso, to_local_iso
 from .me import me_view
 
+log = logging.getLogger(__name__)
 router = APIRouter(prefix="/driver", tags=["driver"])
 
 MAX_FILE = 8 * 1024 * 1024
@@ -96,7 +99,9 @@ async def upload_documents(request: Request, license_file: UploadFile | None = F
                            s: AsyncSession = Depends(get_session), settings: Settings = Depends(get_settings),
                            uploader: TelegramUploader = Depends(get_uploader)):
     """Driving licence + vehicle registration (both required -> "Tasdiqlangan" badge after admin review), optional
-    car photo. Each file is sent to the private storage chat; only the returned file ids are stored."""
+    car photo. Each file is sent to the private storage chat (file ids are kept) and, when a documents key is
+    configured, the licence and tech passport are also stored encrypted on our server (decision 57). Both copies or
+    an error: if the server copy fails the request fails (the Telegram copy may remain, it is logged)."""
     if int(request.headers.get("content-length") or 0) > 3 * MAX_FILE + 64 * 1024:
         raise TooLarge("file_too_large")
     d = await drivers.get_driver(s, user)
@@ -113,6 +118,13 @@ async def upload_documents(request: Request, license_file: UploadFile | None = F
         data, ext, ctype = item
         ids[kind] = await uploader.send_document(settings.storage_chat_id, f"{kind}-{d.id}.{ext}", data, ctype,
                                                  caption=f"{kind} / driver #{d.id}")
+    try:
+        for kind, item in (("license", lic), ("techpass", tp)):
+            assert item is not None                          # both are required above
+            await documents.store(s, d, kind, item[0], item[2], settings)
+    except Exception:
+        log.error("server copy of driver %s documents failed; the Telegram copy stays in the storage chat", d.id)
+        raise
     await drivers.submit_documents(s, d, ids["license"], ids["techpass"])
     if "car_photo" in ids:
         d.car_photo_file_id = ids["car_photo"]

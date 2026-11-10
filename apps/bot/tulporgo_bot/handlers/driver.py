@@ -1,5 +1,7 @@
 """Driver onboarding (decision 12): phone via the contact button → car (make, colour, plate, seats, photo) → home
 district → `drivers.register_driver`; optional documents → admin review → "Tasdiqlangan" badge; referral link."""
+import logging
+
 from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
@@ -8,14 +10,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core import i18n
 from tulporgo_core.config import Settings
 from tulporgo_core.db import utcnow
-from tulporgo_core.errors import Forbidden
+from tulporgo_core.errors import DomainError, Forbidden
 from tulporgo_core.models import Driver, Place, User
-from tulporgo_core.services import billing, drivers, users
+from tulporgo_core.services import billing, documents, drivers, users
 
 from . import admin, commands, picker
 from .common import PRIVATE, btn, esc, int_arg, kb, parse_cb, rating_text, referral_link, say, show, to_local
 from .states import Docs, Reg
 
+log = logging.getLogger(__name__)
 router = Router(name="driver")
 router.message.filter(F.chat.type == PRIVATE)
 
@@ -221,6 +224,16 @@ async def got_license(msg: Message, state: FSMContext, t) -> None:
     await show(msg, t("bot.docs.techpass"))
 
 
+async def _download(bot: Bot, file_id: str) -> bytes | None:
+    """The bytes of a Telegram file, or None when it cannot be fetched (the bytes are never logged)."""
+    try:
+        buf = await bot.download(file_id)
+    except Exception as e:                                # Telegram API error, network, timeout
+        log.warning("document download failed: %s", type(e).__name__)
+        return None
+    return buf.read() if buf is not None else None
+
+
 @router.message(StateFilter(Docs.techpass), F.photo)
 async def got_techpass(msg: Message, state: FSMContext, session: AsyncSession, user: User, settings: Settings,
                        bot: Bot, t) -> None:
@@ -230,7 +243,30 @@ async def got_techpass(msg: Message, state: FSMContext, session: AsyncSession, u
     if not msg.photo:
         return
     data = await state.get_data()
-    await drivers.submit_documents(session, d, data["license"], msg.photo[-1].file_id)
+    license_id, techpass_id = data["license"], msg.photo[-1].file_id          # largest photo size
+    if documents.enabled(settings):
+        # decision 57: the encrypted server copy is made first and all-or-nothing; nothing is submitted without it
+        lic = await _download(bot, license_id)
+        if lic is None:
+            await state.set_state(Docs.license)
+            await show(msg, t("bot.docs.download_failed"))
+            await show(msg, t("bot.docs.license"))
+            return
+        tp = await _download(bot, techpass_id)
+        if tp is None:
+            await show(msg, t("bot.docs.download_failed"))                    # stays on the tech passport step
+            return
+        try:
+            async with session.begin_nested():
+                await documents.store(session, d, "license", lic, documents.sniff(lic) or "", settings)
+                await documents.store(session, d, "techpass", tp, documents.sniff(tp) or "", settings)
+        except DomainError as e:
+            log.warning("server copy of driver %s documents refused: %s", d.id, e.code)
+            await state.set_state(Docs.license)
+            await show(msg, t("bot.docs.download_failed"))
+            await show(msg, t("bot.docs.license"))
+            return
+    await drivers.submit_documents(session, d, license_id, techpass_id)
     await state.clear()
     await show(msg, t("bot.docs.sent"))
     await admin.notify_new_documents(bot, session, settings, d)
