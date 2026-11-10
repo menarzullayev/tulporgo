@@ -86,7 +86,7 @@ in **`QARORLAR.md`** (source of truth, Uzbek). Telegram features worth using: `T
   10:00 task below never registered). The guard allows the next attempt from **2026-11-11 20:30**. Fallback: he creates
   the pack himself in @Stickers (`/newemojipack`).
 - (superseded) A scheduled task was meant to make ONE attempt on 2026-11-11 10:00 (+05:00):
-  `C:\Users\nsn\.claude\scheduled-tasks\tulporgo-reactions-create\SKILL.md` (one-shot, bypass mode,
+  `C:\Users\nsn\.claude\scheduled-tasks\tulporgo-reactions-create\SKILL.md` (**deleted 2026-11-11** on his OK; one-shot, bypass mode,
   runs only while the Claude app is open). Check its result before doing anything else; don't
   start a parallel attempt.
 - ⚠ Measured 2026-11-10 12:15 by the next agent: the app log says the task was saved
