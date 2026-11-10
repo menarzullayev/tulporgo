@@ -3,20 +3,21 @@
   interface (buttons, 1-2-3, lists) -> TulporGo icons            (brand/icons, concept v1)
   emotion   (greeting)              -> tulpor head emoji          (Reactions)
   accent    (max 1 per message)     -> Telegram official animated emoji (RestrictedEmoji "Animated Emoji")
-Ids: icons + head are the test entries in tulporgo_emoji (brand/icons/test_ids.json) until the dedicated
-tulporgo_icons / tulporgo_reactions packs exist; accents are resolved from RestrictedEmoji and cached.
+Ids: icons and heads come from the dedicated packs tulporgo_icons / tulporgo_reactions (created 2026-11-11 via
+@Stickers; brand/icons/pack_ids.json, refreshed by brand/icons/pack_ids.py); accents are resolved from RestrictedEmoji
+and cached.
 """
 import json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..", "..")
-TEST_IDS = os.path.join(ROOT, "brand", "icons", "test_ids.json")
+PACK_IDS = os.path.join(ROOT, "brand", "icons", "pack_ids.json")
 ACCENT_CACHE = os.path.join(HERE, "build", "accent_ids.json")
 
 INTERFACE = {"🚕": "taxi", "🤝": "driver", "💬": "chat", "✅": "check", "🛡": "shield", "1️⃣": "n1", "2️⃣": "n2",
              "3️⃣": "n3", "📢": "megaphone", "📣": "megaphone", "❓": "question", "💳": "card", "📍": "pin",
              "⭐": "star", "🕐": "clock"}
-EMOTION = {"👋": "head-01"}
+EMOTION = {"👋": "09-01-salomlashadi"}
 ACCENT = ("🚀", "🎉", "⏳", "🔥")
 MAX_ACCENTS = 1
 
@@ -48,7 +49,8 @@ def resolve_accents(call):
 
 def build_map(call):
     """{standard emoji: custom_emoji_id} for every role that has an id today."""
-    test = json.load(open(TEST_IDS, encoding="utf-8"))
-    m = {std: test[name]["custom_emoji_id"] for std, name in {**INTERFACE, **EMOTION}.items() if name in test}
+    packs = json.load(open(PACK_IDS, encoding="utf-8"))
+    ids = {**packs["icons"], **packs["reactions"]}
+    m = {std: ids[name] for std, name in {**INTERFACE, **EMOTION}.items() if name in ids}
     m.update(resolve_accents(call))
     return m

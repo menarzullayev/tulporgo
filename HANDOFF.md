@@ -65,6 +65,7 @@ in **`QARORLAR.md`** (source of truth, Uzbek). Telegram features worth using: `T
 | `tulporgo_anim_by_tulporgobot` | video stickers | 51 × WEBM (2 s hop) | https://t.me/addstickers/tulporgo_anim_by_tulporgobot |
 | `tulporgo_emoji_by_tulporgobot` | custom emoji | 51 × **vector TGS** (replaced in place from blurry 100 px PNG) | https://t.me/addemoji/tulporgo_emoji_by_tulporgobot |
 | `tulporgo_reactions` | custom emoji, head close-ups | 24 × vector TGS — **created 2026-11-11 via @Stickers from Saidakbar aka's account** | https://t.me/addemoji/tulporgo_reactions |
+| `tulporgo_icons` | custom emoji, interface icons | 14 × animated vector TGS (`brand/icons/tgs`) — **created 2026-11-11 via @Stickers** | https://t.me/addemoji/tulporgo_icons |
 
 ### ✅ "TulporGo Reactions" pack — RESOLVED 2026-11-11
 
@@ -162,8 +163,9 @@ Gotchas (all in MUAMMOLAR.md):
    review sheets `poses/review/verdict-*.png`). All 51 poses are now approved; packs unchanged.
 3b. **Emoji system (decision 39, 2026-11-10)**: interface = own TulporGo icons (`brand/icons/`, 14, **animated vector TGS** via `icons_tgs.py`, official TGS rules checked),
    emotion = tulpor head (Reactions), max 1 official animated accent per message (`content/i18n/emoji_system.py`).
-   ⚠ 15 test emoji (14 icons + head-01) are TEMPORARILY in `tulporgo_emoji_by_tulporgobot` (51 → 66), recorded in
-   `brand/icons/test_ids.json`. While they are there, `create_sticker_sets.py replace` refuses (order check) — by design.
+   ✅ 2026-11-11: dedicated packs `tulporgo_icons` + `tulporgo_reactions` exist (via @Stickers, his account); their ids are in
+   `brand/icons/pack_ids.json` (`brand/icons/pack_ids.py`), `emoji_system.py` and `content/i18n/build/emoji_map.json` use them
+   (verified in a real bot message), and the 15 test emoji were removed from `tulporgo_emoji_by_tulporgobot` (back to 51).
    Head emoji (Reactions, 24 TGS) stay **static** — animation offered 2026-11-10, Saidakbar aka: "hozircha kerak emas".
    Do not change `telegram/emoji_head_tgs/` before the 2026-11-11 10:00 attempt.
    Reactions now exists (`tulporgo_reactions`, via @Stickers 2026-11-11). Next: the icons pack — the bot is
