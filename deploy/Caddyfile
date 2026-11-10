@@ -14,6 +14,11 @@
 		reverse_proxy api:8000
 	}
 
+	# public legal pages rendered from docs/legal (terms, privacy, userbot consent)
+	handle /legal/* {
+		reverse_proxy api:8000
+	}
+
 	redir /app /app/ 308
 	handle_path /app/* {
 		root * /srv/app

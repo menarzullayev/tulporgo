@@ -22,6 +22,7 @@ COPY packages ./packages
 COPY apps/bot ./apps/bot
 COPY apps/api ./apps/api
 COPY apps/userbot ./apps/userbot
+COPY docs/legal ./docs/legal
 
 RUN useradd --system --uid 10001 --home-dir /app tulporgo \
     && mkdir -p /app/state && chown tulporgo:tulporgo /app/state   # offsite backup state (named volume)

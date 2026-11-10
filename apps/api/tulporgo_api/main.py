@@ -10,7 +10,8 @@ from tulporgo_core.errors import DomainError
 from tulporgo_core.events import InMemoryBus, RedisBus
 
 log = logging.getLogger(__name__)
-OPTIONAL_ROUTERS = ["tulporgo_api.routes:router", "tulporgo_userbot.api:router", "tulporgo_payments.api:router"]
+OPTIONAL_ROUTERS = ["tulporgo_api.routes:router", "tulporgo_api.legal:router", "tulporgo_userbot.api:router",
+                    "tulporgo_payments.api:router"]
 
 
 def create_app(settings: Settings | None = None, maker=None, bus=None) -> FastAPI:

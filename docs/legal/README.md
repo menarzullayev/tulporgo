@@ -33,5 +33,5 @@ Every product fact comes from `QARORLAR.md`. Places marked `[yurist: …]` / `[�
 
 - ~~Bot: "Ma'lumotlarim" — export and delete own data (privacy §8).~~ Done: `/malumotlarim`.
 - `/terms` and `/paysupport` commands, terms acceptance before payment (W4).
-- Public pages for the final texts (e.g. `https://tulporgo.uz/legal/terms`).
+- ~~Public pages~~ Done: `https://tulporgo.uz/legal/<terms|privacy|userbot-consent>?lang=uz|ru` render these files; replace the drafts after review.
 - ~~Compare §4 of the privacy policy ("who sees what") with the merged bot behaviour.~~ Done (trip card: name, phone, username).

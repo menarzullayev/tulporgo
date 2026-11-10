@@ -8,6 +8,7 @@
 !apps/userbot/**
 !apps/miniapp/**
 !deploy/Caddyfile
+!docs/legal/**
 
 # re-exclude inside the allowed folders
 **/__pycache__
