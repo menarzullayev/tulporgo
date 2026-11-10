@@ -1,6 +1,7 @@
 # TulporGo — build progress
 
-Goal: implement everything in `GOAL.md` (set by Saidakbar aka 2026-11-10 via `/goal`). Status is updated here as
+Goal: implement everything in `GOAL.md` (set by Saidakbar aka 2026-11-10 via `/goal`). **Closed by Saidakbar aka on
+2026-11-10**: everything Claude can do is done (e0da05f, CI 6/6 green); the ⛔ items below are his. Status is updated here as
 work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked on the owner (cannot be done by Claude).
 
 ## Phase 0 — foundation (Claude)
@@ -83,3 +84,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — decision 57 merged (documents encrypted on the server + Telegram); privacy policy §5/§6 updated; full suite 1 257 passed.
 - 2026-11-10 — MySQL: PyMySQL 1.2 broke aiomysql's bytes escaping (encrypted documents) → `pymysql<1.2` in the mysql extra + guard test; CI 6/6 green incl. MySQL (651edb8).
 - 2026-11-10 — PROGRESS rows corrected (topics OFF per decision 59; CI incl. MySQL green); public legal pages built.
+- 2026-11-10 — **goal closed by Saidakbar aka.** Open, owner-only: VPS purchase + deploy, lawyer review, Click/Payme merchant contract, my.telegram.org app, Cloudflare R2 keys, BotFather Login Widget client secret.
