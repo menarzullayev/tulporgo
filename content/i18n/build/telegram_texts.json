@@ -1,0 +1,332 @@
+{
+ "bot.name": {
+  "scope": "bot",
+  "limit": 64,
+  "text": {
+   "uz_new": "TulporGo",
+   "uz_latn": "TulporGo",
+   "uz_cyrl": "TulporGo",
+   "ru": "TulporGo",
+   "en": "TulporGo"
+  },
+  "buttons": []
+ },
+ "bot.short_description": {
+  "scope": "bot",
+  "limit": 120,
+  "text": {
+   "uz_new": "Taksi Telegram içida: yönalişni yozing, haydovçilar taklif yuboradi, siz tanlaysiz. Yölovçi uçun bepul.",
+   "uz_latn": "Taksi Telegram ichida: yoʻnalishni yozing, haydovchilar taklif yuboradi, siz tanlaysiz. Yoʻlovchi uchun bepul.",
+   "uz_cyrl": "Такси Telegram ичида: йўналишни ёзинг, ҳайдовчилар таклиф юборади, сиз танлайсиз. Йўловчи учун бепул.",
+   "ru": "Такси прямо в Telegram: напишите маршрут, водители пришлют предложения, вы выберете. Для пассажиров бесплатно.",
+   "en": "Taxi right in Telegram: send your route, drivers make offers, you choose. Free for passengers."
+  },
+  "buttons": []
+ },
+ "bot.description": {
+  "scope": "bot",
+  "limit": 512,
+  "text": {
+   "uz_new": "TulporGo — taksini Telegram'dan çaqiriş xizmati.\n\n🚕 Qayerdan va qayerga borişingizni yozing.\n💬 Haydovçilar narxi va maşinasi bilan taklif yuboradi.\n✅ Ma'qulini özingiz tanlaysiz, narxni kelişiş ham mumkin.\n\n🛡 Reyting, tasdiqlangan haydovçilar belgisi va qatnovni yaqinlaringizga ulaşiş.\n\nYölovçi uçun bepul. Boşlaş uçun pastdagi tugmani bosing.",
+   "uz_latn": "TulporGo — taksini Telegramʼdan chaqirish xizmati.\n\n🚕 Qayerdan va qayerga borishingizni yozing.\n💬 Haydovchilar narxi va mashinasi bilan taklif yuboradi.\n✅ Maʼqulini oʻzingiz tanlaysiz, narxni kelishish ham mumkin.\n\n🛡 Reyting, tasdiqlangan haydovchilar belgisi va qatnovni yaqinlaringizga ulashish.\n\nYoʻlovchi uchun bepul. Boshlash uchun pastdagi tugmani bosing.",
+   "uz_cyrl": "TulporGo — таксини Telegram'дан чақириш хизмати.\n\n🚕 Қаердан ва қаерга боришингизни ёзинг.\n💬 Ҳайдовчилар нархи ва машинаси билан таклиф юборади.\n✅ Маъқулини ўзингиз танлайсиз, нархни келишиш ҳам мумкин.\n\n🛡 Рейтинг, тасдиқланган ҳайдовчилар белгиси ва қатновни яқинларингизга улашиш.\n\nЙўловчи учун бепул. Бошлаш учун пастдаги тугмани босинг.",
+   "ru": "TulporGo — сервис вызова такси прямо в Telegram.\n\n🚕 Напишите, откуда и куда вам нужно.\n💬 Водители пришлют предложения с ценой и машиной.\n✅ Выберите подходящее — о цене можно договориться.\n\n🛡 Рейтинг, отметка проверенных водителей и возможность поделиться поездкой с близкими.\n\nДля пассажиров бесплатно. Чтобы начать, нажмите кнопку внизу.",
+   "en": "TulporGo is a taxi service right inside Telegram.\n\n🚕 Tell us where you are and where you're going.\n💬 Drivers send offers with their price and car.\n✅ Pick the one you like — you can also agree on the price.\n\n🛡 Ratings, a verified-driver badge and trip sharing with your family.\n\nFree for passengers. Tap the button below to start."
+  },
+  "buttons": []
+ },
+ "bot.menu_button": {
+  "scope": "bot",
+  "limit": 24,
+  "text": {
+   "uz_new": "Taksi çaqiriş",
+   "uz_latn": "Taksi chaqirish",
+   "uz_cyrl": "Такси чақириш",
+   "ru": "Вызвать такси",
+   "en": "Order a taxi"
+  },
+  "buttons": []
+ },
+ "bot.cmd.start": {
+  "scope": "bot",
+  "limit": 256,
+  "command": "start",
+  "text": {
+   "uz_new": "Boşlaş va taksi çaqiriş",
+   "uz_latn": "Boshlash va taksi chaqirish",
+   "uz_cyrl": "Бошлаш ва такси чақириш",
+   "ru": "Начать и вызвать такси",
+   "en": "Start and order a taxi"
+  },
+  "buttons": []
+ },
+ "bot.cmd.qatnovlarim": {
+  "scope": "bot",
+  "limit": 256,
+  "command": "qatnovlarim",
+  "text": {
+   "uz_new": "Mening qatnovlarim",
+   "uz_latn": "Mening qatnovlarim",
+   "uz_cyrl": "Менинг қатновларим",
+   "ru": "Мои поездки",
+   "en": "My trips"
+  },
+  "buttons": []
+ },
+ "bot.cmd.til": {
+  "scope": "bot",
+  "limit": 256,
+  "command": "til",
+  "text": {
+   "uz_new": "Tilni özgartiriş",
+   "uz_latn": "Tilni oʻzgartirish",
+   "uz_cyrl": "Тилни ўзгартириш",
+   "ru": "Сменить язык",
+   "en": "Change language"
+  },
+  "buttons": []
+ },
+ "bot.cmd.yordam": {
+  "scope": "bot",
+  "limit": 256,
+  "command": "yordam",
+  "text": {
+   "uz_new": "Yordam va savollar",
+   "uz_latn": "Yordam va savollar",
+   "uz_cyrl": "Ёрдам ва саволлар",
+   "ru": "Помощь и вопросы",
+   "en": "Help and questions"
+  },
+  "buttons": []
+ },
+ "bot.cmd.elon": {
+  "scope": "bot",
+  "limit": 256,
+  "command": "elon",
+  "drivers": true,
+  "text": {
+   "uz_new": "E'lon beriş (haydovçilar uçun)",
+   "uz_latn": "Eʼlon berish (haydovchilar uchun)",
+   "uz_cyrl": "Эълон бериш (ҳайдовчилар учун)",
+   "ru": "Разместить объявление (для водителей)",
+   "en": "Post a ride offer (drivers)"
+  },
+  "buttons": []
+ },
+ "bot.cmd.obuna": {
+  "scope": "bot",
+  "limit": 256,
+  "command": "obuna",
+  "drivers": true,
+  "text": {
+   "uz_new": "Obuna va tariflar",
+   "uz_latn": "Obuna va tariflar",
+   "uz_cyrl": "Обуна ва тарифлар",
+   "ru": "Подписка и тарифы",
+   "en": "Subscription and plans"
+  },
+  "buttons": []
+ },
+ "bot.start": {
+  "scope": "bot",
+  "limit": 4096,
+  "text": {
+   "uz_new": "Xuş kelibsiz! 👋\nQayerga borasiz? «Taksi çaqiriş» tugmasini bosing yoki yönalişni yozing, masalan: Qöşrabot → Samarqand.\nHaydovçilarning takliflari şu yerga keladi.",
+   "uz_latn": "Xush kelibsiz! 👋\nQayerga borasiz? «Taksi chaqirish» tugmasini bosing yoki yoʻnalishni yozing, masalan: Qoʻshrabot → Samarqand.\nHaydovchilarning takliflari shu yerga keladi.",
+   "uz_cyrl": "Хуш келибсиз! 👋\nҚаерга борасиз? «Такси чақириш» тугмасини босинг ёки йўналишни ёзинг, масалан: Қўшработ → Самарқанд.\nҲайдовчиларнинг таклифлари шу ерга келади.",
+   "ru": "Добро пожаловать! 👋\nКуда едем? Нажмите «Вызвать такси» или напишите маршрут, например: Кошрабад → Самарканд.\nПредложения водителей придут сюда.",
+   "en": "Welcome! 👋\nWhere are you going? Tap «Order a taxi» or type your route, e.g. Qoshrabot → Samarkand.\nDrivers' offers will arrive here."
+  },
+  "buttons": [
+   {
+    "style": "primary",
+    "icon": "09-19-rulda",
+    "fallback": "🚕",
+    "labels": {
+     "uz_new": "Taksi çaqiriş",
+     "uz_latn": "Taksi chaqirish",
+     "uz_cyrl": "Такси чақириш",
+     "ru": "Вызвать такси",
+     "en": "Order a taxi"
+    }
+   },
+   {
+    "icon": "09-07-qol-berishyapti",
+    "fallback": "🤝",
+    "labels": {
+     "uz_new": "Haydovçiman",
+     "uz_latn": "Haydovchiman",
+     "uz_cyrl": "Ҳайдовчиман",
+     "ru": "Я водитель",
+     "en": "I'm a driver"
+    }
+   }
+  ]
+ },
+ "bot.coming_soon": {
+  "scope": "bot",
+  "limit": 4096,
+  "text": {
+   "uz_new": "TulporGo tez orada işga tuşadi 🚀\nBirinçilardan bölib biliş uçun kanalimizga obuna böling.",
+   "uz_latn": "TulporGo tez orada ishga tushadi 🚀\nBirinchilardan boʻlib bilish uchun kanalimizga obuna boʻling.",
+   "uz_cyrl": "TulporGo тез орада ишга тушади 🚀\nБиринчилардан бўлиб билиш учун каналимизга обуна бўлинг.",
+   "ru": "TulporGo скоро запустится 🚀\nПодпишитесь на канал, чтобы узнать об этом первыми.",
+   "en": "TulporGo is launching soon 🚀\nFollow our channel to be the first to know."
+  },
+  "buttons": [
+   {
+    "url": "https://t.me/tulporgo",
+    "icon": "09-03-uchib-ketyapti",
+    "fallback": "📢",
+    "labels": {
+     "uz_new": "Kanalga ötiş",
+     "uz_latn": "Kanalga oʻtish",
+     "uz_cyrl": "Каналга ўтиш",
+     "ru": "Перейти в канал",
+     "en": "Open the channel"
+    }
+   }
+  ]
+ },
+ "channel.description": {
+  "scope": "chat",
+  "limit": 255,
+  "text": {
+   "uz_new": "TulporGo — taksini Telegram'dan çaqiriş xizmati. Yangiliklar va yönalişlar.\nTaksi: @tulporgobot · Savollar: @tulporgo_chat",
+   "ru": "Вызов такси в Telegram. Новости и маршруты.",
+   "composed": "TulporGo — taksini Telegram'dan çaqiriş xizmati. Yangiliklar va yönalişlar.\nTaksi: @tulporgobot · Savollar: @tulporgo_chat\nВызов такси в Telegram. Новости и маршруты."
+  },
+  "buttons": []
+ },
+ "channel.welcome": {
+  "scope": "chat",
+  "limit": 1024,
+  "photo": "09-01-salomlashadi",
+  "text": {
+   "uz_new": "Xuş kelibsiz! 👋\nTulporGo — taksini Telegram'dan çaqiriş:\n1️⃣ Botga yönalişingizni yozasiz.\n2️⃣ Haydovçilar narx va maşina bilan taklif yuboradi.\n3️⃣ Ma'qulini özingiz tanlaysiz.\nBu kanalda — yangiliklar, yönalişlar va foydali maslahatlar.",
+   "ru": "Добро пожаловать! TulporGo — вызов такси в Telegram: напишите маршрут боту, водители пришлют предложения, выберите подходящее. В канале — новости, маршруты и полезные советы.",
+   "composed": "Xuş kelibsiz! 👋\nTulporGo — taksini Telegram'dan çaqiriş:\n1️⃣ Botga yönalişingizni yozasiz.\n2️⃣ Haydovçilar narx va maşina bilan taklif yuboradi.\n3️⃣ Ma'qulini özingiz tanlaysiz.\nBu kanalda — yangiliklar, yönalişlar va foydali maslahatlar.\n\nДобро пожаловать! TulporGo — вызов такси в Telegram: напишите маршрут боту, водители пришлют предложения, выберите подходящее. В канале — новости, маршруты и полезные советы."
+  },
+  "buttons": [
+   {
+    "url": "https://t.me/tulporgobot",
+    "style": "primary",
+    "icon": "09-19-rulda",
+    "fallback": "🚕",
+    "labels": {
+     "uz_new": "Taksi çaqiriş",
+     "ru": "Вызвать такси"
+    }
+   },
+   {
+    "url": "https://t.me/tulporgobot?start=driver",
+    "icon": "09-07-qol-berishyapti",
+    "fallback": "🤝",
+    "labels": {
+     "uz_new": "Haydovçi böliş",
+     "ru": "Стать водителем"
+    }
+   }
+  ]
+ },
+ "channel.pinned": {
+  "scope": "chat",
+  "limit": 1024,
+  "text": {
+   "uz_new": "Bu yerdan boşlang 👇\nTulporGo qanday işlaydi — 3 qadamda. Rasmlarni suring.",
+   "ru": "Начните отсюда: как работает TulporGo — в 3 шага. Листайте картинки.",
+   "composed": "Bu yerdan boşlang 👇\nTulporGo qanday işlaydi — 3 qadamda. Rasmlarni suring.\n\nНачните отсюда: как работает TulporGo — в 3 шага. Листайте картинки."
+  },
+  "buttons": []
+ },
+ "chat.description": {
+  "scope": "chat",
+  "limit": 255,
+  "text": {
+   "uz_new": "TulporGo böyiça savol-javob: yölovçilar va haydovçilar uçun.\nTaksi çaqiriş: @tulporgobot",
+   "ru": "Вопросы и ответы о TulporGo.",
+   "composed": "TulporGo böyiça savol-javob: yölovçilar va haydovçilar uçun.\nTaksi çaqiriş: @tulporgobot\nВопросы и ответы о TulporGo."
+  },
+  "buttons": []
+ },
+ "chat.rules": {
+  "scope": "chat",
+  "limit": 4096,
+  "text": {
+   "uz_new": "Guruh qoidalari:\n1. Bir-birimizni hurmat qilamiz: haqorat, siyosiy va diniy bahslar yöq.\n2. Reklama va boşqa xizmatlar havolalari öçiriladi.\n3. Taksi e'lonlari bu yerda emas — @tulporgobot orqali.\n4. Telefon raqami va karta ma'lumotlarini oçiq yozmang.\n5. Şikoyat bölsa — botda /yordam yoki adminga yozing.",
+   "ru": "Правила: уважаем друг друга, без оскорблений, политических и религиозных споров; реклама и ссылки на другие сервисы удаляются; объявления такси — только через @tulporgobot; не публикуйте телефон и данные карты; жалобы — /yordam в боте или админу.",
+   "composed": "Guruh qoidalari:\n1. Bir-birimizni hurmat qilamiz: haqorat, siyosiy va diniy bahslar yöq.\n2. Reklama va boşqa xizmatlar havolalari öçiriladi.\n3. Taksi e'lonlari bu yerda emas — @tulporgobot orqali.\n4. Telefon raqami va karta ma'lumotlarini oçiq yozmang.\n5. Şikoyat bölsa — botda /yordam yoki adminga yozing.\n\nПравила: уважаем друг друга, без оскорблений, политических и религиозных споров; реклама и ссылки на другие сервисы удаляются; объявления такси — только через @tulporgobot; не публикуйте телефон и данные карты; жалобы — /yordam в боте или админу."
+  },
+  "buttons": []
+ },
+ "chat.welcome": {
+  "scope": "chat",
+  "limit": 1024,
+  "text": {
+   "uz_new": "Xuş kelibsiz! 👋\nBu yerda TulporGo haqida savol berişingiz mumkin. Avval qoidalar va tez-tez söraladigan savollarni köring.",
+   "ru": "Добро пожаловать! Здесь можно задать вопрос о TulporGo. Сначала посмотрите правила и частые вопросы.",
+   "composed": "Xuş kelibsiz! 👋\nBu yerda TulporGo haqida savol berişingiz mumkin. Avval qoidalar va tez-tez söraladigan savollarni köring.\n\nДобро пожаловать! Здесь можно задать вопрос о TulporGo. Сначала посмотрите правила и частые вопросы."
+  },
+  "buttons": [
+   {
+    "url": "https://t.me/tulporgobot?start=faq",
+    "icon": "09-09-oylanyapti",
+    "fallback": "❓",
+    "labels": {
+     "uz_new": "Savol-javoblar",
+     "ru": "Частые вопросы"
+    }
+   },
+   {
+    "url": "https://t.me/tulporgobot",
+    "style": "primary",
+    "icon": "09-19-rulda",
+    "fallback": "🚕",
+    "labels": {
+     "uz_new": "Taksi çaqiriş",
+     "ru": "Вызвать такси"
+    }
+   }
+  ]
+ },
+ "drivers.description": {
+  "scope": "chat",
+  "limit": 255,
+  "text": {
+   "uz_new": "TulporGo haydovçilari uçun yopiq guruh. Faqat tasdiqlangan haydovçilar.",
+   "ru": "Закрытая группа водителей TulporGo.",
+   "composed": "TulporGo haydovçilari uçun yopiq guruh. Faqat tasdiqlangan haydovçilar.\nЗакрытая группа водителей TulporGo."
+  },
+  "buttons": []
+ },
+ "drivers.welcome": {
+  "scope": "chat",
+  "limit": 1024,
+  "text": {
+   "uz_new": "Xuş kelibsiz, hamkasb! 🚕\nBu guruh — faqat TulporGo haydovçilari uçun.\n• Yangiliklar va qoidalar şu yerda e'lon qilinadi.\n• E'lon beriş va obuna — @tulporgobot orqali: /elon, /obuna.\n• Yölovçilar ma'lumotlarini guruhda ulaşmang.\nBirinçi 7 kun — bepul sinov.",
+   "ru": "Добро пожаловать, коллега! Группа только для водителей TulporGo. Объявления и подписка — через @tulporgobot (/elon, /obuna). Не публикуйте данные пассажиров. Первые 7 дней — бесплатно.",
+   "composed": "Xuş kelibsiz, hamkasb! 🚕\nBu guruh — faqat TulporGo haydovçilari uçun.\n• Yangiliklar va qoidalar şu yerda e'lon qilinadi.\n• E'lon beriş va obuna — @tulporgobot orqali: /elon, /obuna.\n• Yölovçilar ma'lumotlarini guruhda ulaşmang.\nBirinçi 7 kun — bepul sinov.\n\nДобро пожаловать, коллега! Группа только для водителей TulporGo. Объявления и подписка — через @tulporgobot (/elon, /obuna). Не публикуйте данные пассажиров. Первые 7 дней — бесплатно."
+  },
+  "buttons": [
+   {
+    "url": "https://t.me/tulporgobot?start=elon",
+    "style": "success",
+    "icon": "09-02-ongga-korsatadi",
+    "fallback": "📣",
+    "labels": {
+     "uz_new": "E'lon beriş",
+     "ru": "Объявление"
+    }
+   },
+   {
+    "url": "https://t.me/tulporgobot?start=obuna",
+    "icon": "09-49-kalkulyator",
+    "fallback": "💳",
+    "labels": {
+     "uz_new": "Obuna va tariflar",
+     "ru": "Подписка и тарифы"
+    }
+   }
+  ]
+ }
+}

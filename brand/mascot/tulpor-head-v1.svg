@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
+  <rect width="1000" height="1000" fill="#FFFFFF"/>
+  <g stroke="#111214" stroke-width="16" stroke-linejoin="round" stroke-linecap="round">
+    <!-- wing: brand speed blades -->
+    <g transform="translate(360 720) rotate(-38)">
+      <rect x="-400" y="-150" width="390" height="56" rx="28" fill="#FFC72C"/>
+      <rect x="-350" y="-80" width="340" height="56" rx="28" fill="#FFC72C"/>
+      <rect x="-290" y="-10" width="280" height="56" rx="28" fill="#FFC72C"/>
+      <rect x="-220" y="60" width="210" height="56" rx="28" fill="#E0A100"/>
+    </g>
+    <!-- mane -->
+    <path d="M520 250 C 470 215, 410 195, 350 205 L 415 250 C 350 250, 290 272, 238 318 L 335 322 C 275 345, 228 390, 198 445 L 300 425 C 252 470, 222 520, 212 585 L 305 545 C 275 605, 265 665, 275 730 L 352 665 C 335 745, 335 810, 345 885 L 420 560 C 430 420, 455 310, 520 250 Z" fill="#23252A"/>
+    <!-- neck + head -->
+    <path d="M520 250 C 580 228, 642 250, 672 292 L 772 472 C 802 502, 842 530, 842 572 C 842 612, 822 642, 790 652 L 722 642 C 706 672, 690 702, 660 712 C 612 722, 572 702, 546 692 C 520 742, 492 792, 472 885 L 345 885 C 352 760, 372 650, 405 560 C 425 420, 452 302, 520 250 Z" fill="#FFC72C"/>
+    <!-- ears -->
+    <path d="M455 300 L 428 150 L 525 252 Z" fill="#FFC72C"/>
+    <path d="M560 246 L 612 118 L 652 282 Z" fill="#FFC72C"/>
+  </g>
+  <!-- inner ear shadows -->
+  <path d="M470 280 L 452 190 L 508 250 Z" fill="#B87F00"/>
+  <path d="M590 250 L 615 170 L 636 270 Z" fill="#B87F00"/>
+  <!-- shading -->
+  <path d="M546 692 C 520 742, 492 792, 472 877 L 405 877 C 425 800, 462 722, 502 662 Z" fill="#E0A100"/>
+  <path d="M560 520 L 662 600 L 606 662 L 522 610 Z" fill="#E0A100"/>
+  <path d="M722 642 C 706 672, 690 702, 660 712 C 640 716, 620 714, 600 708 L 700 636 Z" fill="#E0A100"/>
+  <!-- highlight on nose bridge -->
+  <path d="M640 300 L 772 486 L 744 498 L 620 322 Z" fill="#FFE08A"/>
+  <!-- forelock -->
+  <path d="M528 252 C 562 272, 584 314, 578 360 C 556 326, 530 304, 496 292 Z" fill="#23252A" stroke="#111214" stroke-width="10" stroke-linejoin="round"/>
+  <!-- mane highlights -->
+  <g fill="#FFC72C">
+    <path d="M300 300 L 395 285 L 330 312 Z"/>
+    <path d="M260 420 L 355 385 L 290 430 Z"/>
+    <path d="M268 560 L 360 500 L 300 570 Z"/>
+  </g>
+  <!-- eye -->
+  <path d="M622 402 L 704 386 C 708 408, 692 432, 662 437 C 641 434, 626 421, 622 402 Z" fill="#FFFFFF" stroke="#111214" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="674" cy="410" r="17" fill="#111214"/>
+  <circle cx="680" cy="404" r="5" fill="#FFFFFF"/>
+  <path d="M588 384 L 718 360 L 712 382 L 600 404 Z" fill="#111214"/>
+  <!-- nostril and mouth -->
+  <path d="M782 546 C 802 534, 826 546, 830 568 C 816 561, 796 561, 784 571 Z" fill="#111214"/>
+  <path d="M705 624 L 796 650" fill="none" stroke="#111214" stroke-width="12" stroke-linecap="round"/>
+</svg>

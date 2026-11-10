@@ -1,0 +1,91 @@
+{
+ "taxi": {
+  "custom_emoji_id": "5447319335188079862",
+  "file_unique_id": "AgAD9qQAAhPEmEs",
+  "alt": "🚕",
+  "format": "animated"
+ },
+ "driver": {
+  "custom_emoji_id": "5447164836624508537",
+  "file_unique_id": "AgADeaYAAo83mEs",
+  "alt": "🚘",
+  "format": "animated"
+ },
+ "check": {
+  "custom_emoji_id": "5447604001325491990",
+  "file_unique_id": "AgADFqcAAvrGmUs",
+  "alt": "✅",
+  "format": "animated"
+ },
+ "pin": {
+  "custom_emoji_id": "5447331751938532379",
+  "file_unique_id": "AgADG6QAAl7PmEs",
+  "alt": "📍",
+  "format": "animated"
+ },
+ "shield": {
+  "custom_emoji_id": "5447406561678894625",
+  "file_unique_id": "AgADIaYAAmgTmUs",
+  "alt": "🛡",
+  "format": "animated"
+ },
+ "chat": {
+  "custom_emoji_id": "5447152230895492802",
+  "file_unique_id": "AgADwp4AAhgsmEs",
+  "alt": "💬",
+  "format": "animated"
+ },
+ "question": {
+  "custom_emoji_id": "5447624552744008127",
+  "file_unique_id": "AgADv7kAAqvZmUs",
+  "alt": "❓",
+  "format": "animated"
+ },
+ "megaphone": {
+  "custom_emoji_id": "5447203229337169064",
+  "file_unique_id": "AgADqKwAAnpamEs",
+  "alt": "📣",
+  "format": "animated"
+ },
+ "card": {
+  "custom_emoji_id": "5447511831327323462",
+  "file_unique_id": "AgADRrUAAiZzmUs",
+  "alt": "💳",
+  "format": "animated"
+ },
+ "star": {
+  "custom_emoji_id": "5447386396807441841",
+  "file_unique_id": "AgADsa0AAhEBmUs",
+  "alt": "⭐",
+  "format": "animated"
+ },
+ "clock": {
+  "custom_emoji_id": "5447196086806553824",
+  "file_unique_id": "AgAD4KQAAvtTmEs",
+  "alt": "⏳",
+  "format": "animated"
+ },
+ "n1": {
+  "custom_emoji_id": "5447495291408265710",
+  "file_unique_id": "AgAD7rEAAhtkmUs",
+  "alt": "1️⃣",
+  "format": "animated"
+ },
+ "n2": {
+  "custom_emoji_id": "5447505375991473774",
+  "file_unique_id": "AgADbqYAAkdtmUs",
+  "alt": "2️⃣",
+  "format": "animated"
+ },
+ "n3": {
+  "custom_emoji_id": "5447204152755136008",
+  "file_unique_id": "AgADCKYAAlFbmEs",
+  "alt": "3️⃣",
+  "format": "animated"
+ },
+ "head-01": {
+  "custom_emoji_id": "5447414090756567558",
+  "file_unique_id": "AgADBrIAAkEamUs",
+  "alt": "👋"
+ }
+}

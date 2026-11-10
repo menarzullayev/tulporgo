@@ -1,0 +1,109 @@
+# Taksi bot: qarorlar jurnali
+
+Boshlangan: 2026-11-08. Qaror qabul qiluvchi: Saidakbar aka.
+Asos: 15 ta taksi guruhi va 3 ta mahalla guruhi tahlili (`D:\Linux\coding\taxi-analysis\`),
+hisobot sahifasi: https://claude.ai/artifact/Wm4HnSdCHHf6zokxdCYY5w
+
+| # | Mavzu | Qaror | Izoh |
+|---|---|---|---|
+| 1 | Asosiy mahsulot | Yo'lovchi–haydovchi bot **va** haydovchi uchun avto-e'lon | Ikkalasi birinchi versiyada |
+| 2 | Hudud | Tizim butun O'zbekiston uchun (barcha viloyat va tumanlar); ishga tushirish va marketing Samarqanddan | Ma'lumotlar modeli boshidanoq respublika miqyosida |
+| 3 | Qatnov turlari | Hammasi: tuman ichidagi qisqa, viloyat ichidagi, viloyatlararo uzoq, bozor qatnovlari | |
+| 4 | Pochta | Alohida mahsulot | O'z narxi, kuzatuvi va javobgarligi bilan; asosiy botga keyin ulanadi |
+| 5 | Platforma | Telegram bot + Mini App | Xarita, manzil, profil Mini App'da |
+| 6 | Moslashtirish | Yo'lovchi takliflardan o'zi tanlaydi | Narx, mashina, reyting ko'rinadi |
+| 7 | Narx | Ikki tomon kelishadi: haydovchi narx aytadi, yo'lovchi kamroq taklif qilishi mumkin | Bot yo'nalish bo'yicha o'rtacha narxni maslahat qiladi |
+| 8 | Userbot | To'liq userbot, cheklovsiz: haydovchi o'z Telegram hisobini ulaydi, a'zo bo'lgan guruhlaridan taksi guruhlarini belgilaydi; userbot o'qiydi va e'lon yuboradi; deyarli hamma narsa sozlamalarda | Sabab: butun O'zbekiston miqyosida minglab guruh, bir nechta o'z hisobimiz yetmaydi. Majburiy texnik shartlar: (1) `FloodWait`/`PEER_FLOOD` hech qachon chetlab o'tilmaydi — kutadi yoki to'xtab haydovchiga xabar beradi; (2) ulashdan oldin xavflar yozilgan rozilik ekrani; (3) session'lar shifrlangan, "Hisobni uzish" bilan o'chiriladi. Tan olingan xavf: avto-e'lon haydovchi hisobini bloklatishi mumkin **2026-11-10: 48-qaror bilan yangilandi — xavfsiz standart chegara, sozlanadi.** |
+| 9 | Daromad | Haydovchi obunasi; yo'lovchi uchun bepul | Birinchi mijozlar — 6+ guruhga yozadigan ~415 "professional" haydovchi |
+| 10 | Tarif | 7 kun bepul sinov; Asosiy 29 ming/oy, Pro 59 ming/oy (+ avto-e'lon, 15 guruhgacha), Biznes 99 ming/oy (cheksiz guruh, ustuvorlik) | |
+| 11 | To'lov | Qatnov: naqd yoki P2P, biz aralashmaymiz. Obuna: hozircha P2P; Click/Payme integratsiyasi ko'rib chiqiladi | YATT va MChJ hozircha yo'q: o'zini o'zi band qilgan shaxs maqomi yoki 3-tomon to'lov servislari solishtiriladi (ochiq vazifa) |
+| 12 | Haydovchi tekshiruvi | Bosqichma-bosqich: telefon + mashina (rusum, rang, davlat raqami, rasm); "Tasdiqlangan" belgisi uchun guvohnoma va texpasport rasmi; reyting hammada | |
+| 13 | Xavfsizlik (MVP) | Ayol yo'lovchi belgisi, qatnovni yaqinlarga ulashish, reyting va shikoyat, qora ro'yxat | Hammasi birinchi versiyada |
+| 14 | Guruh egalari va arxitektura | Guruh egalari bilan alohida ishlamaymiz, userbotlar oddiy a'zo sifatida ishlaydi. **Bot + userbot birikmasi**: bot — interfeys, Mini App, yo'lovchi tomoni, to'lov, bildirishnoma; userbot — haydovchi hisobi orqali guruhlarni o'qish va e'lon yuborish | Yo'lovchilar hisob ulamaydi, faqat bot bilan ishlaydi |
+| 15 | Huquqiy maqom | Axborot-vositachi servis (tashuvchi emas): foydalanish shartlari va maxfiylik siyosati, ishga tushirishdan oldin yurist bilan bir martalik maslahat | Session va telefonlar — shaxsga doir ma'lumot |
+| 16 | Tillar | 5 ta: o'zbek yangi lotin alifbosi (Ö, Ğ, Ş, Ç), o'zbek joriy lotin, o'zbek kirill, rus, ingliz | Yangi alifbo qonuni 2026-10-21 imzolangan, 2027-04-22 dan kuchga kiradi; imlo qoidalari hali to'liq e'lon qilinmagan, "ng" taqdiri aniq emas. Yangi alifbo matni joriy lotindan avtomatik o'giriladi va qo'lda tekshiriladi. Brend nomi alohida tanlanadi (.uz domen + Telegram + Instagram bir xil nomda) — ochiq vazifa |
+| 17 | Stek | Python: userbot — Telethon 1.45 (layer 233); bot — aiogram 3.31 (Bot API 10.3); PostgreSQL + Redis; Mini App — React + Telegram Mini App SDK | 2026-11-09 tekshirildi. Pyrogram 2024-12 da arxivlangan; TDLib minglab session uchun og'ir. Foydali yangiliklar: ephemeral guruh xabarlari (10.2), `BotSubscriptionUpdated` (10.2), Rich Messages (10.1); Mini App metodlari faqat o'z domenidan (10.2). Business bot (10.0) faqat shaxsiy chatlarni qamraydi, guruhlar uchun userbot baribir kerak |
+| 18 | Infratuzilma | Pilot: bot, userbotlar va baza shaxsiy PC'da; Mini App va statik qism Telegram Serverless va/yoki Cloudflare'da; keyin bepul serverda sinov; xorijiy server ham qabul qilinadi | Telegram Serverless (rasmiy hujjat, 2026-11-09): faqat JS, per-update handler, doimiy ulanish va npm yo'q → userbot va Python bot u yerda ishlamaydi; narx/limit/SLA/joylashuv ko'rsatilmagan. Tan olingan xavflar: PC elektr/internetga bog'liq; xorijda saqlash shaxsga doir ma'lumotlar qonuni bo'yicha xavf **2026-11-10: 43-qaror — O'zbekistondagi VPS.** |
+| 19 | Jamoa | Saidakbar aka + Claude; kerak bo'lsa 2 ta akasi va 1 ukasi yordam beradi | Haydovchi tasdiqlash, P2P to'lovni tekshirish, shikoyatlar — oila a'zolariga bo'linishi mumkin |
+| 20 | Ishga tushirish | Darhol butun Samarqand bo'ylab reklama va guruhlarga e'lon; ishlash zonasi Qo'shrabot tumanidan boshlanadi | Aniq KPI tanlanmadi — quyidagi taklif ko'rib chiqiladi |
+
+## Brend
+
+| # | Mavzu | Qaror | Izoh |
+|---|---|---|---|
+| 21 | Brend nomi | **TulporGo** (`tulporgo`) | Tulpor — o'zbek dostonlaridagi afsonaviy uchar ot. 2026-11-09 holatiga bo'sh: tulporgo.uz/.com/.io/.ai, Telegram @tulporgo, @tulporgobot. Instagram va Facebook qo'lda tekshiriladi. Yangi alifboda o'zgarmaydi. Tekshiruv: `naming/brend-nomlari-2.html` |
+| 22 | Logotip yo'nalishi | **02 · Taksi qanoti**: qiyshiq tezlik chiziqlaridan qanot + taksi shashkasi, "TULPORGO" Unbounded 800, qiyalik bilan | Ranglar: #111214, #FFC72C, #FFFFFF. Konsepsiyalar: https://claude.ai/artifact/MjwgxHrfjdQ3NegkP1oxdf. Keyingi qadam: maskot (10 variant), keyin final SVG/PNG fayllar |
+| 23 | Maskot / emblema | Aylana ichidagi qanotli tulpor boshi (esports uslubi), ChatGPT'da tavsif bo'yicha yaratilgan konsepsiya → Illustrator Image Trace bilan vektorlangan, brend ranglariga keltirilgan | Fayllar: `brand/mascot/chatgpt/` (emblem, dark, app-icon, telegram-avatar: .ai/.svg/1024 PNG). Kuronami rasmi trace qilinmagan (mualliflik huquqi). AI yaratgan tasvir bo'lgani uchun tovar belgisi sifatida ro'yxatdan o'tkazishdan oldin yurist bilan tekshiriladi. **2026-11-09: asosiy maskot emas** — 24-qarorga qarang; endi merch emblemasi (1-yo'nalish) |
+| 24 | Maskot tizimi (10 yo'nalishdan) | **Logotip belgisi va bot avatari: 2** (uchayotgan, minimal). **Asosiy personaj: 9** (chibi). **Stikerlar: 9 va 3** (ikki to'plam). **Mashina stikeri: 2**. **Merch: 7, 1, 6, 9**. 6 faqat merchda. 3 va 10 reklama/banner uchun. **Tana rangi:** belgi sariq (1, 2, 6, 7), personaj krem (3, 9, 10) | Fayllar: `brand/mascot/directions/` (895 px PNG, galereya `tulpor-10-yonalish.png`). 4 va 5 — arxiv (`directions/archive/`). Vektorlash tartibi: 2 → 9 → qolganlari. **2026-11-09 vektorlandi** (8 tasi ham, Illustrator Image Trace): `directions/vector/*.ai|svg|-preview.png`, solishtirish `vector/compare.png`. 02 va 08 brend ranglariga tozalangan (`*-brand.ai/svg/-1024.png`, shaffof fon), 02 uchun qora fonga mos variant ham bor (`-brand-dark`, qanotlari oq). 03 (3D) faqat taxminiy vektor — gradient pog'onalarga bo'lingan; 3D ishlar uchun asl PNG ishlatiladi. **Barcha 8 tasi brend palitrasiga keltirildi** (`*-brand.ai/svg/-1024.png`, shaffof fon, `palette_snap.py` + testlar): asosiy #FFC72C, #E0A100, #111214, #FFFFFF; qo'shimcha soyalar — personajlar uchun krem/pushti, 06 uchun firuza #1FA3A3, to'q qahrabo #A0640A. Umumiy ko'rinish: `vector/brand-all.png`. **Qora fon (2026-11-09 tasdiqlandi):** 01 va 07 dagi fon dog'lari o'chirildi; 02 va 06 qora fonda `-brand-dark` (qora qismlar oq) bilan ishlatiladi; 03 ga oq stiker hoshiya qo'shildi, pol soyasi olib tashlandi; 08, 09, 10 o'zgarishsiz. Skript: `directions/fix_dark.jsx` |
+
+## Telegram mavjudligi (2026-11-09)
+
+Barchasi @menarzullayev (Premium) hisobidan ochiladi. Telegram yangiliklari: `TELEGRAM-YANGILIKLAR.md`.
+
+| # | Mavzu | Qaror | Izoh |
+|---|---|---|---|
+| 25 | Domen | **tulporgo.uz** — Eskiz, buyurtma № 118840, 1 yil, 29 000 so'm | 2026-11-09 to'langan, tekshiruvda; faollashishi 2026-11-10 kutiladi |
+| 26 | Tuzilma | Bot + kanal + 2 guruh: ommaviy savol-javob guruhi va yopiq haydovchilar guruhi | |
+| 27 | Username | Kanal **@tulporgo**, bot **@tulporgobot**, savol-javob **@tulporgo_chat**; haydovchilar guruhi username'siz, faqat havola/tekshiruv orqali | 2026-11-09 da hammasi bo'sh (API + t.me bilan tekshirildi) |
+| 27a | Bot ochildi | **@tulporgobot** (id 9198136695, nomi "TulporGo") — 2026-11-09 @menarzullayev hisobidan BotFather orqali | Token: `.secrets/bot.env` (gitignore, faqat egasi o'qiydi). Prototip yuboruvchi: `content/prototype/send_prototypes.py`. Eslatma: Premium bilan bot username `…app`/`…ai`/`…agent`/`…game` bilan ham tugashi mumkin |
+| 28 | Ko'rinadigan nom | Hammasida faqat **"TulporGo"** | Farq tavsif va avatarda |
+| 29 | Post tili | O'zbek **yangi alifbo** (O'→Ö, G'→Ğ, Sh→Ş, Ch→Ç; `ı` ishlatilmaydi) + ruscha qism **yig'iladigan blokda** (expandable quote) | |
+| 30 | Communities | Bot, kanal va guruhlar bitta **TulporGo hamjamiyati**; haydovchilar guruhi **Hidden** | Bot API 10.2 (2026-07-14) |
+| 31 | Avatar | Hammasida **02**, fon har xil: bot — sariq fon; kanal — qora fon (02-dark); savol-javob — oq fon **+ sariq halqa** (2026-11-10: oddiy oq ochiq mavzuda yo'qolardi); haydovchilar — qora fon + kichik rul belgisi | 2026-11-10: sariq fonda 02 to'liq qora (sariq tana sariqda ko'rinmaydi). Fayllar: `brand/telegram/out/{bot,channel,chat,drivers}.png` (1024 px), skript `brand/telegram/avatars.py`, 32 px gacha tekshirilgan |
+| 32 | Post qolipi | Har postga **alohida generatsiya qilingan rasm** (imkon bo'lsa karusel) + sarlavha + qatorlar + izoh + tugmalar + rich post | Tafsilotlari keyin muhokama qilinadi. **Har post uchun noyob rasm** (1 000 post → 1 000 xil rasm). Agentlar yaratildi: `.claude/agents/tulporgo-content-maker.md`, `tulporgo-media-engineer.md` (faqat qoralama, hech narsa e'lon qilmaydi). Katalogdan taklif qilingan plaginlar: Marketing, Social Media Skills, image-generation, Brand Voice |
+| 33 | Rasm o'lchami | Uchalasi ham, **mazmunga qarab**: 4:5 (1080×1350) — reklama va asosiy e'lonlar; 1:1 (1280×1280) — karusel va Instagram'ga ham chiqadigan postlar; 16:9 (1280×720) — yangilik, jadval, yo'nalish xaritasi | Prototiplar 2026-11-09 da @tulporgobot orqali Telegram'da ko'rildi |
+| 34 | Rasm yaratish | Hozircha **ChatGPT** (obuna, qo'shimcha to'lovsiz); oddiyroq rasmlarni (jadval, e'lon, kompozitsiya) **Claude o'zi render qiladi** (Python/Illustrator, brend fayllaridan). Pullik API — keyin alohida qaror. **Har bir rasmni Saidakbar aka tasdiqlaydi** | |
+| 35 | Har rasmda o'zgarmas | Palitra (sariq #FFC72C, qora #111214, oq); burchakda **02** belgisi; maskot personaji bir xil ko'rinishda (09/10, referens sifatida o'z fayllarimiz) | Takrorni avtomatik tekshirish tanlanmadi |
+| 36 | Rasm ustida matn | **5 ta qolipning hammasi**, mazmunga qarab: A matnsiz (kayfiyat, maskot hikoyasi); B tepada sarlavha (yo'nalish, yangilik); C pastki qora plashka + @tulporgobot (forward qilinadigan e'lonlar); D yo'nalish stikeri (bitta yo'nalish, minimal); E katta tipografika (reklama, kampaniya) | Prototiplar 2026-11-09 da @tulporgobot orqali ko'rildi. Qoliplar: `content/prototype/text_variants.py` (Unbounded 800 + Manrope, Edge headless render). Matn yangi alifboda, 02 belgisi va matn ustma-ust tushmasligi tekshiriladi |
+| 37 | Karusel | **Rich slideshow** (Bot API 10.1 `sendRichMessage`, `slideshow` bloki): matn, yig'iladigan ruscha blok va tugmalar bitta post ichida | 3 usul (albom, slideshow, collage) 2026-11-09 da @tulporgobot orqali sinaldi. Talab: rasmning o'zida keyingi rasmga undovchi element. Oddiy belgilar (strelka, 1/4, chet, "Surib köring") rad etildi. **Tanlandi: RM panorama** — 4 ramka bitta uzun rasmdan kesiladi; marshrut chizig'i (A → B) va tulpor ramkalar chegarasidan o'tadi (`panorama_cues.py`). Tulpor har kadrda boshqa pozada bo'lishi kerak → pozalar kutubxonasi (38-qaror). Skriptlar: `content/prototype/send_carousel.py`, `swipe_cues.py`, `send_cues.py` |
+| 38 | Maskot pozalari | Tulpor (09) uchun **pozalar kutubxonasi**: avval 20 ta asosiy, keyin kontent talabiga qarab 50+ gacha. **Personaj varag'i v1 tasdiqlandi** (2026-11-09): old / 3/4 / yon / orqa + 8 ifoda + ranglar — barcha pozalar shunga solishtiriladi | Varaq: `brand/mascot/model-sheet/09-model-sheet-v1.png` (ChatGPT, 09 referensi bilan). Pozalar ro'yxati: `content/mascot-poses.md`. Har poza alohida tasdiqlanadi. **1-to'plam to'liq: 20 ta poza tasdiqlandi** 2026-11-09; **2-to'plam (21–50) generatsiya qilindi**; 2026-11-09 qayta tekshiruv: 11 (2 dum), 24 (bayroq), 44/45/47 (kesilgan) qayta chizildi, 37 ikki variantda. **2026-11-10: 2-to'plam (21–50, 37t bilan 31 ta) hammasi tasdiqlandi** — kutubxona 51 ta tasdiqlangan poza (`review/verdict-*.png`). **Vektor (2026-11-09):** 51 ta → `brand/mascot/poses/vector/{ai,svg,png}`, bir xil oq stiker hoshiya, 94% normallashtirilgan; muammolar va ochiq vazifalar: `poses/vector/MUAMMOLAR.md`; keyingi bosqich: vektor + Telegram emoji/stiker/animatsiya paketlari: `brand/mascot/poses/INDEX.md` |
+| 39 | Emoji tizimi (2026-11-10) | **3 qatlam**: katta — stiker yoki yakka emoji; hissiyot — tulpor **boshi** emoji (Reactions); interfeys (tugma, 1-2-3, ro'yxat) — **o'z TulporGo belgilarimiz** (sariq kvadrat, qora belgi). Xabarda ko'pi bilan **1 ta** Telegram rasmiy animatsion emoji urg'u uchun (🚀 🎉 ⏳ 🔥) | Sabab: butun tanali maskot emoji'si matnda ~20 px da o'qilmaydi (o'lchandi). Rasmiy «Animated Emoji» (`RestrictedEmoji`) brendni bildirmaydi va 1-2-3, 🛡 yo'q. Bot ikkalasini ishlata oladi (sinaldi). Custom emoji faqat xabarlarda — profil va «Haqida» oddiy matn. Belgilar: `brand/icons/` (14 ta) — **vektor TGS + animatsiya** (2026-11-10 Saidakbar aka talabi: maksimal sifat): birinchi kadr = to'liq belgi (quvvat tejash rejimida ham to'g'ri), qisqa harakat, keyin dam; rasmiy TGS qoidalari avtomatik tekshiriladi; alohida `tulporgo_icons` paketi Reactions'dan keyin yaratiladi. Taqqoslash: `brand/mascot/poses/review/emoji-a-b-tavsiya.png` |
+| 40 | Telegram matnlari, 1-bosqich (2026-11-10) | **Tasdiqlandi**: bot nomi, qisqa tavsif, tavsif, menyu tugmasi, 6 buyruq (`/start`, `/qatnovlarim`, `/til`, `/yordam`; haydovchilarga `/elon`, `/obuna`), til tanlash, salomlashuv, «tez orada» javobi, kanal/savol-javob/haydovchilar tavsiflari, welcome matnlari, guruh qoidalari | Manba: `content/i18n/telegram_texts.py` (joriy lotin + ru + en → yangi alifbo, rasmiy lotin, kirill avtomatik). Bot profilida o'zbekcha matn **yangi alifboda** (29-qaror); ruscha nom «Кошрабад». Emoji — 39-qaror bo'yicha |
+| 41 | Telegram vizuallari, 2-bosqich (2026-11-10) | **Tasdiqlandi**: 4 avatar (31-qaror), kanal welcome rasmi (1280×720: «Xuş kelibsiz!», @tulporgobot, tulpor 01), qadalgan «Bu yerdan boshlang» karuseli (RM panorama, 4 × 1280×1280, chegaralarda pozalar 05 / 06 / 08, Qöşrabot → Samarqand chizig'i) | Fayllar: `brand/telegram/out/` (avatars, `welcome-channel.png`, `carousel/f1–f4.png`); skriptlar `avatars.py`, `visuals.py`; ko'rsatish `send_stage2.py`. Karusel Rich slideshow sifatida (37-qaror) |
+
+## Mahsulotni qurish (2026-11-10, keng muhokama, 12 savol)
+
+| # | Mavzu | Qaror | Izoh |
+|---|---|---|---|
+| 42 | MVP tarkibi | **Hammasi birga**: bot (yo'lovchi tomoni) + haydovchi tomoni + haydovchi userboti + Mini App | 1-qaror tartibi: bosqichma-bosqich emas, parallel quriladi |
+| 43 | Server | **O'zbekistondagi VPS** | Shaxsga doir ma'lumotlar O'zbekistonda saqlanadi (lokalizatsiya), 24/7. PC faqat vaqtinchalik «tez orada» bot uchun (2026-11-10 dagi 2 marta svet o'chishi — 18-qarordagi xavf tasdiqlandi). 18-qaror yangilandi |
+| 44 | To'lov | **Birinchi 1–2 oy hamma bepul**, lekin to'lov yo'llari hozirdan to'liq integratsiya: P2P karta + qo'lda tekshiruv, Telegram Stars, Click, Payme, boshqa 3-tomon tizimlari | Live Click/Payme uchun merchant shartnoma (YATT/MChJ) kerak — kod sandbox bilan tayyorlanadi. 10-qaror narxlari o'zgarmaydi |
+| 45 | Muddat | **Qo'yilmaydi** — tayyor bo'lganda | |
+| 46 | Ish tartibi | **Avval poydevor, keyin parallel**: git + **ochiq (public) GitHub repo**, monorepo, umumiy baza sxemasi (PostgreSQL; SQLite/MySQL ham ishlay oladigan ORM qatlami), domen modeli, API shartnomasi, testlar, CI → keyin 4 agent har biri o'z worktree'sida, o'z goal'i va testlari bilan; Claude birlashtiradi va tekshiradi | Reja: `GOAL.md`. Ochiq repo: sirlar skaneri birinchi push'dan oldin majburiy |
+| 47 | Buyurtma | **Hammasi**: bot tugmalari (tuman → mahalla, vaqt, odam soni) + erkin matn (bot tanib oladi) + Mini App xarita + Guest Mode (guruhlardan) | |
+| 48 | Userbot chegarasi | **Xavfsiz standart + sozlanadi**: har guruhga 30–60 daqiqada ≤ 1 e'lon, tasodifiy pauza, FloodWait → to'xtash va haydovchiga xabar; haydovchi chegarani o'zgartira oladi (xavf ogohlantirishi bilan) | 8-qaror shunga yangilandi |
+| 49 | Birinchi haydovchilar | **Saidakbar aka o'zi**: tanishlar, guruhlarda e'lon, 415 «professional» haydovchidan saralanganlariga shaxsan; ular boshqalarni referal orqali olib keladi | Bot ommaviy xabar yubormaydi |
+| 50 | Litsenziya | **Kod: AGPL-3.0; brend yopiq** — TulporGo nomi, tulpor maskoti, logotip, stikerlar, emoji: barcha huquqlar Saidakbar akada (`BRAND.md`) | |
+| 51 | Huquqiy hujjatlar | **Claude qoralama (uz/ru), yurist tekshiradi**, ochiq ishga tushishdan oldin | 15-qaror, ochiq vazifa 3; userbot rozilik ekrani (8-qaror) ham |
+| 52 | Referal | **Bepul kunlar**: har haydovchining havolasi (`?start=ref_…`); taklif qilingan haydovchi tasdiqlansa — ikkalasiga +7 kun bepul; «Elchi» member tag | |
+| 53 | KPI | **20-qaror taklifi qabul**, «pullik obuna» o'rniga «faol haydovchi (7 kunda 1+ qatnov)»; bot haftalik hisobotni Saidakbar akaga yuboradi | KPI bo'limi yangilandi |
+| 54 | Ochiq repo tarkibi (2026-11-10) | **Ichki hujjatlar ham ochiq** (QARORLAR, HANDOFF, MUAMMOLAR, TELEGRAM-REJA, naming); **brenddan faqat tayyor fayllar** (avatarlar, belgilar, emoji/stiker eksportlari, quvur skriptlari) | Hech qachon kirmaydi: `.secrets/`, sessiyalar, tokenlar, telefon raqamlari; oraliq brend fayllari va `.ai` manbalar lokal (skriptlar qayta yaratadi) |
+
+## Taklif etilgan KPI (tasdiqlandi 2026-11-10, 53-qaror)
+
+Asos: Qovunchi va O'razmat guruhlarida yiliga ~4 500 yo'lovchi so'rovi, Qo'shrabot tumanida ~1 100 mahalla haydovchisi.
+
+| Ko'rsatkich | 30-kun | 60-kun |
+|---|---|---|
+| Ro'yxatdan o'tgan haydovchilar | 100 | 250 |
+| Userbot ulagan haydovchilar | 30 | 80 |
+| Kunlik yo'lovchi so'rovlari (bot orqali) | 20 | 50 |
+| Kelishilgan qatnovlar / kun | 10 | 30 |
+| Faol haydovchilar (7 kunda 1+ qatnov; 53-qaror) | 15 | 50 |
+| Bloklangan haydovchi hisoblari | 0 | 0 |
+
+## Ochiq vazifalar
+
+1. (44-qaror bilan yo'l belgilandi; live Click/Payme uchun maqom hali kerak) Obuna to'lovini qabul qilish yo'li: o'zini o'zi band qilgan shaxs maqomi va 3-tomon servislarni solishtirish (11-qaror).
+2. ~~Brend nomi~~ — TulporGo tanlandi (21-qaror). **tulporgo.uz — 2026-11-09 Eskiz orqali buyurtma qilindi (№ 118840, 1 yil, 29 000 so'm), tekshiruvda; 2026-11-10 da faollashishi kutilmoqda.** Qolgan: domenlar va @tulporgo, @tulporgobot ni darhol band qilish; Instagram/Facebook'ni qo'lda tekshirish.
+3. Foydalanish shartlari va maxfiylik siyosati — 51-qaror: Claude qoralama, yurist tekshiradi.
+4. Yangi o'zbek alifbosining imlo qoidalari chiqqach, tarjimalarni yangilash (16-qaror).
+5. Butun O'zbekiston joylar bazasi: Samarqand (16 tuman, 1 063 mahalla) tayyor, qolgan viloyatlar (2-qaror).
+6. ~~KPI'ni tasdiqlash~~ — 53-qaror.
+7. Telegram: 3-bosqich bajarildi 2026-11-10 (bot profili). Qolgan: «tez orada» javobi uchun doim ishlaydigan jarayon; 4-bosqich (2026-11-10): kanal @tulporgo OCHIQ, savol-javob va haydovchilar guruhi, Welcome Message ×3, Hamjamiyat — bajarildi. @tulporgo_chat ham ochiq (limit uchun @rankwant_chat hozircha yopiq qilindi — Saidakbar aka qarori, tiklash ma'lumoti `brand/telegram/released_usernames.json`). «Tez orada» javobi 2026-11-10 dan ishlayapti (`bot/coming_soon.py`, kompyuterda doim yoniq). Keyingi: bot kodi (aiogram, 17-qaror).
+
+## Qarorlar orasidagi taranglik (e'tibor uchun)
+
+- **Keng reklama + PC'da pilot (18, 20).** Butun Samarqand bo'ylab e'lon tez yuklama keltirishi mumkin, uydagi PC esa elektr yoki internet uzilsa, barcha userbotlar to'xtaydi. Reklama boshlanishidan oldin server rejasi tayyor turishi kerak.
+- **Cheklovsiz avto-e'lon + keng reklama (8, 20).** Haydovchilar ko'p guruhga cheklovsiz e'lon bersa, guruh adminlari va Telegram spam tizimi tez sezadi. Birinchi haftalarda bloklangan hisoblar sonini kuzatish shart.
+- **P2P obuna + rasmiy maqom yo'qligi (11, 15).** Pullik obuna ko'paygach, daromadni qonuniy rasmiylashtirish kechiktirib bo'lmaydigan masalaga aylanadi.

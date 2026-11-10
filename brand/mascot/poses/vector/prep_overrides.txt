@@ -1,0 +1,5 @@
+# <pose> <flood threshold>  (default 40). Lower keeps light details close to the background colour.
+09-23-hayit-tabrigi 12
+09-25-yangi-yil 12
+09-26-qish-qor-odam 12
+09-31-tugilgan-kun 12

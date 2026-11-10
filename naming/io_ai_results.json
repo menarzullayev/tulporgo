@@ -1,0 +1,147 @@
+{
+  "boychibor": {
+    "handle": "boychibor",
+    "io": "error",
+    "ai": "error"
+  },
+  "burgutgo": {
+    "handle": "burgutgo",
+    "io": "error",
+    "ai": "free"
+  },
+  "chaqmoqgo": {
+    "handle": "chaqmoqgo",
+    "io": "free",
+    "ai": "free"
+  },
+  "chovush": {
+    "handle": "chovush",
+    "io": "free",
+    "ai": "free"
+  },
+  "dulduluz": {
+    "handle": "dulduluz",
+    "io": "free",
+    "ai": "free"
+  },
+  "girotuz": {
+    "handle": "girotuz",
+    "io": "free",
+    "ai": "free"
+  },
+  "ketgouz": {
+    "handle": "ketgouz",
+    "io": "free",
+    "ai": "free"
+  },
+  "lochingo": {
+    "handle": "lochingo",
+    "io": "free",
+    "ai": "free"
+  },
+  "qatgo": {
+    "handle": "qatgo",
+    "io": "free",
+    "ai": "free"
+  },
+  "ravotgo": {
+    "handle": "ravotgo",
+    "io": "free",
+    "ai": "free"
+  },
+  "rydouz": {
+    "handle": "rydouz",
+    "io": "free",
+    "ai": "free"
+  },
+  "sarbongo": {
+    "handle": "sarbongo",
+    "io": "free",
+    "ai": "free"
+  },
+  "shamolgo": {
+    "handle": "shamolgo",
+    "io": "free",
+    "ai": "free"
+  },
+  "shoshil": {
+    "handle": "shoshil",
+    "io": "free",
+    "ai": "free"
+  },
+  "tezkoruz": {
+    "handle": "tezkoruz",
+    "io": "free",
+    "ai": "free"
+  },
+  "tezyur": {
+    "handle": "tezyur",
+    "io": "free",
+    "ai": "free"
+  },
+  "tezyuruz": {
+    "handle": "tezyuruz",
+    "io": "free",
+    "ai": "free"
+  },
+  "tulporgo": {
+    "handle": "tulporgo",
+    "io": "free",
+    "ai": "free"
+  },
+  "ulovgo": {
+    "handle": "ulovgo",
+    "io": "free",
+    "ai": "free"
+  },
+  "yashingo": {
+    "handle": "yashingo",
+    "io": "free",
+    "ai": "free"
+  },
+  "yelday": {
+    "handle": "yelday",
+    "io": "free",
+    "ai": "free"
+  },
+  "yelqanot": {
+    "handle": "yelqanot",
+    "io": "free",
+    "ai": "free"
+  },
+  "yetibkel": {
+    "handle": "yetibkel",
+    "io": "free",
+    "ai": "free"
+  },
+  "yetkiz": {
+    "handle": "yetkiz",
+    "io": "free",
+    "ai": "free"
+  },
+  "yolgouz": {
+    "handle": "yolgouz",
+    "io": "free",
+    "ai": "free"
+  },
+  "yuraklar": {
+    "handle": "yuraklar",
+    "io": "free",
+    "ai": "free"
+  },
+  "yurgouz": {
+    "handle": "yurgouz",
+    "io": "free",
+    "ai": "free"
+  },
+  "yurouz": {
+    "handle": "yurouz",
+    "io": "free",
+    "ai": "free"
+  },
+  "yuruvchi": {
+    "handle": "yuruvchi",
+    "io": "free",
+    "ai": "free"
+  }
+}

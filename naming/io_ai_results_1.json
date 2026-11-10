@@ -1,0 +1,77 @@
+{
+  "birgayol": {
+    "handle": "birgayol",
+    "io": "error",
+    "ai": "error"
+  },
+  "hitchuz": {
+    "handle": "hitchuz",
+    "io": "free",
+    "ai": "free"
+  },
+  "hopinuz": {
+    "handle": "hopinuz",
+    "io": "free",
+    "ai": "free"
+  },
+  "hozirga": {
+    "handle": "hozirga",
+    "io": "free",
+    "ai": "free"
+  },
+  "jonaymiz": {
+    "handle": "jonaymiz",
+    "io": "free",
+    "ai": "free"
+  },
+  "kirakashuz": {
+    "handle": "kirakashuz",
+    "io": "free",
+    "ai": "free"
+  },
+  "kishibor": {
+    "handle": "kishibor",
+    "io": "free",
+    "ai": "free"
+  },
+  "taksimahalla": {
+    "handle": "taksimahalla",
+    "io": "free",
+    "ai": "free"
+  },
+  "taksiol": {
+    "handle": "taksiol",
+    "io": "free",
+    "ai": "free"
+  },
+  "taksiyol": {
+    "handle": "taksiyol",
+    "io": "free",
+    "ai": "free"
+  },
+  "tumantaksi": {
+    "handle": "tumantaksi",
+    "io": "free",
+    "ai": "free"
+  },
+  "yetkazgich": {
+    "handle": "yetkazgich",
+    "io": "free",
+    "ai": "free"
+  },
+  "yolbormi": {
+    "handle": "yolbormi",
+    "io": "free",
+    "ai": "free"
+  },
+  "yolboshchi": {
+    "handle": "yolboshchi",
+    "io": "free",
+    "ai": "free"
+  },
+  "yoldaman": {
+    "handle": "yoldaman",
+    "io": "free",
+    "ai": "free"
+  }
+}

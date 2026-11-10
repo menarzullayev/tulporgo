@@ -1,0 +1,832 @@
+[
+  {
+    "handle": "birgayol",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "borasizmi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "bormi",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "chopar",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "getride",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "gotrip",
+    ".uz": "error",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "taken",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hamroh",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "taken",
+    ".ai": "taken",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hamsafar",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hamyol",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hitchuz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hopinuz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hopuz",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "hozirga",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "jonaymiz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "joybor",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "karvon",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "taken",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ketamiz",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ketaylik",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ketdik",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ketdikmi",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ketvoramiz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "kirachi",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "kirakash",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "kirakashuz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "kishibor",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "liftuz",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "mahallataksi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "manzil",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "taken",
+    ".ai": "taken",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "manzilim",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "minamiz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "free",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "mindik",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "free",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "olibket",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "free",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "poolio",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "taken",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "qatnov",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "qatnovchi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "qishloqtaksi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ridego",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ridehub",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ridely",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ridemate",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "rideon",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ridepal",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ridesy",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "rideuz",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "routa",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "safardosh",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "safarim",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksi24",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksibor",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksibormi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksichi",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksigo",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksihub",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksikerak",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksilink",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksimahalla",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksinet",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksiol",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksiplus",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksiuz",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taksiyol",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "taxi24uz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "tezbor",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "tezket",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "tripuz",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "tumantaksi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ulovbor",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "ulovim",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "uzride",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "waygo",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "wayuz",
+    ".uz": "free",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yetkazgich",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yolbormi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yolboshchi",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yolchi",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yoldaman",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yoldosh",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yolkira",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yolla",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yollauz",
+    ".uz": "free",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yolovchi",
+    ".uz": "taken",
+    ".com": "taken",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yuldosh",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "taken",
+    "instagram": "unknown",
+    "facebook": "manual"
+  },
+  {
+    "handle": "yurdik",
+    ".uz": "taken",
+    ".com": "free",
+    ".io": "error",
+    ".ai": "error",
+    "telegram": "free",
+    "instagram": "unknown",
+    "facebook": "manual"
+  }
+]

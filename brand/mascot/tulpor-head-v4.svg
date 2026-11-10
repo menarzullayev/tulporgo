@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
+  <rect width="1000" height="1000" fill="#FFFFFF"/>
+  <g stroke="#111214" stroke-width="20" stroke-linejoin="round" stroke-linecap="round">
+    <!-- wing: fanned tapered speed feathers -->
+    <path transform="translate(372 530) rotate(-98)" d="M0 -30 L 300 -30 L 350 0 L 280 30 L 0 30 Z" fill="#E0A100"/>
+    <path transform="translate(372 530) rotate(-116)" d="M0 -32 L 390 -32 L 448 0 L 368 32 L 0 32 Z" fill="#FFC72C"/>
+    <path transform="translate(372 530) rotate(-134)" d="M0 -32 L 440 -32 L 500 0 L 418 32 L 0 32 Z" fill="#FFC72C"/>
+    <path transform="translate(372 530) rotate(-152)" d="M0 -30 L 400 -30 L 458 0 L 378 30 L 0 30 Z" fill="#FFC72C"/>
+    <!-- mane -->
+    <path d="M470 245 C 430 222, 380 214, 318 228 L 384 264 C 318 272, 260 300, 214 346 L 312 348 C 256 376, 212 422, 186 478 L 288 460 C 244 508, 220 560, 214 622 L 298 584 C 274 646, 270 704, 282 768 L 336 710 C 330 770, 330 820, 334 872 L 330 880 C 300 720, 320 520, 360 380 C 390 310, 420 265, 470 245 Z" fill="#23252A"/>
+    <!-- ears -->
+    <path d="M428 268 L 392 108 L 482 238 Z" fill="#FFC72C"/>
+    <path d="M498 240 L 548 88 L 580 272 Z" fill="#FFC72C"/>
+    <!-- head + neck with angular cut -->
+    <path d="M470 245 C 520 235, 560 250, 585 290 L 735 500 C 770 530, 805 560, 808 605 C 810 645, 780 668, 740 668 C 715 668, 700 660, 690 652 C 700 675, 690 705, 655 708 C 620 712, 590 700, 565 690 C 520 720, 460 715, 434 690 C 452 760, 482 812, 522 862 L 424 832 L 330 880 C 300 720, 320 520, 360 380 C 390 310, 420 265, 470 245 Z" fill="#FFC72C"/>
+  </g>
+  <g fill="#FFE9A8">
+    <path transform="translate(372 530) rotate(-116)" d="M250 -18 L 380 -18 L 410 -6 L 250 -6 Z"/>
+    <path transform="translate(372 530) rotate(-134)" d="M290 -18 L 430 -18 L 462 -6 L 290 -6 Z"/>
+    <path transform="translate(372 530) rotate(-152)" d="M260 -16 L 390 -16 L 420 -5 L 260 -5 Z"/>
+  </g>
+  <!-- inner ears -->
+  <path d="M442 250 L 410 148 L 470 236 Z" fill="#B87F00"/>
+  <path d="M516 238 L 548 136 L 568 256 Z" fill="#B87F00"/>
+  <!-- angular jaw shadow -->
+  <path d="M408 602 L 470 520 L 560 560 L 600 640 L 567 688 C 520 716, 462 712, 436 688 Z" fill="#E0A100"/>
+  <path d="M408 602 L 470 520 L 560 560 L 600 640" fill="none" stroke="#111214" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- neck shadow -->
+  <path d="M436 696 C 452 760, 480 808, 512 850 L 430 826 L 372 856 C 380 800, 400 746, 418 700 Z" fill="#E0A100"/>
+  <!-- muzzle lighter tone + mouth -->
+  <path d="M735 500 C 770 530, 805 560, 808 605 C 810 645, 780 668, 740 668 C 715 668, 700 660, 690 652 C 698 600, 712 540, 735 500 Z" fill="#FFD766"/>
+  <path d="M690 652 C 722 650, 752 656, 778 646" fill="none" stroke="#111214" stroke-width="10" stroke-linecap="round"/>
+  <path d="M752 572 C 772 560, 796 572, 798 596 C 784 588, 765 588, 754 598 Z" fill="#111214"/>
+  <!-- highlights -->
+  <path d="M592 300 L 735 505 L 712 518 L 570 318 Z" fill="#FFE9A8"/>
+  <path d="M370 400 C 380 350, 400 310, 430 285 L 438 300 C 412 326, 396 362, 388 404 Z" fill="#FFE08A"/>
+  <!-- forelock -->
+  <path d="M478 246 C 520 262, 548 302, 548 350 C 527 318, 502 298, 464 286 Z" fill="#23252A" stroke="#111214" stroke-width="10" stroke-linejoin="round"/>
+  <!-- mane highlights -->
+  <g fill="#FFC72C">
+    <path d="M300 302 L 380 285 L 326 316 Z"/>
+    <path d="M248 434 L 333 404 L 276 444 Z"/>
+    <path d="M266 584 L 332 540 L 288 596 Z"/>
+  </g>
+  <!-- eye: open, determined -->
+  <path d="M550 414 L 656 368 C 666 408, 642 444, 598 446 C 572 444, 555 431, 550 414 Z" fill="#FFFFFF" stroke="#111214" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="614" cy="412" r="21" fill="#111214"/>
+  <circle cx="622" cy="404" r="7" fill="#FFFFFF"/>
+  <path d="M532 376 L 670 322 L 666 346 L 542 396 Z" fill="#111214"/>
+</svg>
