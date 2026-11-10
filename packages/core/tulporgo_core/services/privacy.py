@@ -1,7 +1,8 @@
 """Data-subject rights (privacy policy §8): export own data, delete own data.
 
 Deletion anonymises instead of dropping rows that other people or the books depend on:
-- removed: phone, names, username, women marker, referral code, car photo, document photos, the whole userbot
+- removed: phone, names, username, women marker, referral code, car photo, document photos (file ids and the encrypted
+  server copies), the whole userbot
   account (encrypted session, groups, post log), comments the user wrote in ratings;
 - kept, linked to the anonymised user: trips (the other party's history and ratings), payments (accounting —
   retention period is a lawyer item), complaints (evidence), referral bonuses;
@@ -31,6 +32,7 @@ from ..models import (
     UserbotGroup,
     UserbotPost,
 )
+from . import documents
 
 ACTIVE_TRIP = (TripStatus.CONFIRMED, TripStatus.STARTED)
 
@@ -62,6 +64,7 @@ async def export_user_data(s: AsyncSession, user: User) -> dict:
         out["driver"] = {"status": d.status, "car_make": d.car_make, "car_color": d.car_color,
                          "car_plate": d.car_plate, "seats": d.seats, "car_photo_on_file": bool(d.car_photo_file_id),
                          "documents_on_file": bool(d.license_file_id or d.techpass_file_id),
+                         "documents_on_server": await documents.has_server_copy(s, d),
                          "verified": d.verified, "plan": d.plan, "subscription_until": _iso(d.subscription_until),
                          "ambassador": d.ambassador, "rating": d.rating, "created_at": _iso(d.created_at)}
         driver_trips = [Trip.driver_id == d.id]
@@ -151,6 +154,7 @@ async def delete_user_data(s: AsyncSession, user: User, bus=None) -> DeletionRep
             await s.execute(delete(UserbotAccount).where(UserbotAccount.id == acc.id))
             rep.userbot_deleted = True
         d.status = DriverStatus.SUSPENDED if d.status != DriverStatus.BLOCKED else DriverStatus.BLOCKED
+        await documents.delete_for_driver(s, d)
         d.car_photo_file_id = d.license_file_id = d.techpass_file_id = None
         d.car_plate = f"DELETED{d.id}"[:16]
         d.car_make = d.car_color = "-"

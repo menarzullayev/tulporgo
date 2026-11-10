@@ -68,3 +68,33 @@ def test_trip_topic_columns_are_added_and_dropped_by_0002(tmp_path):
     assert "passenger_topic_id" not in trip_columns() and "driver_topic_id" not in trip_columns()
     command.upgrade(c, "head")
     command.check(c)
+
+
+def test_driver_documents_table_is_added_and_dropped_by_0003(tmp_path):
+    from sqlalchemy import create_engine, inspect
+    if os.environ.get("TULPORGO_TEST_DATABASE_URL"):
+        pytest.skip("table inspection below is written for the SQLite file; other databases are covered by `check`")
+    path = tmp_path / "d.db"
+    c = cfg(f"sqlite+aiosqlite:///{path.as_posix()}")
+
+    def inspected():
+        eng = create_engine(f"sqlite:///{path.as_posix()}")
+        try:
+            insp = inspect(eng)
+            if "driver_documents" not in insp.get_table_names():
+                return None
+            return ({col["name"] for col in insp.get_columns("driver_documents")},
+                    [u["column_names"] for u in insp.get_unique_constraints("driver_documents")])
+        finally:
+            eng.dispose()
+
+    command.upgrade(c, "0002")
+    assert inspected() is None
+    command.upgrade(c, "0003")
+    cols, uniques = inspected()
+    assert {"driver_id", "kind", "content_type", "size", "sha256", "data_encrypted", "created_at"} <= cols
+    assert ["driver_id", "kind"] in uniques
+    command.downgrade(c, "0002")                         # negative: the downgrade really drops the table
+    assert inspected() is None
+    command.upgrade(c, "head")
+    command.check(c)
