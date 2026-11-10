@@ -323,6 +323,7 @@ TEXTS = {
     "bot.privacy.btn_keep": _t("Yo'q, qolsin", "Нет, оставить", "No, keep it"),
     "bot.privacy.kept": _t("Hech narsa o'chirilmadi.", "Ничего не удалено.", "Nothing was deleted."),
     "bot.privacy.deleted": _t("Ma'lumotlaringiz o'chirildi. Qaytsangiz, /start bilan yangidan boshlaysiz.", "Ваши данные удалены. Если вернётесь — начнёте заново с /start.", "Your data has been deleted. If you come back, /start begins afresh."),
+    "bot.join.declined": _t("Haydovchilar guruhiga faqat ro'yxatdan o'tgan haydovchilar qabul qilinadi. Ro'yxatdan o'tish: {link}", "В группу водителей принимаются только зарегистрированные водители. Регистрация: {link}", "Only registered drivers can join the drivers group. Register here: {link}"),
     "bot.err.active_trip": _t("Avval joriy qatnovni yakunlang yoki bekor qiling.",
                              "Сначала завершите или отмените текущую поездку.",
                              "Finish or cancel your current trip first."),

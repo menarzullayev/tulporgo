@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 
 from aiogram import Router
 
-from . import admin, driver, errors, guest, mytrips, offers, order, picker, privacy, start, trips
+from . import admin, driver, errors, guest, joinguard, mytrips, offers, order, picker, privacy, start, trips
 from .notify import Notifier
 
 log = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ router = Router(name="bot")
 router.message.middleware(errors.ErrorMiddleware())
 router.callback_query.middleware(errors.ErrorMiddleware())
 for sub in (start.router, picker.router, order.router, guest.router, offers.router, trips.router, driver.router,
-            admin.router, mytrips.router, privacy.router):
+            admin.router, mytrips.router, privacy.router, joinguard.router):
     router.include_router(sub)
 
 fallback = order.fallback
