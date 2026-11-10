@@ -195,14 +195,25 @@ Gotchas (all in MUAMMOLAR.md):
    `Status: ACTIVE`, created 09-Nov-2026, expires 09-Nov-2027, NS ns1–ns4.eskiz.uz; **no A record
    yet** (`getaddrinfo failed` for tulporgo.uz and www) — DNS records still to be set at Eskiz.
 5. Brand guide; post templates finalisation (decisions 32–37).
-6. QARORLAR open tasks: payment route, ToS/privacy + lawyer, alphabet rules, all-Uzbekistan places DB, KPI.
-7. Bot code itself (stack decided: aiogram 3.31, Telethon 1.45, PostgreSQL + Redis, React Mini App) — not started.
+6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
+   - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
+     lawyer review (`docs/legal/README.md`, 8 questions); legal status (YATT/MChJ) + Click/Payme merchant contracts;
+     Cloudflare R2 account + keys (decision 58); BotFather Login Widget client secret; after deploy: BotFather
+     "Configure Mini App" + menu button (`getMe.has_main_web_app=false`).
+   - **Owner to confirm (rules the agents chose, not in QARORLAR):** 3 open requests per passenger, max price
+     5 000 000 so'm, request TTL 120 min / offer TTL 30 min; userbot 5-minute absolute floor; userbot posts in the
+     driver's language (new alphabet in public groups); rejected documents delete the server copy; a Stars refund
+     shortens the subscription; the share page shows the car plate; a driver cancelling before start reopens the request.
+   - **Later:** other regions' mahallas (+22 missing in Samarqand); new-alphabet spelling rules (decision 16); the
+     userbot *reading* groups to pick up passenger requests (decision 8 — not built, it only posts); Click/Payme sandbox
+     consoles; watch blocked driver accounts in the first weeks of auto-posting.
+7. ~~Bot code itself~~ — **DONE 2026-11-10** (`/goal` build, closed by Saidakbar aka): see §7.
 
 ## 6. First 5 minutes for a new agent
 
 1. Read `C:\Users\nsn\.claude\CLAUDE.md`, this file, `QARORLAR.md`, `poses/vector/MUAMMOLAR.md`.
 2. Check whether the scheduled Reactions attempt ran (scheduled-tasks list / `getStickerSet tulporgo_reactions_by_tulporgobot`).
-3. `python -m pytest -q` in `brand/mascot/poses/vector` → expect 23 passed.
+3. `uv run pytest -q` at the repo root → ≈1 290 passed; `python -m pytest -q` in `brand/mascot/poses/vector` → 33 passed.
 4. Greet "Saidakbar aka" in Uzbek with a 3-line status and ask which open item to take.
 
 ## 7. Build goal (2026-11-10)
@@ -217,14 +228,16 @@ Status 2026-11-10 (end of the `/goal` build) — **live status is `PROGRESS.md`*
   i18n, privacy export/delete), `apps/bot` (W1), `apps/userbot` (W2), `apps/api` + `apps/miniapp` (W3),
   `packages/payments` (W4), `tests/e2e`, `tests/contract` (`docs/openapi.json`), `deploy/` (Compose, Caddy, backups,
   restore test, VPS scripts, runbook `docs/DEPLOY.md`), legal drafts `docs/legal/` (uz/ru).
-- Checks: `uv run pytest -q` (≈1 130), `uv run mypy`, `uv run ruff check packages apps tests`,
+- Checks: `uv run pytest -q` (≈1 290), `uv run mypy`, `uv run ruff check packages apps tests`,
   `npm --prefix apps/miniapp test`, `python tools/secret_scan.py`. Test helpers are `*_fixtures.py` / `bot_harness.py`,
   never a second `conftest.py` (it shadows `packages/core/tests/conftest.py`).
-- GOAL §4 features are ON by default (decision 55): `TULPORGO_TRIP_TOPICS`, `TULPORGO_EPHEMERAL_GROUP`,
-  `TULPORGO_WIDGETS`; Login with Telegram once `TULPORGO_LOGIN_CLIENT_SECRET` is set (see `docs/DEPLOY.md`).
-  Migrations: 0001, 0002.
-- Blocked on the owner (⛔ in PROGRESS.md): VPS purchase + deploy, lawyer review, Click/Payme merchant contract,
-  TulporGo app at my.telegram.org (userbot logins), Stars rate (165 so'm), off-server backup location, driver
-  document storage vs localisation, enabling topics for the bot in BotFather, the Login Widget client secret.
+- GOAL §4 features (decision 55): ON — `TULPORGO_EPHEMERAL_GROUP`, `TULPORGO_WIDGETS`, Guest Mode (BotFather Guest
+  Chat Mode enabled); Login with Telegram once `TULPORGO_LOGIN_CLIENT_SECRET` is set. **OFF — trip topics**
+  (`TULPORGO_TRIP_TOPICS=false`, decision 59: BotFather Threaded Mode adds a fee to Stars purchases).
+  Migrations: 0001 initial, 0002 trip topics, 0003 driver documents. Public legal pages: `/legal/<doc>?lang=uz|ru`.
+- Decided 2026-11-10/11 (QARORLAR 56–60): Stars 165 so'm; driver documents encrypted on the server + Telegram copy;
+  backups monthly, 1 copy, encrypted copy to R2; topics not enabled, Guest Chat Mode enabled; the my.telegram.org app
+  renamed TulporGo — its `api_id`/`api_hash` are in `.secrets/telegram_app.env` (verified with Telegram; copy to the
+  server `.env` at deploy). Still blocked on the owner: see §5 item 6.
 - The PC stub `bot/coming_soon.py` still answers @tulporgobot; stop its scheduled task before the bot runs anywhere
   else (one `getUpdates` consumer per token).
