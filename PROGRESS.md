@@ -35,6 +35,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | Telegram features of GOAL §4 | 🔄 | ✅ Guest Mode, Rich Messages, `date_time`, member tags, colored buttons, custom emoji, `BotSubscriptionUpdated`, join-request guard (drivers group). ⛔ owner approval first (CLAUDE.md rule 4, UX change): topics per trip in the bot chat, ephemeral group messages, Widgets (10.4), Login with Telegram on tulporgo.uz |
 | Docker Compose (bot, userbot, api, miniapp, PostgreSQL, Redis, proxy), backups + restore test | ✅ | verified locally over HTTPS: API health 200, Mini App at `/app/` (SPA routes), `/` → bot, HSTS/nosniff, no-auth API 401; bot/userbot images import; restore test + negatives. Bug found by running: Caddy did not start with an empty `email` (fixed). Bot/userbot not started locally (one poller per token) |
 | Deploy scripts for the Uzbekistan VPS | ✅ | `deploy/scripts/` (bootstrap-vps, deploy with backup + health + revision check + rollback hint, restore, restore-test); runbook `docs/DEPLOY.md` |
+| Deploy rehearsal: unchanged `deploy/scripts/deploy.sh` on a fresh clone of the public repo | ✅ | first run failed at `migrate` (empty `KEY=` lines of `.env.example` → int/date parse errors) — fixed in cb71f17 with tests that load `.env.example`; second run: deploy OK, health 200, revision check ok, Mini App 200, restore test OK |
 | Deploy to VPS, retire PC stub | ⛔ | needs a VPS bought by the owner (money) |
 
 ## Other
@@ -70,3 +71,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
   blog 2026-08-25 — nothing newer than `TELEGRAM-YANGILIKLAR.md`.
 - 2026-11-10 — goal build complete: mypy clean (CI step), 1 129 pytest + 159 vitest, GitHub CI 6/6 green (e93704e).
   Everything left is ⛔ owner-side (see tables). Owner notified in chat and via @tulporgobot.
+- 2026-11-10 — deploy rehearsal on a fresh clone found and fixed the `.env.example` crash; GOAL §4 Telegram features being built behind flags (default off).
