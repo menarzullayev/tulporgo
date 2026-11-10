@@ -6,7 +6,8 @@ TEXTS = {
     "userbot.risk": {
         "uz": "<b>⚠️ Avto-e'lon: rozilik</b>\n\n"
               "1. Siz o'z Telegram hisobingizni ulaysiz. TulporGo siz tanlagan guruhlarga qatnov e'loningizni sizning "
-              "nomingizdan yuboradi.\n"
+              "nomingizdan yuboradi. TulporGo — Telegram API orqali ishlaydigan mustaqil xizmat, Telegramning rasmiy "
+              "ilovasi emas.\n"
               "2. Xavf: Telegram avtomatik e'lonlar uchun hisobingizni vaqtincha cheklashi yoki bloklashi mumkin. Bu "
               "Telegramning qarori: TulporGo uni bekor qila olmaydi va javobgar emas.\n"
               "3. TulporGo FloodWait va PEER_FLOOD cheklovlarini hech qachon chetlab o'tmaydi: kutadi yoki to'xtaydi va "
@@ -24,7 +25,8 @@ TEXTS = {
               "Rozimisiz?",
         "ru": "<b>⚠️ Автообъявления: согласие</b>\n\n"
               "1. Вы подключаете свой аккаунт Telegram. TulporGo публикует ваше объявление о поездке в выбранных вами "
-              "группах от вашего имени.\n"
+              "группах от вашего имени. TulporGo — независимый сервис, работающий через Telegram API, а не официальное "
+              "приложение Telegram.\n"
               "2. Риск: Telegram может временно ограничить или заблокировать аккаунт за автоматические публикации. "
               "Это решение Telegram: TulporGo не может его отменить и не несёт ответственности.\n"
               "3. TulporGo никогда не обходит ограничения FloodWait и PEER_FLOOD: ждёт или останавливается и сообщает "
@@ -41,7 +43,8 @@ TEXTS = {
               "Вы согласны?",
         "en": "<b>⚠️ Auto-posting: consent</b>\n\n"
               "1. You connect your own Telegram account. TulporGo posts your ride announcement in the groups you "
-              "selected, in your name.\n"
+              "selected, in your name. TulporGo is an independent service built on the Telegram API, not an official "
+              "Telegram app.\n"
               "2. Risk: Telegram may temporarily limit or ban the account for automatic posts. That is Telegram's "
               "decision: TulporGo cannot undo it and is not liable.\n"
               "3. TulporGo never bypasses FloodWait or PEER_FLOOD: it waits or stops and tells you.\n"

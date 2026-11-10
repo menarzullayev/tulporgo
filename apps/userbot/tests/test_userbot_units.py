@@ -180,3 +180,5 @@ def test_consent_text_has_the_eight_points_in_order(lang):
     assert all(p >= 0 for p in pos) and pos == sorted(pos)
     assert "FloodWait" in text and "PEER_FLOOD" in text and "TulporGo (driver)" in text and "45" in text
     assert "9. " not in text and "{min}" not in text
+    # Telegram API Terms 2.2: users must be told the app uses the Telegram API (and is not an official app)
+    assert "Telegram API" in text
