@@ -7,6 +7,7 @@ import { useAction } from '../hooks'
 import { LANGS, useI18n } from '../i18n'
 import { href } from '../router'
 import { haptic, shareLink } from '../tg'
+import { LogoutButton } from '../components/WebLogin'
 import type { LangCode, Me } from '../types'
 
 /** The one-line subscription status shown on the profile, from the user's point of view. */
@@ -143,6 +144,8 @@ export default function Profile() {
           </a>
         </Card>
       ) : null}
+
+      <LogoutButton />
     </div>
   )
 }

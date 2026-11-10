@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     miniapp_url: str = "https://tulporgo.uz/app"
     storage_chat_id: int | None = None              # private chat where uploaded documents are stored as file ids
 
+    # "Login with Telegram" for the site opened outside Telegram (OpenID Connect). OFF while the secret is empty;
+    # the secret comes from BotFather -> Bot Settings -> Login Widget. The client id is the bot's numeric id.
+    login_client_secret: str = ""
+    web_session_hours: int = 72
+
     # product rules
     free_period_until: date | None = None          # decision 44: everyone free until this date (inclusive)
     trial_days: int = 7                            # decision 10

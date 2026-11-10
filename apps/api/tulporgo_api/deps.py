@@ -2,6 +2,8 @@
 
 Auth: the Mini App sends `Authorization: tma <initData>`; we verify the HMAC exactly as documented in
 core.telegram.org/bots/webapps ("Validating data received via the Mini App") and reject data older than 24 h.
+Outside Telegram (Login with Telegram, off unless configured) the site sends `Authorization: tgweb <token>`, a short
+HMAC-signed session issued by routes/auth_telegram.py (see web_session.py).
 """
 import hashlib
 import hmac
@@ -16,6 +18,8 @@ from tulporgo_core.config import Settings
 from tulporgo_core.db import session_scope
 from tulporgo_core.models import User
 from tulporgo_core.services.users import get_or_create_user
+
+from . import web_session
 
 MAX_AGE = 24 * 3600
 
@@ -54,7 +58,19 @@ def validate_init_data(init_data: str, bot_token: str, now: float | None = None)
 async def current_user(authorization: str = Header(default=""), settings: Settings = Depends(get_settings),
                        s: AsyncSession = Depends(get_session)) -> User:
     scheme, _, data = authorization.partition(" ")
-    if scheme.lower() != "tma" or not data:
+    scheme = scheme.lower()
+    if scheme == "tgweb" and data:
+        if not settings.login_client_secret:           # Login with Telegram is off: no such sessions exist
+            raise HTTPException(401, "web login is not enabled")
+        try:
+            tg_id = web_session.verify(data.strip(), settings.bot_token)
+        except web_session.InvalidSession as e:
+            raise HTTPException(401, f"invalid web session: {e}") from e
+        user = await get_or_create_user(s, tg_id)
+        if user.is_blocked:
+            raise HTTPException(403, "blocked")
+        return user
+    if scheme != "tma" or not data:
         raise HTTPException(401, "missing Mini App auth")
     try:
         fields = validate_init_data(data, settings.bot_token)

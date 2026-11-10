@@ -69,6 +69,14 @@ _ROWS: list[tuple[str, str, str, str]] = [
     ("err.password_not_requested", "Hozir parol so'ralmagan.", "Сейчас пароль не требуется.", "No password is needed right now."),
     ("err.telegram_api_missing", "Server hali sozlanmagan. Keyinroq urinib ko'ring.", "Сервер ещё не настроен. Попробуйте позже.", "The server is not configured yet. Try again later."),
     ("err.userbot_key_missing", "Server hali sozlanmagan. Keyinroq urinib ko'ring.", "Сервер ещё не настроен. Попробуйте позже.", "The server is not configured yet. Try again later."),
+    # --- Login with Telegram (site opened outside Telegram) ---
+    ("err.login_disabled", "Telegram orqali kirish yoqilmagan.", "Вход через Telegram не включён.", "Login with Telegram is not enabled."),
+    ("err.bad_state", "Kirish muddati tugadi. Qaytadan boshlang.", "Время входа истекло. Начните заново.", "The login expired. Start again."),
+    ("err.bad_return_to", "Qaytish manzili noto'g'ri.", "Недопустимый адрес возврата.", "Invalid return address."),
+    ("auth.telegram_login", "Telegram orqali kirish", "Войти через Telegram", "Log in with Telegram"),
+    ("auth.logout", "Chiqish", "Выйти", "Log out"),
+    ("auth.failed", "Kirish amalga oshmadi. Qayta urinib ko'ring.", "Не удалось войти. Попробуйте ещё раз.", "Login failed. Please try again."),
+    ("auth.denied", "Kirish bekor qilindi.", "Вход отменён.", "Login was cancelled."),
     # --- common ---
     ("common.loading", "Yuklanmoqda...", "Загрузка...", "Loading..."),
     ("common.retry", "Qayta urinish", "Повторить", "Retry"),
