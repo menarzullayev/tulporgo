@@ -85,17 +85,19 @@ jobs:
           uv run python -m pytest -q -p no:cacheprovider brand/mascot/poses/vector brand/icons brand/telegram
 
   miniapp:
-    if: ${{ hashFiles('apps/miniapp/package.json') != '' }}
+    # hashFiles() is only available at step level, so every step carries the guard
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/miniapp
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        if: ${{ hashFiles('apps/miniapp/package.json') != '' }}
         with:
           node-version: 22
-      - run: npm ci
-      - run: npm run lint --if-present
-      - run: npm test --if-present
-      - run: npm run build
+      - name: install, lint, test, build
+        if: ${{ hashFiles('apps/miniapp/package.json') != '' }}
+        working-directory: apps/miniapp
+        run: |
+          npm ci
+          npm run lint --if-present
+          npm test --if-present
+          npm run build
