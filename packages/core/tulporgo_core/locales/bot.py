@@ -314,6 +314,15 @@ TEXTS = {
     "bot.status.withdrawn": _t("qaytarib olingan", "отозвано", "withdrawn"),
 
     # ---- errors: stable domain codes (tulporgo_core.errors) → short, human texts ----
+    "bot.privacy.menu": _t("<b>Ma'lumotlarim</b>\nBu yerda TulporGo siz haqingizda saqlagan ma'lumotlarni yuklab olishingiz yoki o'chirishingiz mumkin.", "<b>Мои данные</b>\nЗдесь можно скачать или удалить данные, которые TulporGo хранит о вас.", "<b>My data</b>\nHere you can download or delete the data TulporGo keeps about you."),
+    "bot.privacy.btn_export": _t("Yuklab olish (JSON)", "Скачать (JSON)", "Download (JSON)"),
+    "bot.privacy.btn_delete": _t("Ma'lumotlarimni o'chirish", "Удалить мои данные", "Delete my data"),
+    "bot.privacy.export_caption": _t("TulporGo'dagi ma'lumotlaringiz.", "Ваши данные в TulporGo.", "Your data in TulporGo."),
+    "bot.privacy.delete_confirm": _t("Ishonchingiz komilmi? Telefon, ism, mashina rasmi, hujjatlar va avto-e'lon sessiyasi o'chiriladi, ochiq so'rovlar bekor qilinadi. Qatnovlar tarixi va to'lov yozuvlari ismsiz holda qoladi. Buni qaytarib bo'lmaydi.", "Вы уверены? Будут удалены телефон, имя, фото автомобиля, документы и сессия автообъявлений, открытые запросы отменятся. История поездок и записи об оплатах останутся без имени. Отменить это нельзя.", "Are you sure? Your phone, name, car photo, documents and auto-posting session are deleted and open requests are cancelled. Trip history and payment records stay without your name. This cannot be undone."),
+    "bot.privacy.btn_delete_yes": _t("Ha, o'chirilsin", "Да, удалить", "Yes, delete"),
+    "bot.privacy.btn_keep": _t("Yo'q, qolsin", "Нет, оставить", "No, keep it"),
+    "bot.privacy.kept": _t("Hech narsa o'chirilmadi.", "Ничего не удалено.", "Nothing was deleted."),
+    "bot.privacy.deleted": _t("Ma'lumotlaringiz o'chirildi. Qaytsangiz, /start bilan yangidan boshlaysiz.", "Ваши данные удалены. Если вернётесь — начнёте заново с /start.", "Your data has been deleted. If you come back, /start begins afresh."),
     "bot.err.active_trip": _t("Avval joriy qatnovni yakunlang yoki bekor qiling.",
                              "Сначала завершите или отмените текущую поездку.",
                              "Finish or cancel your current trip first."),

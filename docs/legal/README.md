@@ -29,7 +29,7 @@ Every product fact comes from `QARORLAR.md`. Places marked `[yurist: …]` / `[�
 
 ## To build before launch (tracked in PROGRESS.md)
 
-- Bot: "Ma'lumotlarim" — export and delete own data (privacy §8).
+- ~~Bot: "Ma'lumotlarim" — export and delete own data (privacy §8).~~ Done: `/malumotlarim`.
 - `/terms` and `/paysupport` commands, terms acceptance before payment (W4).
 - Public pages for the final texts (e.g. `https://tulporgo.uz/legal/terms`).
-- Compare §4 of the privacy policy ("who sees what") with the merged bot behaviour.
+- ~~Compare §4 of the privacy policy ("who sees what") with the merged bot behaviour.~~ Done (trip card: name, phone, username).

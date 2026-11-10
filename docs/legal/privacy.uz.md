@@ -46,8 +46,8 @@ Server loglarida texnik ma'lumotlar (so'rov vaqti, IP manzil) qisqa muddat — l
 - **Haydovchilar** — yo'lovchi so'rovini: yo'nalish, vaqt, odam soni, izoh, ayol yo'lovchi belgisi.
 - **Yo'lovchi** — taklif bergan haydovchining ismi, avtomobili (rusum, rang, davlat raqami, rasm), reytingi va
   «Tasdiqlangan» belgisi.
-- **Qatnov tomonlari** — taklif qabul qilingandan keyin bog'lanish uchun zarur ma'lumot faqat o'sha qatnovning
-  ikkinchi tomoniga ko'rsatiladi `[ishlab chiqilgan bot bilan solishtirib aniqlanadi]`.
+- **Qatnov tomonlari** — taklif qabul qilingandan keyin haydovchi va yo'lovchi bir-birining ismini, telefon raqamini
+  (agar ulashilgan bo'lsa) va Telegram username'ini ko'radi — faqat o'sha qatnovning kartasida.
 - **Ulashish havolasini ochgan kishi** — yo'nalish, avtomobil, haydovchining ismi, qatnov holati. Telefon raqami yo'q.
 - **Operator va uning topshirig'i bilan ishlaydigan shaxslar** — hujjatlarni tekshirish, shikoyat va to'lovlarni
   ko'rib chiqish uchun.
@@ -90,7 +90,7 @@ Siz quyidagilarni so'rashingiz mumkin:
 - ma'lumotlaringizni o'chirish va rozilikni qaytarib olish (bunda Servisdan foydalanish to'xtaydi);
 - avto-e'lonni istalgan vaqtda «Hisobni uzish» orqali to'xtatish.
 
-So'rovni bot orqali yuboring: `[ishlab chiqiladi: botdagi «Ma'lumotlarim» bo'limi]` yoki
+So'rovni bot orqali yuboring: botdagi `/malumotlarim` buyrug'i (yuklab olish va o'chirish) yoki
 `[yurist: email / pochta manzili]`. Javob muddati — `[yurist: N]` kun.
 
 ## 9. Bolalar

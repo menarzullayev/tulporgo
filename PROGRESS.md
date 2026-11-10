@@ -44,7 +44,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | ToS + privacy drafts (uz/ru), userbot consent text | ✅ | `docs/legal/` (6 texts + questions for the lawyer); lawyer review ⛔ owner |
 | TulporGo app at my.telegram.org (`TULPORGO_TELEGRAM_API_ID` / `_HASH`) for drivers' logins | ⛔ | owner registers the app (needs his phone + code) |
 | Click / Payme live keys | ⛔ | merchant contract needs YATT/MChJ; sandbox integration is in scope |
-| Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | 🔄 | core service `services/privacy.py` ✅ (6 tests); bot button after W1 merge |
+| Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | ✅ | `/malumotlarim`: JSON export, delete after confirmation; refused during a trip; userbot logged out on Telegram's side first (core 6 + bot 5 tests) |
 | Public pages for the final legal texts (`tulporgo.uz/legal/...`) | ⏳ | after lawyer review |
 | Driver document photos: Telegram storage chat vs localisation (art. 27-1) | ⛔ | question for the lawyer + owner (`docs/legal/README.md` §3) |
 | Off-server backup copy inside Uzbekistan | ⛔ | owner chooses the second location (`docs/DEPLOY.md`) |

@@ -111,14 +111,21 @@ class DeletionReport:
     tg_id_kept_for_ban: bool = False
 
 
-async def delete_user_data(s: AsyncSession, user: User, bus=None) -> DeletionReport:
-    """Anonymise the user (see module docstring). Refused while a trip is confirmed or under way."""
+async def ensure_deletable(s: AsyncSession, user: User) -> None:
+    """Raise Conflict("active_trip") while the user has a confirmed or running trip (as passenger or driver).
+    Callers that must undo something outside the database first (the userbot's Telegram session) check this before."""
     d = (await s.execute(select(Driver).where(Driver.user_id == user.id))).scalar_one_or_none()
     trip_owner = [Trip.passenger_id == user.id] + ([Trip.driver_id == d.id] if d else [])
     active = await s.scalar(select(func.count()).select_from(Trip)
                             .where(or_(*trip_owner), Trip.status.in_(ACTIVE_TRIP)))
     if active:
         raise Conflict("active_trip")
+
+
+async def delete_user_data(s: AsyncSession, user: User, bus=None) -> DeletionReport:
+    """Anonymise the user (see module docstring). Refused while a trip is confirmed or under way."""
+    await ensure_deletable(s, user)
+    d = (await s.execute(select(Driver).where(Driver.user_id == user.id))).scalar_one_or_none()
 
     rep = DeletionReport()
     res = await s.execute(update(RideRequest).where(RideRequest.passenger_id == user.id,
@@ -164,4 +171,4 @@ async def delete_user_data(s: AsyncSession, user: User, bus=None) -> DeletionRep
     return rep
 
 
-__all__ = ["export_user_data", "delete_user_data", "DeletionReport", "utcnow"]
+__all__ = ["export_user_data", "ensure_deletable", "delete_user_data", "DeletionReport", "utcnow"]
