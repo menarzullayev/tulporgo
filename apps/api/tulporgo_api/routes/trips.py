@@ -23,6 +23,8 @@ async def trip_payload(s: AsyncSession, t: Trip, viewer: User, settings: Setting
     r = await rides.get_request(s, t.request_id)
     driver = await s.get(Driver, t.driver_id)
     passenger = await s.get(User, t.passenger_id)
+    if driver is None or passenger is None:                     # NOT NULL foreign keys: only corrupt data gets here
+        raise NotFound("trip_not_found")
     rated = (await s.execute(select(Rating.id).where(Rating.trip_id == t.id,
                                                      Rating.from_user_id == viewer.id))).first() is not None
     return {**trip_view(t, r, driver, passenger, viewer, settings), "rated": rated}

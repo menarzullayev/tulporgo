@@ -35,7 +35,7 @@ async def _views(s: AsyncSession, places: list[Place]) -> list[dict]:
     names = {}
     if parent_ids:
         names = {p.id: p.name_uz for p in (await s.execute(select(Place).where(Place.id.in_(parent_ids)))).scalars()}
-    return [place_view(p, names.get(p.parent_id)) for p in places]
+    return [place_view(p, names.get(p.parent_id) if p.parent_id is not None else None) for p in places]
 
 
 @router.get("")
@@ -69,10 +69,13 @@ async def nearest(lat: float = Query(ge=-90, le=90), lon: float = Query(ge=-180,
     """Snap a map tap to the closest known place that has coordinates (no external geocoder)."""
     rows = (await s.execute(select(Place).where(Place.lat.is_not(None), Place.lon.is_not(None),
                                                 Place.kind != "region"))).scalars().all()
-    best = min(rows, key=lambda p: _km(lat, lon, p.lat, p.lon), default=None)
-    if best is None or _km(lat, lon, best.lat, best.lon) > NEAREST_MAX_KM:
+    located = [(_km(lat, lon, p.lat, p.lon), p) for p in rows if p.lat is not None and p.lon is not None]
+    if not located:
         raise NotFound("place_not_found")
-    return {"item": (await _views(s, [best]))[0], "distance_km": round(_km(lat, lon, best.lat, best.lon), 2)}
+    dist, best = min(located, key=lambda pair: pair[0])
+    if dist > NEAREST_MAX_KM:
+        raise NotFound("place_not_found")
+    return {"item": (await _views(s, [best]))[0], "distance_km": round(dist, 2)}
 
 
 @router.get("/{place_id}/children")

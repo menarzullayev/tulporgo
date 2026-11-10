@@ -52,12 +52,15 @@ async def run_reminders(bot, maker, settings: Settings, now: datetime | None = N
                                                         Driver.subscription_until <= now + REMIND_BEFORE))
                    ).scalars().all()
         for d in drivers:
-            key = (d.id, d.subscription_until.isoformat())
+            until = d.subscription_until
+            if until is None:                              # the query filters on it; None cannot occur
+                continue
+            key = (d.id, until.isoformat())
             if key in sent:
                 continue
             lg = lang_of(d.user.lang)
             markup = botmod.kb([[botmod.btn(t("pay.btn.renew", lg), data="pay:home", style="primary")]])
-            if await botmod._send(bot, d.user.tg_id, t("pay.reminder", lg, date=botmod.fmt_date(d.subscription_until)),
+            if await botmod._send(bot, d.user.tg_id, t("pay.reminder", lg, date=botmod.fmt_date(until)),
                                   markup):
                 sent.add(key)
                 count += 1

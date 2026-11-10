@@ -79,10 +79,11 @@ async def reg_button(cb: CallbackQuery, state: FSMContext, session: AsyncSession
 
 @router.message(StateFilter(Reg.phone), F.contact)
 async def got_contact(msg: Message, state: FSMContext, session: AsyncSession, user: User, t) -> None:
-    if msg.contact.user_id != msg.from_user.id:          # somebody else's number is not a verification
+    contact = msg.contact
+    if contact is None or msg.from_user is None or contact.user_id != msg.from_user.id:   # not own = not verified
         await show(msg, t("bot.reg.contact_not_own"))
         return
-    await users.set_phone(session, user, msg.contact.phone_number)
+    await users.set_phone(session, user, contact.phone_number)
     await state.set_state(Reg.make)
     await say(msg, t("bot.reg.make"), ReplyKeyboardRemove())
 
@@ -120,9 +121,10 @@ async def got_color(msg: Message, state: FSMContext, t) -> None:
 
 @router.message(StateFilter(Reg.plate), F.text, ~F.text.startswith("/"))
 async def got_plate(msg: Message, state: FSMContext, t) -> None:
-    if msg.text.startswith("/"):
+    text = msg.text or ""
+    if text.startswith("/"):
         return
-    plate = drivers.normalize_plate(msg.text)            # Invalid → "plate format" alert, state kept
+    plate = drivers.normalize_plate(text)            # Invalid → "plate format" alert, state kept
     await state.update_data(plate=plate)
     await state.set_state(Reg.seats)
     await show(msg, t("bot.reg.seats"), kb([btn(str(n), f"ds:{n}") for n in (2, 3, 4)],
@@ -155,6 +157,8 @@ async def seats_typed(msg: Message, state: FSMContext, t) -> None:
 
 @router.message(StateFilter(Reg.photo), F.photo)
 async def got_photo(msg: Message, state: FSMContext, session: AsyncSession, t, lang) -> None:
+    if not msg.photo:                                    # F.photo guarantees it; narrows the Optional
+        return
     await state.update_data(photo=msg.photo[-1].file_id)
     await picker.ask_place(msg, state, session, t, lang, "h")
 
@@ -210,6 +214,8 @@ async def docs_start(cb: CallbackQuery, state: FSMContext, session: AsyncSession
 
 @router.message(StateFilter(Docs.license), F.photo)
 async def got_license(msg: Message, state: FSMContext, t) -> None:
+    if not msg.photo:
+        return
     await state.update_data(license=msg.photo[-1].file_id)
     await state.set_state(Docs.techpass)
     await show(msg, t("bot.docs.techpass"))
@@ -221,6 +227,8 @@ async def got_techpass(msg: Message, state: FSMContext, session: AsyncSession, u
     d = await drivers.get_driver(session, user)
     if d is None:
         raise Forbidden("not_driver")
+    if not msg.photo:
+        return
     data = await state.get_data()
     await drivers.submit_documents(session, d, data["license"], msg.photo[-1].file_id)
     await state.clear()

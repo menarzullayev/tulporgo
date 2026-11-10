@@ -113,12 +113,11 @@ async def time_hour(cb: CallbackQuery, t) -> None:
 @router.callback_query(StateFilter(Order.time), F.data.startswith("tm:m:"))
 async def time_minute(cb: CallbackQuery, state: FSMContext, t) -> None:
     parts = parse_cb(cb.data, 5)
-    vals = [int_arg(p) for p in parts[2:]] if parts else []
-    if not vals or None in vals or vals[0] not in (0, 1) or vals[1] > 23 or vals[2] > 59:
+    day, hour, minute = (int_arg(p) for p in parts[2:]) if parts else (None, None, None)
+    if day is None or hour is None or minute is None or day not in (0, 1) or hour > 23 or minute > 59:
         await cb.answer()
         return
     await cb.answer()
-    day, hour, minute = vals
     local = datetime.combine((to_local(utcnow()) + timedelta(days=day)).date(), time(hour, minute), UZT)
     await _set_time(cb, state, local_to_utc(local), t)
 
@@ -256,10 +255,11 @@ async def start_from_guest(msg: Message, state: FSMContext, session: AsyncSessio
                            payload: str) -> bool:
     """`?start=g_<from>_<to>_<seats>_<depart minutes>` from a Guest Mode answer. False → not usable (plain greeting)."""
     parts = payload.split("_")
-    nums = [int_arg(p) for p in parts[1:]]
-    if len(parts) != 5 or None in nums:
+    if len(parts) != 5:
         return False
-    from_id, to_id, seats, minutes = nums
+    from_id, to_id, seats, minutes = (int_arg(p) for p in parts[1:])
+    if from_id is None or to_id is None or seats is None or minutes is None:
+        return False
     a, b = (await session.get(Place, from_id), await session.get(Place, to_id))
     if a is None or b is None or a.id == b.id or not 1 <= seats <= 8:
         return False

@@ -1,7 +1,7 @@
 """Provider registry: one class per gateway (see base.GatewayProvider and other.py)."""
 from tulporgo_core.config import Settings
 
-from .base import GatewayProvider
+from .base import GatewayProvider, TgCall
 from .click import ClickProvider
 from .other import OtherGateway
 from .p2p import P2PProvider
@@ -14,11 +14,11 @@ PROVIDERS: dict[str, type[GatewayProvider]] = {
 }
 
 
-def get_provider(name: str, settings: Settings, tg_call=None) -> GatewayProvider | None:
+def get_provider(name: str, settings: Settings, tg_call: TgCall | None = None) -> GatewayProvider | None:
     cls = PROVIDERS.get(name)
     if cls is None:
         return None
-    return cls(settings, tg_call=tg_call) if cls is StarsProvider else cls(settings)
+    return cls(settings, tg_call=tg_call)
 
 
 def available_providers(settings: Settings) -> list[str]:

@@ -27,7 +27,8 @@ class DeferredBus:
     """Collects events during one update and publishes them only after the transaction committed."""
 
     def __init__(self, inner) -> None:
-        self.inner, self.queue = inner, []
+        self.inner = inner
+        self.queue: list[Any] = []
 
     async def publish(self, event) -> None:
         self.queue.append(event)

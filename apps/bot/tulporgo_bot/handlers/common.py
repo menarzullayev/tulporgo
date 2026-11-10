@@ -10,11 +10,21 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 from tulporgo_core import emoji, i18n
 from tulporgo_core.config import Settings
 from tulporgo_core.enums import Lang
+from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core.models import Driver, User
 
 log = logging.getLogger(__name__)
 UZT = timezone(timedelta(hours=5))               # Asia/Tashkent, no DST
 PRIVATE = "private"
+
+
+async def get_required[T](s: AsyncSession, model: type[T], pk: int) -> T:
+    """Load a row that a NOT NULL foreign key points at. A miss means corrupt data, so fail loudly (LookupError)
+    instead of passing None on to code that would crash later with an opaque AttributeError."""
+    obj = await s.get(model, pk)
+    if obj is None:
+        raise LookupError(f"{model.__name__} #{pk} referenced by a foreign key does not exist")
+    return obj
 
 
 def bind(lang):

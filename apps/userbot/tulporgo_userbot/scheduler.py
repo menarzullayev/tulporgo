@@ -66,6 +66,8 @@ class Scheduler:
     async def _client_for(self, account: UserbotAccount) -> UserbotClient:
         client = self._clients.get(account.id)
         if client is None:
+            if account.session_encrypted is None:               # nothing stored: handled like a revoked session
+                raise tg.AuthKeyUnregisteredError(request=None)
             client = self.factory(decrypt_session(self.settings, account.session_encrypted))
             await client.connect()
             self._clients[account.id] = client

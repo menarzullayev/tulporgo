@@ -14,7 +14,7 @@ from tulporgo_core.services import feedback, rides
 from .. import delivery
 from . import states
 from .cards import trip_keyboard
-from .common import PRIVATE, btn, esc, int_arg, kb, parse_cb, person, show, user_t
+from .common import PRIVATE, btn, esc, get_required, int_arg, kb, parse_cb, person, show, user_t
 from .recipients import admin_targets
 
 router = Router(name="trips")
@@ -29,7 +29,7 @@ async def get_trip(session: AsyncSession, trip_id: int) -> Trip:
 
 
 async def parties(session: AsyncSession, trip: Trip) -> tuple[Driver, User]:
-    return await session.get(Driver, trip.driver_id), await session.get(User, trip.passenger_id)
+    return await get_required(session, Driver, trip.driver_id), await get_required(session, User, trip.passenger_id)
 
 
 def _id(cb: CallbackQuery, n: int = 2) -> int | None:

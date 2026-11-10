@@ -6,6 +6,7 @@ numbers, usernames, Telegram ids, passenger data or price. The token is the only
 from fastapi import APIRouter, Depends, Path, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core.enums import TripStatus
+from tulporgo_core.errors import NotFound
 from tulporgo_core.models import Driver
 from tulporgo_core.services import rides
 
@@ -21,6 +22,8 @@ async def shared_trip(response: Response, token: str = Path(min_length=8, max_le
     t = await rides.trip_by_share_token(s, token)
     r = await rides.get_request(s, t.request_id)
     d = await s.get(Driver, t.driver_id)
+    if d is None:                                               # NOT NULL foreign key: only corrupt data gets here
+        raise NotFound("trip_not_found")
     response.headers["Cache-Control"] = "no-store"
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return {

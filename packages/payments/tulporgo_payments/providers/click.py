@@ -76,7 +76,7 @@ class ClickProvider(GatewayProvider):
         s = self.settings
         return bool(s.click_service_id and s.click_merchant_id and s.click_secret_key)
 
-    async def start(self, payment: Payment) -> dict:
+    async def start(self, payment: Payment, *, recurring: bool = False, **texts: str) -> dict:
         return {"type": "url", "url": build_pay_url(self.settings, payment), "amount": payment.amount,
                 "currency": "UZS", "payment_id": payment.id}
 

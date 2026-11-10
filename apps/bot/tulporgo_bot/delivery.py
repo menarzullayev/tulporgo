@@ -70,7 +70,7 @@ async def send_rich(bot: Bot, chat_id: int, blocks: list[dict], fallback_html: s
                     markup: InlineKeyboardMarkup | None = None) -> Message | None:
     """Rich Message (Bot API 10.1+). Anything that goes wrong (old Bot API server, bad block) → the HTML fallback."""
     try:
-        return await call(bot, SendRichMessage(chat_id=chat_id, rich_message=InputRichMessage(blocks=blocks),
+        return await call(bot, SendRichMessage(chat_id=chat_id, rich_message=InputRichMessage(blocks=blocks),  # type: ignore[arg-type]  # aiogram types blocks as a union of models; we pass validated dicts
                                                reply_markup=markup))
     except Exception as e:                  # noqa: BLE001 — 400/404 on old servers, validation of future fields, ...
         log.warning("rich message failed (%s) — sending the HTML fallback", e)

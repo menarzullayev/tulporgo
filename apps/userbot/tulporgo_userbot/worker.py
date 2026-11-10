@@ -14,7 +14,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from tulporgo_core.config import Settings, get_settings
 from tulporgo_core.db import make_engine, make_sessionmaker
-from tulporgo_core.events import PaymentConfirmed, RedisBus, UserbotStopped
+from tulporgo_core.events import InMemoryBus, PaymentConfirmed, RedisBus, UserbotStopped
 
 from .client import ClientFactory, make_telethon_factory
 from .config import TICK_SECONDS
@@ -67,11 +67,11 @@ async def run() -> None:
     logging.basicConfig(level=logging.INFO)
     settings = get_settings()
     maker = make_sessionmaker(make_engine(settings.database_url))
+    bus: InMemoryBus                                               # RedisBus is a subclass
     if settings.redis_url:
         import redis.asyncio as redis
         bus = RedisBus(redis.from_url(settings.redis_url))
     else:
-        from tulporgo_core.events import InMemoryBus
         bus = InMemoryBus()
     bot = Bot(settings.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     worker = build_worker(settings, maker, bus, make_telethon_factory(), BotNotifier(bot))
