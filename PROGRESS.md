@@ -20,20 +20,20 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 
 | Workstream | Status | Branch | Notes |
 |---|---|---|---|
-| W1 bot — passenger, driver, admin, KPI report | 🔄 | worktree agent | started 2026-11-10 |
+| W1 bot — passenger, driver, admin, KPI report | ✅ | merged (94bc3bf) | start/language/deep links, order by buttons + free text + Mini App + Guest Mode, driver notifications (rate-limited), offers/counter, trip card (Rich Message + `date_time`), share, rating, complaints, driver onboarding + documents + referral, admin panel, jobs (expiry, weekly KPI Mon 09:00, member tags), `/qatnovlarim`; 160 tests |
 | W2 userbot — consent, encrypted sessions, safe scheduler | ✅ | merged (4a47717) | consent screen = `docs/legal/userbot-consent.uz.md`; Mini App login API (code + 2FA, 5 attempts, never stored/logged); Fernet sessions; groups by plan; scheduler 45 min + jitter, daily cap, FloodWait/PeerFlood/ban handling without retries; `/elon`; worker `python -m tulporgo_userbot`; 167 tests. Assumption: 5-minute absolute floor even after risk acknowledgement. Gaps: pending login lives in API memory (1 API process); real Telethon client only stub-tested |
-| W3 Mini App + API | 🔄 | worktree agent | started 2026-11-10 |
+| W3 Mini App + API | ✅ | merged (c1444c1) | API: me, places, requests, offers, trips, public share, driver register + documents (storage chat `file_id`); Mini App: order + map, offers, trips, profile, driver docs, userbot login, subscription, share page; 123 pytest + 159 vitest |
 | W4 payments + referral | ✅ | merged (7dad311) | P2P (admin review), Stars (invoice, pre-checkout, recurring link, refund), Click SHOP API, Payme Merchant API (6 methods), other-gateway base class, `/obuna`, `/terms`, `/paysupport`, terms confirmation, 3-day reminders, API checkout + webhooks; 566 payment tests. Gaps: sandbox consoles of Click/Payme not run yet; reminder de-dup in memory; Payme fiscal `detail` not sent |
 
 ## Phase 2 — integration
 
 | Item | Status | Notes |
 |---|---|---|
-| Merge, end-to-end tests | ⏳ | |
-| Type checking in CI (GOAL §1 Quality: "lint, types") | ⏳ | after all merges, so `pyproject.toml` / `uv.lock` do not conflict with the workstreams |
-| OpenAPI contract file `docs/openapi.json` + CI check that it is current | ⏳ | after W3 merge |
-| Telegram features of GOAL §4 (Guest Mode, Rich Messages, `date_time`, member tags, join-request guard, topics, colored buttons, custom emoji) | ⏳ | checklist against the merged bot |
-| Docker Compose (bot, userbot, api, miniapp, PostgreSQL, Redis, proxy), backups + restore test | 🔄 | `deploy/` — postgres, redis, migrate, api, backup verified locally (Docker 29.8); restore test OK + negative tests; proxy/bot/userbot start after the merge |
+| Merge, end-to-end tests | ✅ | all 4 merged; `tests/e2e`: Mini App order → bot → driver offer → accept → trip → rate → share (no contacts); Click prepare/complete with forged-signature and replay negatives. Integration gaps found and fixed: payment jobs not started by the bot; Mini App checkout contract; `uv.lock` was git-ignored; duplicate test module name |
+| Type checking in CI (GOAL §1 Quality: "lint, types") | 🔄 | mypy 1.18.2 configured; core clean; 133 errors in apps being fixed in a worktree agent, then a CI job |
+| OpenAPI contract file `docs/openapi.json` + CI check that it is current | ✅ | `tulporgo_api.export_openapi`, `tests/contract` (stale file fails) |
+| Telegram features of GOAL §4 | 🔄 | ✅ Guest Mode, Rich Messages, `date_time`, member tags, colored buttons, custom emoji, `BotSubscriptionUpdated`, join-request guard (drivers group). ⛔ owner approval first (CLAUDE.md rule 4, UX change): topics per trip in the bot chat, ephemeral group messages, Widgets (10.4), Login with Telegram on tulporgo.uz |
+| Docker Compose (bot, userbot, api, miniapp, PostgreSQL, Redis, proxy), backups + restore test | ✅ | verified locally over HTTPS: API health 200, Mini App at `/app/` (SPA routes), `/` → bot, HSTS/nosniff, no-auth API 401; bot/userbot images import; restore test + negatives. Bug found by running: Caddy did not start with an empty `email` (fixed). Bot/userbot not started locally (one poller per token) |
 | Deploy scripts for the Uzbekistan VPS | ✅ | `deploy/scripts/` (bootstrap-vps, deploy with backup + health + revision check + rollback hint, restore, restore-test); runbook `docs/DEPLOY.md` |
 | Deploy to VPS, retire PC stub | ⛔ | needs a VPS bought by the owner (money) |
 
@@ -65,3 +65,6 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — legal drafts uz/ru in `docs/legal/`; Telegram Stars rules (`/terms`, `/paysupport`) sent to W4.
 - 2026-11-10 — W4 merged; full suite 646 passed, ruff clean, secret scan 0. Core fix from W4: Cyrillic converter broke words ending in o/g/y (`"" in APOS` is always true).
 - 2026-11-10 — W2 merged; full suite 815 passed, ruff clean, secret scan 0.
+- 2026-11-10 — W1 and W3 merged; integration fixes; `/malumotlarim`; e2e tests; OpenAPI file; join-request guard;
+  full Docker stack verified over HTTPS. Full suite 1 110 pytest + 159 vitest, CI green. Telegram check: Bot API 10.4,
+  blog 2026-08-25 — nothing newer than `TELEGRAM-YANGILIKLAR.md`.
