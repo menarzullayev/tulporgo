@@ -43,3 +43,28 @@ def test_check_catches_unmigrated_model_change(tmp_path):
     finally:
         User.__table__._columns.remove(col)
     command.downgrade(c, "base")
+
+
+def test_trip_topic_columns_are_added_and_dropped_by_0002(tmp_path):
+    from sqlalchemy import create_engine, inspect
+    if os.environ.get("TULPORGO_TEST_DATABASE_URL"):
+        pytest.skip("column inspection below is written for the SQLite file; other databases are covered by `check`")
+    path = tmp_path / "t.db"
+    c = cfg(f"sqlite+aiosqlite:///{path.as_posix()}")
+
+    def trip_columns() -> dict:
+        eng = create_engine(f"sqlite:///{path.as_posix()}")
+        try:
+            return {col["name"]: col for col in inspect(eng).get_columns("trips")}
+        finally:
+            eng.dispose()
+
+    command.upgrade(c, "0001")
+    assert "passenger_topic_id" not in trip_columns()
+    command.upgrade(c, "0002")
+    cols = trip_columns()
+    assert cols["passenger_topic_id"]["nullable"] and cols["driver_topic_id"]["nullable"]
+    command.downgrade(c, "0001")                         # negative: the downgrade really removes them again
+    assert "passenger_topic_id" not in trip_columns() and "driver_topic_id" not in trip_columns()
+    command.upgrade(c, "head")
+    command.check(c)
