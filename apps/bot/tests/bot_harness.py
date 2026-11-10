@@ -309,6 +309,10 @@ def no_waiting(monkeypatch):
     monkeypatch.setattr(delivery, "sleep", no_sleep)
     monkeypatch.setattr(delivery.LIMITER, "rate", 0.0)
     delivery.LIMITER._next = 0.0
+    # The flows below were written for the plain cards; the optional features (ON in production, decision 55) are
+    # switched on per test in test_optional_features.py and in the defaults test there.
+    for var in ("TULPORGO_TRIP_TOPICS", "TULPORGO_EPHEMERAL_GROUP", "TULPORGO_WIDGETS"):
+        monkeypatch.setenv(var, "false")
 
 
 @pytest.fixture

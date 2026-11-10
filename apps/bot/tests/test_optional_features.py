@@ -64,11 +64,19 @@ def api(env, name: str) -> list:
 
 # =============================== A. trip topics ===============================
 
-def test_flags_default_to_off(monkeypatch):
+def test_flags_default_to_on(monkeypatch):
+    # decision 55: approved by Saidakbar aka on 2026-11-10
     for var in FLAGS.values():
         monkeypatch.delenv(var, raising=False)
     extra = BotExtra(_env_file=None)                                       # type: ignore[call-arg]
-    assert (extra.trip_topics, extra.ephemeral_group, extra.widgets) == (False, False, False)
+    assert (extra.trip_topics, extra.ephemeral_group, extra.widgets) == (True, True, True)
+
+
+@pytest.mark.parametrize("name", list(FLAGS))
+def test_each_flag_can_be_switched_off(monkeypatch, name):
+    # negative: "false" in deploy/.env really turns the feature off
+    monkeypatch.setenv(FLAGS[name], "false")
+    assert getattr(BotExtra(_env_file=None), name) is False               # type: ignore[call-arg]
 
 
 async def test_topics_off_makes_no_topic_call_at_all(env):
@@ -398,3 +406,20 @@ async def test_send_widget_is_a_raw_bot_api_call(env):
     assert await widgets.send_trip_widget(env.bot, 1, w, thread_id=9) is not None
     (m,) = api(env, "SendWidget")
     assert SendWidget.__api_method__ == "sendWidget" and m.message_thread_id == 9
+
+
+async def test_production_defaults_all_on_together(env, monkeypatch):
+    """Decision 55: all three on at once (as in production) — the trip still works end to end, the widget lands in the
+    party's own trip topic, and the plain card is still delivered for old clients."""
+    turn_on(env, monkeypatch, "trip_topics", "ephemeral_group", "widgets")
+    await trip_setup(env)
+    t = await the_trip(env)
+    assert t.passenger_topic_id and t.driver_topic_id
+    assert env.said(1, tx("bot.trip.confirmed")) and env.said(2, tx("bot.trip.confirmed"))
+    widgets_sent = {w.chat_id: w.message_thread_id for w in api(env, "SendWidget")}
+    assert widgets_sent == {1: t.passenger_topic_id, 2: t.driver_topic_id}
+    await env.press(2, f"ts:{t.id}")
+    await env.press(2, f"tc:{t.id}")
+    assert (await the_trip(env)).status == "completed"
+    assert len(api(env, "CreateForumTopic")) == 2
+

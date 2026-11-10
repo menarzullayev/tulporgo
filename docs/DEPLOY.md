@@ -48,16 +48,16 @@ Before the `telegram` profile starts on the VPS, **stop the PC "coming soon" stu
 `TULPORGO_USERBOT_ENCRYPTION_KEY` encrypts every driver session. Keep a copy offline (password manager): without it,
 backups of `userbot_accounts` cannot be decrypted and drivers must log in again.
 
-## Optional Telegram features (off by default)
+## Telegram features (on by default, decision 55)
 
-Each is a switch in `deploy/.env`; turn one on only after Saidakbar aka has seen it (CLAUDE.md rule 4), then
+Approved by Saidakbar aka on 2026-11-10. Each is a switch in `deploy/.env` (`false` turns it off), then
 `./scripts/deploy.sh`. Old clients always get the plain card / plain reply.
 
 | Variable | What it does | Extra step |
 |---|---|---|
-| `TULPORGO_TRIP_TOPICS=true` | one topic per trip in each party's chat with the bot | BotFather: enable topics for the bot |
-| `TULPORGO_EPHEMERAL_GROUP=true` | `/taksi`, `/yordam` in groups answered only to the asking user | — |
-| `TULPORGO_WIDGETS=true` | trip-status HTML widget in private chats | — |
+| `TULPORGO_TRIP_TOPICS` | one topic per trip in each party's chat with the bot | BotFather: enable topics for the bot (until then the bot skips topics by itself: `getMe.has_topics_enabled`) |
+| `TULPORGO_EPHEMERAL_GROUP` | `/taksi`, `/yordam` in groups answered only to the asking user | — |
+| `TULPORGO_WIDGETS` | trip-status HTML widget in private chats | — |
 | `TULPORGO_LOGIN_CLIENT_SECRET=<secret>` | "Login with Telegram" on tulporgo.uz outside Telegram (OpenID Connect) | BotFather → Bot Settings → Login Widget: origin `https://tulporgo.uz`, redirect `https://tulporgo.uz/api/auth/telegram/callback` |
 
 ## Every later deploy

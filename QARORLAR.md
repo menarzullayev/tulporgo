@@ -78,6 +78,7 @@ Barchasi @menarzullayev (Premium) hisobidan ochiladi. Telegram yangiliklari: `TE
 | 52 | Referal | **Bepul kunlar**: har haydovchining havolasi (`?start=ref_…`); taklif qilingan haydovchi tasdiqlansa — ikkalasiga +7 kun bepul; «Elchi» member tag | |
 | 53 | KPI | **20-qaror taklifi qabul**, «pullik obuna» o'rniga «faol haydovchi (7 kunda 1+ qatnov)»; bot haftalik hisobotni Saidakbar akaga yuboradi | KPI bo'limi yangilandi |
 | 54 | Ochiq repo tarkibi (2026-11-10) | **Ichki hujjatlar ham ochiq** (QARORLAR, HANDOFF, MUAMMOLAR, TELEGRAM-REJA, naming); **brenddan faqat tayyor fayllar** (avatarlar, belgilar, emoji/stiker eksportlari, quvur skriptlari) | Hech qachon kirmaydi: `.secrets/`, sessiyalar, tokenlar, telefon raqamlari; oraliq brend fayllari va `.ai` manbalar lokal (skriptlar qayta yaratadi) |
+| 55 | Telegram yangi imkoniyatlari (2026-11-10) | **Hammasi yoqiladi (sukut bo'yicha)**: qatnov topic'lari, guruhda ephemeral javoblar (`/taksi`, `/yordam`), qatnov widget'i (Bot API 10.4), tulporgo.uz'da Telegram orqali kirish | Widget namunasi @tulporgobot orqali ko'rsatildi. Topic'lar BotFather'da yoqilgach ishlaydi; kirish — Client Secret kiritilgach. Har biri `deploy/.env` da `false` bilan o'chiriladi; eski ilovalarga oddiy karta |
 
 ## Taklif etilgan KPI (tasdiqlandi 2026-11-10, 53-qaror)
 
