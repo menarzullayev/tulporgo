@@ -62,7 +62,7 @@ class PlaceIndex:
         return cls([ref_of(p) for p in rows])
 
     def _rank(self, r: PlaceRef) -> tuple:
-        order = [PlaceKind.CITY, PlaceKind.DISTRICT, PlaceKind.POI, PlaceKind.MAHALLA, PlaceKind.REGION]
+        order: list[str] = [PlaceKind.CITY, PlaceKind.DISTRICT, PlaceKind.POI, PlaceKind.MAHALLA, PlaceKind.REGION]
         return (-r.popularity, order.index(r.kind) if r.kind in order else 9, r.name)
 
     def exact(self, text: str) -> PlaceRef | None:

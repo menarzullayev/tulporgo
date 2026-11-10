@@ -5,8 +5,10 @@ All timestamps are stored as naive UTC so the same schema works on PostgreSQL, S
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
+from typing import cast
 
 from sqlalchemy import MetaData
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -48,3 +50,8 @@ async def session_scope(maker: async_sessionmaker[AsyncSession]) -> AsyncIterato
         except BaseException:
             await s.rollback()
             raise
+
+
+def rowcount(result: object) -> int:
+    """Rows matched by an UPDATE/DELETE. `AsyncSession.execute()` is typed as `Result`; DML returns a `CursorResult`."""
+    return cast(CursorResult, result).rowcount

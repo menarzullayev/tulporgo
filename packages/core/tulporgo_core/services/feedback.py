@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..enums import ComplaintStatus, TripStatus
-from ..errors import Conflict, Forbidden, Invalid
+from ..errors import Conflict, Forbidden, Invalid, NotFound
 from ..models import Complaint, Driver, Rating, Trip, User
 
 
@@ -13,6 +13,8 @@ async def rate(s: AsyncSession, user: User, t: Trip, stars: int, comment: str | 
     if not (1 <= stars <= 5):
         raise Invalid("bad_stars")
     driver = await s.get(Driver, t.driver_id)
+    if driver is None:
+        raise NotFound("driver_not_found")
     if user.id == t.passenger_id:
         to_user = driver.user_id
     elif driver.user_id == user.id:

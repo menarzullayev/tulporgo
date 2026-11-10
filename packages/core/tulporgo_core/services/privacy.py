@@ -14,7 +14,7 @@ from datetime import datetime
 from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..db import utcnow
+from ..db import rowcount, utcnow
 from ..enums import DriverStatus, OfferStatus, RequestStatus, TripStatus, UserbotStatus
 from ..errors import Conflict
 from ..events import UserbotStopped
@@ -83,9 +83,9 @@ async def export_user_data(s: AsyncSession, user: User) -> dict:
                                 "created_at": _iso(r.created_at)})
     for t in (await s.execute(select(Trip).where(or_(Trip.passenger_id == user.id, *driver_trips))
                               .order_by(Trip.id))).scalars():
-        r = await s.get(RideRequest, t.request_id)
+        req = await s.get(RideRequest, t.request_id)
         out["trips"].append({"role": "passenger" if t.passenger_id == user.id else "driver",
-                             "from": r.from_text if r else None, "to": r.to_text if r else None,
+                             "from": req.from_text if req else None, "to": req.to_text if req else None,
                              "price": t.price, "status": t.status, "created_at": _iso(t.created_at),
                              "completed_at": _iso(t.completed_at)})
     for g in (await s.execute(select(Rating).where(Rating.from_user_id == user.id))).scalars():
@@ -124,14 +124,14 @@ async def delete_user_data(s: AsyncSession, user: User, bus=None) -> DeletionRep
     res = await s.execute(update(RideRequest).where(RideRequest.passenger_id == user.id,
                                                    RideRequest.status == RequestStatus.OPEN)
                           .values(status=RequestStatus.CANCELLED, note=None))
-    rep.requests_cancelled = res.rowcount or 0
+    rep.requests_cancelled = rowcount(res)
     await s.execute(update(RideRequest).where(RideRequest.passenger_id == user.id).values(note=None))
 
     if d is not None:
         res = await s.execute(update(Offer).where(Offer.driver_id == d.id,
                                                   Offer.status.in_((OfferStatus.SENT, OfferStatus.COUNTERED)))
                               .values(status=OfferStatus.WITHDRAWN))
-        rep.offers_withdrawn = res.rowcount or 0
+        rep.offers_withdrawn = rowcount(res)
         await s.execute(update(Offer).where(Offer.driver_id == d.id).values(message=None))
         acc = (await s.execute(select(UserbotAccount).where(UserbotAccount.driver_id == d.id))).scalar_one_or_none()
         if acc is not None:

@@ -94,7 +94,7 @@ def parse(text: str, index: PlaceIndex, now: datetime | None = None) -> ParsedRo
             a, b = _clean(m[1]), _clean(m[2])
         else:
             words = [w for w in re.findall(r"[\w']+", t) if len(w) >= 3]
-            found = []
+            found: list[tuple[str, PlaceRef]] = []
             for w in words:                               # first two words that are places, in order
                 ref = index.exact(w)
                 if ref and (not found or ref.id != found[-1][1].id):

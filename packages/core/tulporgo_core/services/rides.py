@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import Settings
-from ..db import utcnow
+from ..db import rowcount, utcnow
 from ..enums import DriverStatus, OfferStatus, RequestSource, RequestStatus, TripStatus
 from ..errors import Conflict, Forbidden, Invalid, NotFound
 from ..events import OfferAccepted, OfferCountered, OfferCreated, RequestClosed, RequestCreated, TripCompleted
@@ -147,6 +147,8 @@ async def respond_counter(s: AsyncSession, driver: Driver, o: Offer, accept: boo
     if not accept:
         o.status, o.counter_price = OfferStatus.SENT, None
         return o
+    if o.counter_price is None:
+        raise Conflict("no_counter")
     return await _make_trip(s, o, o.counter_price, bus)
 
 
@@ -164,7 +166,7 @@ async def _make_trip(s: AsyncSession, o: Offer, price: int, bus) -> Trip:
     # atomic OPEN → MATCHED: of two concurrent acceptances only one updates the row (works on every backend)
     res = await s.execute(update(RideRequest).where(RideRequest.id == r.id, RideRequest.status == RequestStatus.OPEN)
                           .values(status=RequestStatus.MATCHED).execution_options(synchronize_session="fetch"))
-    if res.rowcount != 1:
+    if rowcount(res) != 1:
         raise Conflict("request_not_open")
     t = Trip(request_id=r.id, offer_id=o.id, driver_id=o.driver_id, passenger_id=r.passenger_id, price=price,
              share_token=secrets.token_urlsafe(12))
@@ -229,7 +231,8 @@ async def cancel_trip(s: AsyncSession, user: User, t: Trip, bus=None) -> Trip:
     t.status, t.cancelled_by_id = TripStatus.CANCELLED, user.id
     r = await get_request(s, t.request_id)
     o = await s.get(Offer, t.offer_id)
-    o.status = OfferStatus.WITHDRAWN
+    if o is not None:
+        o.status = OfferStatus.WITHDRAWN
     if actor == "driver" and r.expires_at and r.expires_at > utcnow():
         r.status = RequestStatus.OPEN                      # other drivers can offer again; the cancelled trip stays
         if bus:                                            # as history (complaints, driver reliability)
