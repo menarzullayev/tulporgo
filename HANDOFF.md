@@ -71,7 +71,11 @@ in **`QARORLAR.md`** (source of truth, Uzbek). Telegram features worth using: `T
 - `createNewStickerSet` returns `429 {"retry_after":301}` on **every** attempt — 6 attempts
   2026-11-09 22:20 … 2026-11-10 04:08 (hourly gaps didn't help). Likely a per-bot daily
   set-creation limit (bot created 3 sets on 2026-11-09). Logged as MUAMMOLAR #26.
-- **A scheduled task will make ONE attempt on 2026-11-11 10:00 (+05:00)**:
+- **2026-11-11 00:30 (Saidakbar aka: "hozir urinib ko'r"): attempt 7 → again `429 retry after 301`**, although more than
+  24 h had passed since the 3 sets were created — so not a plain daily limit. The scheduler listed **no** tasks (the
+  10:00 task below never registered). The guard allows the next attempt from **2026-11-11 20:30**. Fallback: he creates
+  the pack himself in @Stickers (`/newemojipack`).
+- (superseded) A scheduled task was meant to make ONE attempt on 2026-11-11 10:00 (+05:00):
   `C:\Users\nsn\.claude\scheduled-tasks\tulporgo-reactions-create\SKILL.md` (one-shot, bypass mode,
   runs only while the Claude app is open). Check its result before doing anything else; don't
   start a parallel attempt.

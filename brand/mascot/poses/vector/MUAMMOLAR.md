@@ -84,7 +84,7 @@ Cheklov: TGS faqat Telegram ilovalarida; 5 ta murakkab sahna soddalashtirilgan t
 
 | # | Muammo | Sabab | Holat |
 |---|---|---|---|
-| 26 | `createNewStickerSet` doim `429 retry after 301` (2026-11-09 22:20 dan 2026-11-10 04:08 gacha 6 urinish) | Bot bir kunda 3 ta yangi paket yaratgan; `retry_after` har safar aynan 301 — kunlik yaratish limiti bo'lishi ehtimoli | Yaratilmadi. 24 TGS tayyor: `telegram/emoji_head_tgs/`. Keyingi urinish: ertasi kun, bitta, `TG_MAX_WAIT=0`. 2026-11-10: ikki urinish bir vaqtda ketmasligi uchun `attempt_guard.py` qo'shildi — har urinish `create_attempts.json` ga oldindan yoziladi, 20 soat ichida ikkinchisi rad etiladi (`test_attempt_guard.py`, 9 test) |
+| 26 | `createNewStickerSet` doim `429 retry after 301` (2026-11-09 22:20 dan 2026-11-10 04:08 gacha 6 urinish) | Bot bir kunda 3 ta yangi paket yaratgan; `retry_after` har safar aynan 301 — kunlik yaratish limiti bo'lishi ehtimoli | Yaratilmadi. 24 TGS tayyor: `telegram/emoji_head_tgs/`. Keyingi urinish: ertasi kun, bitta, `TG_MAX_WAIT=0`. 2026-11-10: ikki urinish bir vaqtda ketmasligi uchun `attempt_guard.py` qo'shildi — har urinish `create_attempts.json` ga oldindan yoziladi, 20 soat ichida ikkinchisi rad etiladi (`test_attempt_guard.py`, 9 test). **2026-11-11 00:30: 7-urinish ham `429 retry after 301`** — 3 paket yaratilganidan 24 soatdan ko'p o'tgan bo'lsa ham; demak oddiy kunlik limit emas. 10:00 dagi rejalashtirilgan vazifa planlashtiruvchida yo'q edi (fayl bor, ro'yxatda yo'q). Keyingi urinishga himoya 2026-11-11 20:30 dan ruxsat beradi; muqobil — @Stickers orqali `/newemojipack` (Saidakbar aka o'zi) |
 
 ## Statik va video stikerlardagi hoshiya teshiklari (2026-11-10) — YOPILDI
 
