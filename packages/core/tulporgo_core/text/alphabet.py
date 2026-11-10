@@ -54,7 +54,7 @@ def _cyr(s):
             out.append(cyr)
             i += step
 
-        if lo in "og" and nxt and nxt in APOS:                     # o' g'
+        if lo in "og" and nxt and nxt in APOS:                  # o' g'
             put("ў" if lo == "o" else "ғ", 2); continue
         if lo == "s" and nxt.lower() == "h":
             put("ш", 2); continue

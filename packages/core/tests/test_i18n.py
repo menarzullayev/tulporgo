@@ -41,3 +41,12 @@ def test_duplicate_keys_rejected(monkeypatch):
     with pytest.raises(ValueError, match="duplicate"):
         i18n.catalog()
     i18n.catalog.cache_clear()
+
+
+def test_cyrillic_conversion_survives_text_ending_in_y_o_g():
+    # regression: a chunk ending in y/o/g (e.g. before a {placeholder} or at the end of a text) crashed or
+    # produced a wrong letter because an empty "next char" is `in` every string
+    from tulporgo_core.text.alphabet import convert
+    assert convert("so'm / oy", "uz_cyrl").endswith("ой")
+    assert convert("{n} yo'l bo", "uz_cyrl").endswith("бо")
+    assert convert("Reyting {rating}", "uz_cyrl") == "Рейтинг {rating}"

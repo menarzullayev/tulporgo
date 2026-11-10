@@ -18,6 +18,7 @@ dependencies = [
     "telethon>=1.45",
     "cryptography>=44",
     "redis>=5.2",
+    "python-multipart>=0.0.20",
 ]
 
 [project.optional-dependencies]
