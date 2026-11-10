@@ -25,8 +25,8 @@ from tulporgo_core.events import (
 from tulporgo_core.models import Driver, Offer, RideRequest, Trip, User
 from tulporgo_core.services import rides
 
-from .. import delivery
-from ..config import BotExtra
+from .. import delivery, topics, widgets
+from ..config import BotExtra, get_extra
 from .cards import (
     counter_keyboard,
     offer_card,
@@ -45,13 +45,19 @@ TERMINAL_OFFER = (OfferStatus.DECLINED, OfferStatus.WITHDRAWN, OfferStatus.EXPIR
 
 
 async def send_trip_card(bot: Bot, settings: Settings, trip: Trip, r: RideRequest, d: Driver, passenger: User,
-                         role: str) -> None:
-    """Trip card for one side: Rich Message with a table when the Bot API supports it, HTML otherwise."""
+                         role: str, *, thread_id: int | None = None, extra: BotExtra | None = None) -> None:
+    """Trip card for one side: Rich Message with a table when the Bot API supports it, HTML otherwise. With the
+    optional features on, it goes into the party's trip topic and is followed by the status widget (the card is
+    always sent first, so a failing widget costs nothing)."""
+    extra = extra or get_extra()
     user = d.user if role == "driver" else passenger
     t = user_t(user)
+    thread = thread_id if thread_id is not None else topics.thread_of(trip, role, extra)
     markup = trip_keyboard(trip, role, settings, t, driver_user=d.user, started=trip.status == TripStatus.STARTED)
     await delivery.send_rich(bot, user.tg_id, trip_rich(trip, r, d, passenger, role == "driver", t),
-                             trip_html(trip, r, d, passenger, role == "driver", t), markup)
+                             trip_html(trip, r, d, passenger, role == "driver", t), markup, thread_id=thread)
+    if extra.widgets and user.tg_id > 0:                    # private chats only
+        await widgets.send_trip_widget(bot, user.tg_id, widgets.build_trip_widget(trip, r, d, t), thread)
 
 
 class Notifier:
@@ -126,8 +132,10 @@ class Notifier:
             for lo in losers:
                 ld = await get_required(s, Driver, lo.driver_id)
                 lose_msgs.append((ld.user.tg_id, user_t(ld.user)("bot.offer.lost", route=f"{r.from_text} → {r.to_text}")))
-        await send_trip_card(self.bot, self.settings, trip, r, d, passenger, "passenger")
-        await send_trip_card(self.bot, self.settings, trip, r, d, passenger, "driver")
+        for role in ("passenger", "driver"):
+            thread = await topics.ensure_topic(self.bot, self.maker, self.extra, ev.trip_id, role)
+            await send_trip_card(self.bot, self.settings, trip, r, d, passenger, role, thread_id=thread,
+                                 extra=self.extra)
         for tg_id, text in lose_msgs:
             await delivery.send(self.bot, tg_id, f"ℹ {esc(text)}")
 
@@ -140,11 +148,13 @@ class Notifier:
             d = await get_required(s, Driver, trip.driver_id)
             passenger = await get_required(s, User, trip.passenger_id)
             msgs = []
-            for u, other, key in ((passenger, d.user, "bot.rate.ask_driver"), (d.user, passenger, "bot.rate.ask_passenger")):
+            for u, other, key, role in ((passenger, d.user, "bot.rate.ask_driver", "passenger"),
+                                        (d.user, passenger, "bot.rate.ask_passenger", "driver")):
                 t = user_t(u)
-                msgs.append((u.tg_id, f"🏁 {t(key, who=person(other))}", rating_keyboard(trip, t)))
-        for tg_id, text, markup in msgs:
-            await delivery.send(self.bot, tg_id, text, markup)
+                msgs.append((u.tg_id, f"🏁 {t(key, who=person(other))}", rating_keyboard(trip, t),
+                             topics.thread_of(trip, role, self.extra)))
+        for tg_id, text, markup, thread in msgs:
+            await delivery.send(self.bot, tg_id, text, markup, thread_id=thread)
 
     # ----- verification / referral → thank the people, refresh member tags -----
     async def on_driver_verified(self, ev: DriverVerified) -> None:

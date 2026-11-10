@@ -143,6 +143,9 @@ class Trip(Base):
     started_at: Mapped[datetime | None] = mapped_column(DateTime)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime)
     cancelled_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    # message_thread_id of this trip's topic in each party's private chat with the bot (Bot API 9.3; optional feature)
+    passenger_topic_id: Mapped[int | None] = mapped_column(BigInteger)
+    driver_topic_id: Mapped[int | None] = mapped_column(BigInteger)
 
 
 class Rating(Base):
