@@ -19,13 +19,22 @@ DATA_URI = re.compile(r"data:[\w.+-]+/[\w.+-]+;base64,[A-Za-z0-9+/=]+")
 BINARY = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".tgs", ".gif", ".pdf", ".zip", ".ico", ".woff", ".woff2", ".ttf")
 
 
+def placeholder_phone(s: str) -> bool:
+    """Obvious example numbers (…1234567, or one repeated digit) are documentation, not personal data."""
+    d = re.sub(r"\D", "", s)[-7:]
+    return d == "1234567" or len(set(d)) == 1
+
+
 def findings(text):
     spans = [m.span() for m in DATA_URI.finditer(text)]
     out = []
     for kind, rx in PATTERNS.items():
         for m in rx.finditer(text):
-            if not any(a <= m.start() and m.end() <= b for a, b in spans):
-                out.append((kind, text.count("\n", 0, m.start()) + 1))
+            if any(a <= m.start() and m.end() <= b for a, b in spans):
+                continue
+            if kind == "uzbek phone number" and placeholder_phone(m.group(0)):
+                continue
+            out.append((kind, text.count("\n", 0, m.start()) + 1))
     return out
 
 

@@ -11,7 +11,7 @@ def test_each_kind_is_caught():
         f"TOKEN={FAKE_TOKEN}",
         "TELEGRAM_API_HASH=" + "0123456789abcdef" * 2,
         "1" + "B" * 360,
-        "phone +99" + "8 90 123 45 67",                     # samples are assembled at run time so this file
+        "phone +99" + "8 93 418 72 05",                     # samples are assembled at run time so this file
         "-----BEGIN RSA " + "PRIVATE KEY-----",              # itself does not trip the scan
         '{"access_' + 'hash": 296952612360151391}',
     ])
@@ -27,6 +27,12 @@ def test_line_numbers():
 def test_embedded_images_are_not_findings():
     blob = base64.b64encode(bytes(range(256)) * 20).decode()
     assert findings(f'<img src="data:image/png;base64,1{blob}">') == []
+
+
+def test_placeholder_numbers_allowed_real_looking_flagged():
+    assert findings("example: +99" + "8 90 123 45 67, 99" + "8901234567, +99" + "8 99 999 99 99") == []
+    # negative: a number that is not an obvious placeholder is still personal data
+    assert findings("call +99" + "8 93 418 72 05") == [("uzbek phone number", 1)]
 
 
 def test_clean_text_passes():
