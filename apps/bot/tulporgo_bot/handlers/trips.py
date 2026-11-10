@@ -11,7 +11,8 @@ from tulporgo_core.errors import Forbidden, NotFound
 from tulporgo_core.models import Driver, Trip, User
 from tulporgo_core.services import feedback, rides
 
-from .. import delivery
+from .. import delivery, topics
+from ..config import get_extra
 from . import states
 from .cards import trip_keyboard
 from .common import PRIVATE, btn, esc, get_required, int_arg, kb, parse_cb, person, show, user_t
@@ -48,7 +49,8 @@ async def start_trip(cb: CallbackQuery, session: AsyncSession, user: User, setti
     if isinstance(cb.message, Message):
         await cb.message.edit_reply_markup(reply_markup=trip_keyboard(trip, "driver", settings, t, started=True))
     _, passenger = await parties(session, trip)
-    await delivery.send(bot, passenger.tg_id, f"▶ {user_t(passenger)('bot.trip.started_passenger')}")
+    await delivery.send(bot, passenger.tg_id, f"▶ {user_t(passenger)('bot.trip.started_passenger')}",
+                        thread_id=topics.thread_of(trip, "passenger", get_extra()))
 
 
 @router.callback_query(F.data.startswith("tc:"))
@@ -98,11 +100,12 @@ async def cancel_yes(cb: CallbackQuery, session: AsyncSession, user: User, bus, 
     driver, passenger = await parties(session, trip)
     r = await rides.get_request(session, trip.request_id)
     if user.id == passenger.id:
-        other, text = driver.user, "bot.trip.cancelled_by_passenger"
+        other, text, other_role = driver.user, "bot.trip.cancelled_by_passenger", "driver"
     else:
-        other, text = passenger, ("bot.trip.cancelled_by_driver_reopened" if r.status == RequestStatus.OPEN
-                                  else "bot.trip.cancelled_by_driver")
-    await delivery.send(bot, other.tg_id, f"✖ {user_t(other)(text)}\n📍 {r.from_text} → {r.to_text}")
+        other, text, other_role = passenger, ("bot.trip.cancelled_by_driver_reopened" if r.status == RequestStatus.OPEN
+                                              else "bot.trip.cancelled_by_driver"), "passenger"
+    await delivery.send(bot, other.tg_id, f"✖ {user_t(other)(text)}\n📍 {r.from_text} → {r.to_text}",
+                        thread_id=topics.thread_of(trip, other_role, get_extra()))
 
 
 # ---------- rating (1–5) ----------

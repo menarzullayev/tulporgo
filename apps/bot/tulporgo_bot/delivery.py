@@ -7,7 +7,7 @@ import re
 import time
 
 from aiogram import Bot
-from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter
+from aiogram.exceptions import TelegramAPIError, TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter
 from aiogram.methods import SendMessage, SendRichMessage
 from aiogram.types import InlineKeyboardMarkup, InputRichMessage, Message
 from tulporgo_core import emoji
@@ -15,6 +15,16 @@ from tulporgo_core import emoji
 log = logging.getLogger(__name__)
 TAGS = re.compile(r"<[^>]+>")
 sleep = asyncio.sleep                      # replaced in tests
+_warned: set[str] = set()
+
+
+def warn_once(key: str, msg: str, *args) -> None:
+    """Optional features (topics, widgets, ephemeral) fail the same way for everyone — log the first time, then quietly."""
+    if key in _warned:
+        log.debug(msg, *args)
+    else:
+        _warned.add(key)
+        log.warning(msg, *args)
 
 
 class Limiter:
@@ -54,7 +64,7 @@ async def call(bot: Bot, method, retries: int = 3):
             return None
 
 
-async def send(bot: Bot, chat_id: int, html: str, markup: InlineKeyboardMarkup | None = None, **kw) -> Message | None:
+async def _send(bot: Bot, chat_id: int, html: str, markup: InlineKeyboardMarkup | None = None, **kw) -> Message | None:
     html = emoji.decorate(html)
     try:
         return await call(bot, SendMessage(chat_id=chat_id, text=html, parse_mode="HTML", reply_markup=markup, **kw))
@@ -66,12 +76,27 @@ async def send(bot: Bot, chat_id: int, html: str, markup: InlineKeyboardMarkup |
                                            reply_markup=markup, **kw))
 
 
+async def send(bot: Bot, chat_id: int, html: str, markup: InlineKeyboardMarkup | None = None, *,
+               thread_id: int | None = None, **kw) -> Message | None:
+    """`thread_id` = the trip topic in a private chat; any Telegram error there → the same message in the main chat."""
+    if thread_id is not None:
+        try:
+            return await _send(bot, chat_id, html, markup, message_thread_id=thread_id, **kw)
+        except TelegramAPIError as e:
+            warn_once("topic-send", "sending into topic %s of chat %s failed (%s) — using the main chat", thread_id,
+                      chat_id, e)
+    return await _send(bot, chat_id, html, markup, **kw)
+
+
 async def send_rich(bot: Bot, chat_id: int, blocks: list[dict], fallback_html: str,
-                    markup: InlineKeyboardMarkup | None = None) -> Message | None:
-    """Rich Message (Bot API 10.1+). Anything that goes wrong (old Bot API server, bad block) → the HTML fallback."""
-    try:
-        return await call(bot, SendRichMessage(chat_id=chat_id, rich_message=InputRichMessage(blocks=blocks),  # type: ignore[arg-type]  # aiogram types blocks as a union of models; we pass validated dicts
-                                               reply_markup=markup))
-    except Exception as e:                  # noqa: BLE001 — 400/404 on old servers, validation of future fields, ...
-        log.warning("rich message failed (%s) — sending the HTML fallback", e)
-    return await send(bot, chat_id, fallback_html, markup)
+                    markup: InlineKeyboardMarkup | None = None, *, thread_id: int | None = None) -> Message | None:
+    """Rich Message (Bot API 10.1+). Anything that goes wrong (old Bot API server, bad block) → the HTML fallback.
+    With `thread_id` the topic is tried first, then the main chat."""
+    for thread in ((thread_id, None) if thread_id is not None else (None,)):
+        try:
+            return await call(bot, SendRichMessage(chat_id=chat_id, rich_message=InputRichMessage(blocks=blocks),  # type: ignore[arg-type]  # aiogram types blocks as a union of models; we pass validated dicts
+                                                   reply_markup=markup, message_thread_id=thread))
+        except Exception as e:              # noqa: BLE001 — 400/404 on old servers, validation of future fields, ...
+            log.warning("rich message failed (%s) — %s", e, "trying the main chat" if thread is not None else
+                        "sending the HTML fallback")
+    return await send(bot, chat_id, fallback_html, markup, thread_id=thread_id)

@@ -3,7 +3,7 @@ Guest Mode lives in guest.py; its deep link lands in `start_from_guest` below.""
 import re
 from datetime import datetime, time, timedelta
 
-from aiogram import F, Router
+from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -17,9 +17,11 @@ from tulporgo_core.parser import parse
 from tulporgo_core.places import PlaceIndex
 from tulporgo_core.services import pricing, rides
 
+from .. import ephemeral
+from ..config import get_extra
 from . import picker
 from .cards import order_preview
-from .common import PRIVATE, UZT, btn, int_arg, kb, local_to_utc, parse_cb, show, to_local
+from .common import PRIVATE, UZT, btn, deep_link, int_arg, kb, local_to_utc, parse_cb, show, to_local
 from .states import Order
 
 router = Router(name="order")
@@ -276,6 +278,14 @@ async def start_from_guest(msg: Message, state: FSMContext, session: AsyncSessio
 
 
 @fallback.callback_query()
-async def stale_button(cb: CallbackQuery, t) -> None:
-    """Last resort: a button nobody handles (old message, finished flow) — never leave the spinner hanging."""
+async def stale_button(cb: CallbackQuery, bot: Bot, settings: Settings, t) -> None:
+    """Last resort: a button nobody handles (old message, finished flow) — never leave the spinner hanging.
+    In a group, with `TULPORGO_EPHEMERAL_GROUP` on, only the one who pressed it is told (ephemerally, with a way to the
+    private chat); if that cannot be delivered the usual alert is shown."""
+    msg = cb.message
+    if msg is not None and ephemeral.is_group(msg.chat.type) and get_extra().ephemeral_group:
+        markup = kb([btn(f"🚕 {t('bot.group.btn')}", url=deep_link(settings, "order"), style="primary")])
+        if await ephemeral.reply(bot, msg.chat.id, cb.from_user.id, t("bot.stale"), markup, callback_query_id=cb.id):
+            await cb.answer()
+            return
     await cb.answer(t("bot.stale"), show_alert=True)

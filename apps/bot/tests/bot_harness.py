@@ -11,7 +11,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.base import BaseSession
 from aiogram.enums import ParseMode
 from aiogram.methods import TelegramMethod
-from aiogram.types import Chat, Message, SentGuestMessage
+from aiogram.types import Chat, ForumTopic, Message, SentGuestMessage
 from aiogram.types import User as TgUser
 from tulporgo_bot import delivery
 from tulporgo_bot.delivery import strip_tags
@@ -45,6 +45,8 @@ class FakeSession(BaseSession):
         self.failed: list[TelegramMethod] = []         # raised an error
         self.errors: dict[type, Any] = {}
         self._ids = itertools.count(1000)
+        self._topics = itertools.count(7000)
+        self.has_topics = True                         # what getMe reports (BotFather: topics in private chats)
 
     async def close(self) -> None:
         return None
@@ -64,6 +66,11 @@ class FakeSession(BaseSession):
         name = type(method).__name__
         if name.startswith("Send") and hasattr(method, "chat_id"):
             return Message(message_id=next(self._ids), date=datetime.now(), chat=Chat(id=method.chat_id, type="private"))
+        if name == "GetMe":
+            return TgUser(id=BOT_ID, is_bot=True, first_name="TulporGo", username="tulporgobot",
+                          has_topics_enabled=self.has_topics)
+        if name == "CreateForumTopic":
+            return ForumTopic(message_thread_id=next(self._topics), name=method.name, icon_color=method.icon_color or 0)
         if name == "AnswerGuestQuery":
             return SentGuestMessage(inline_message_id="inline-1")
         return True

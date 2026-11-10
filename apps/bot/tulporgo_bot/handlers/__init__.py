@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 
 from aiogram import Router
 
-from . import admin, driver, errors, guest, joinguard, mytrips, offers, order, picker, privacy, start, trips
+from . import admin, driver, errors, groupcmds, guest, joinguard, mytrips, offers, order, picker, privacy, start, trips
 from .notify import Notifier
 
 log = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ router = Router(name="bot")
 router.message.middleware(errors.ErrorMiddleware())
 router.callback_query.middleware(errors.ErrorMiddleware())
 for sub in (start.router, picker.router, order.router, guest.router, offers.router, trips.router, driver.router,
-            admin.router, mytrips.router, privacy.router, joinguard.router):
+            admin.router, mytrips.router, privacy.router, joinguard.router, groupcmds.router):
     router.include_router(sub)
 
 fallback = order.fallback
@@ -50,7 +50,7 @@ async def setup(bot, maker, settings, bus, jobs: bool = True) -> Runtime:
     notifier = Notifier(bot, maker, settings, extra)
     notifier.subscribe(bus)
     runtime = Runtime(notifier)
-    await commands.set_defaults(bot)
+    await commands.set_defaults(bot, extra)
     if jobs:
         runtime.tasks = [
             asyncio.create_task(job_mod.every(extra.expire_every_seconds, lambda: job_mod.expire_once(bot, maker, bus),

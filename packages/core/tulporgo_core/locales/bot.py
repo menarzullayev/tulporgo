@@ -396,4 +396,15 @@ TEXTS = {
     "bot.err.self_referral": _t("O'z havolangiz bilan ro'yxatdan o'tib bo'lmaydi.", "Нельзя использовать собственную ссылку.",
                                 "You cannot use your own invitation link."),
     "bot.err.cannot_block_self": _t("O'zingizni bloklab bo'lmaydi.", "Нельзя заблокировать себя.", "You cannot block yourself."),
+
+    # ---- optional Telegram features, all behind flags that are off by default (GOAL.md §4) ----
+    "bot.topic.name": _t("🚕 {route} · {time}", "🚕 {route} · {time}", "🚕 {route} · {time}"),
+    "bot.cmd.group.taksi": _t("Taksi chaqirish (shaxsiy chatda)", "Вызвать такси (в личном чате)",
+                              "Order a taxi (in private chat)"),
+    "bot.cmd.group.yordam": _t("Yordam (shaxsiy chatda)", "Помощь (в личном чате)", "Help (in private chat)"),
+    "bot.group.private_only": _t("Taksi buyurtmasi shaxsiy chatda — guruh toza qoladi. Tugmani bosing.",
+                                 "Заказ такси оформляется в личном чате — группа остаётся чистой. Нажмите кнопку.",
+                                 "Taxi orders are made in a private chat, so the group stays clean. Tap the button."),
+    "bot.group.btn": _t("Shaxsiy chatda ochish", "Открыть в личном чате", "Open in private chat"),
+    "bot.widget.title": _t("TulporGo qatnovi", "Поездка TulporGo", "TulporGo trip"),
 }
