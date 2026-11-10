@@ -1,0 +1,62 @@
+[project]
+name = "tulporgo"
+version = "0.1.0"
+description = "TulporGo — Telegram taxi service for Uzbekistan (bot, driver userbots, Mini App API)"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram>=3.31,<4",
+    "sqlalchemy[asyncio]>=2.0.40,<3",
+    "alembic>=1.15",
+    "aiosqlite>=0.21",
+    "asyncpg>=0.30",
+    "pydantic>=2.11,<3",
+    "pydantic-settings>=2.8",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "httpx>=0.28",
+    "telethon>=1.45",
+    "cryptography>=44",
+    "redis>=5.2",
+]
+
+[project.optional-dependencies]
+mysql = ["aiomysql>=0.2"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.25",
+    "ruff>=0.11",
+    "fakeredis>=2.26",
+]
+brand = [
+    "pillow>=11",
+    "numpy>=2",
+    "scipy>=1.14",
+    "fonttools>=4.55",
+    "lottie==0.7.2",
+    "svgpathtools>=1.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["packages/core", "apps/bot", "apps/userbot", "apps/api"]
+testpaths = ["packages/core/tests", "apps/bot/tests", "apps/userbot/tests", "apps/api/tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+extend-exclude = ["brand", "content", "naming", "bot", "tools", "apps/miniapp"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "ASYNC"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"packages/core/tulporgo_core/text/alphabet.py" = ["E702", "B023", "B905"]
+"packages/core/migrations/versions/*" = ["W291"]

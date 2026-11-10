@@ -60,3 +60,7 @@ content/prototype/text-variants/
 brand/mascot/ref/
 naming/mascot-refs/*.webp
 naming/mascot-refs/maskot-namunalari.html
+
+# python tooling
+.venv/
+*.db

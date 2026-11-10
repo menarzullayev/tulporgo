@@ -1,0 +1,207 @@
+region_code,region_uz,district_code,district_uz,kind
+1703,Andijon viloyati,1703202,Oltinko'l,tuman
+1703,Andijon viloyati,1703203,Andijon,tuman
+1703,Andijon viloyati,1703206,Baliqchi,tuman
+1703,Andijon viloyati,1703209,Bo'ston,tuman
+1703,Andijon viloyati,1703210,Buloqboshi,tuman
+1703,Andijon viloyati,1703211,Jalaquduq,tuman
+1703,Andijon viloyati,1703214,Izboskan,tuman
+1703,Andijon viloyati,1703217,Ulug'nor,tuman
+1703,Andijon viloyati,1703220,Qo'rg'ontepa,tuman
+1703,Andijon viloyati,1703224,Asaka,tuman
+1703,Andijon viloyati,1703227,Marhamat,tuman
+1703,Andijon viloyati,1703230,Shahrixon,tuman
+1703,Andijon viloyati,1703232,Paxtaobod,tuman
+1703,Andijon viloyati,1703236,Xo'jaobod,tuman
+1703,Andijon viloyati,1703401,Andijon shahri,shahar
+1703,Andijon viloyati,1703408,Xonobod shahri,shahar
+1706,Buxoro viloyati,1706204,Olot,tuman
+1706,Buxoro viloyati,1706207,Buxoro,tuman
+1706,Buxoro viloyati,1706212,Vobkent,tuman
+1706,Buxoro viloyati,1706215,G'ijduvon,tuman
+1706,Buxoro viloyati,1706219,Kogon,tuman
+1706,Buxoro viloyati,1706230,Qorako'l,tuman
+1706,Buxoro viloyati,1706232,Qorovulbozor,tuman
+1706,Buxoro viloyati,1706240,Peshku,tuman
+1706,Buxoro viloyati,1706242,Romitan,tuman
+1706,Buxoro viloyati,1706246,Jondor,tuman
+1706,Buxoro viloyati,1706258,Shofirkon,tuman
+1706,Buxoro viloyati,1706401,Buxoro shahri,shahar
+1706,Buxoro viloyati,1706403,Kogon shahri,shahar
+1708,Jizzax viloyati,1708201,Arnasoy,tuman
+1708,Jizzax viloyati,1708204,Baxmal,tuman
+1708,Jizzax viloyati,1708209,G'allaorol,tuman
+1708,Jizzax viloyati,1708212,Sharof Rashidov,tuman
+1708,Jizzax viloyati,1708215,Do'stlik,tuman
+1708,Jizzax viloyati,1708218,Zomin,tuman
+1708,Jizzax viloyati,1708220,Zarbdor,tuman
+1708,Jizzax viloyati,1708223,Mirzacho'l,tuman
+1708,Jizzax viloyati,1708225,Zafarobod,tuman
+1708,Jizzax viloyati,1708228,Paxtakor,tuman
+1708,Jizzax viloyati,1708235,Forish,tuman
+1708,Jizzax viloyati,1708237,Yangiobod,tuman
+1708,Jizzax viloyati,1708401,Jizzax shahri,shahar
+1710,Qashqadaryo viloyati,1710207,G'uzor,tuman
+1710,Qashqadaryo viloyati,1710212,Dehqonobod,tuman
+1710,Qashqadaryo viloyati,1710220,Qamashi,tuman
+1710,Qashqadaryo viloyati,1710224,Qarshi,tuman
+1710,Qashqadaryo viloyati,1710229,Koson,tuman
+1710,Qashqadaryo viloyati,1710232,Kitob,tuman
+1710,Qashqadaryo viloyati,1710233,Mirishkor,tuman
+1710,Qashqadaryo viloyati,1710234,Muborak,tuman
+1710,Qashqadaryo viloyati,1710235,Nishon,tuman
+1710,Qashqadaryo viloyati,1710237,Kasbi,tuman
+1710,Qashqadaryo viloyati,1710240,Ko'kdala,tuman
+1710,Qashqadaryo viloyati,1710242,Chiroqchi,tuman
+1710,Qashqadaryo viloyati,1710245,Shahrisabz,tuman
+1710,Qashqadaryo viloyati,1710250,Yakkabog',tuman
+1710,Qashqadaryo viloyati,1710401,Qarshi shahri,shahar
+1710,Qashqadaryo viloyati,1710405,Shahrisabz shahri,shahar
+1712,Navoiy viloyati,1712211,Konimex,tuman
+1712,Navoiy viloyati,1712216,Qiziltepa,tuman
+1712,Navoiy viloyati,1712230,Navbahor,tuman
+1712,Navoiy viloyati,1712234,Karmana,tuman
+1712,Navoiy viloyati,1712238,Nurota,tuman
+1712,Navoiy viloyati,1712244,Tomdi,tuman
+1712,Navoiy viloyati,1712248,Uchquduq,tuman
+1712,Navoiy viloyati,1712251,Xatirchi,tuman
+1712,Navoiy viloyati,1712401,Navoiy shahri,shahar
+1712,Navoiy viloyati,1712408,Zarafshon shahri,shahar
+1712,Navoiy viloyati,1712412,G'ozg'on shahri,shahar
+1714,Namangan viloyati,1714204,Mingbuloq,tuman
+1714,Namangan viloyati,1714207,Kosonsoy,tuman
+1714,Namangan viloyati,1714212,Namangan,tuman
+1714,Namangan viloyati,1714216,Norin,tuman
+1714,Namangan viloyati,1714219,Pop,tuman
+1714,Namangan viloyati,1714224,To'raqo'rg'on,tuman
+1714,Namangan viloyati,1714229,Uychi,tuman
+1714,Namangan viloyati,1714234,Uchqo'rg'on,tuman
+1714,Namangan viloyati,1714236,Chortoq,tuman
+1714,Namangan viloyati,1714237,Chust,tuman
+1714,Namangan viloyati,1714242,Yangiqo'rg'on,tuman
+1714,Namangan viloyati,1714401,Namangan shahri,shahar
+1718,Samarqand viloyati,1718203,Oqdaryo,tuman
+1718,Samarqand viloyati,1718206,Bulung'ur,tuman
+1718,Samarqand viloyati,1718209,Jomboy,tuman
+1718,Samarqand viloyati,1718212,Ishtixon,tuman
+1718,Samarqand viloyati,1718215,Kattaqo'rg'on,tuman
+1718,Samarqand viloyati,1718216,Qo'shrabot,tuman
+1718,Samarqand viloyati,1718218,Narpay,tuman
+1718,Samarqand viloyati,1718224,Payariq,tuman
+1718,Samarqand viloyati,1718227,Pastdarg'om,tuman
+1718,Samarqand viloyati,1718230,Paxtachi,tuman
+1718,Samarqand viloyati,1718233,Samarqand,tuman
+1718,Samarqand viloyati,1718235,Nurobod,tuman
+1718,Samarqand viloyati,1718236,Urgut,tuman
+1718,Samarqand viloyati,1718238,Toyloq,tuman
+1718,Samarqand viloyati,1718401,Samarqand shahri,shahar
+1718,Samarqand viloyati,1718406,Kattaqo'rg'on shahri,shahar
+1722,Surxondaryo viloyati,1722201,Oltinsoy,tuman
+1722,Surxondaryo viloyati,1722202,Angor,tuman
+1722,Surxondaryo viloyati,1722203,Bandixon,tuman
+1722,Surxondaryo viloyati,1722204,Boysun,tuman
+1722,Surxondaryo viloyati,1722207,Muzrabot,tuman
+1722,Surxondaryo viloyati,1722210,Denov,tuman
+1722,Surxondaryo viloyati,1722212,Jarqo'rg'on,tuman
+1722,Surxondaryo viloyati,1722214,Qumqo'rg'on,tuman
+1722,Surxondaryo viloyati,1722215,Qiziriq,tuman
+1722,Surxondaryo viloyati,1722217,Sariosiyo,tuman
+1722,Surxondaryo viloyati,1722220,Termiz,tuman
+1722,Surxondaryo viloyati,1722221,Uzun,tuman
+1722,Surxondaryo viloyati,1722223,Sherobod,tuman
+1722,Surxondaryo viloyati,1722226,Sho'rchi,tuman
+1722,Surxondaryo viloyati,1722401,Termiz shahri,shahar
+1724,Sirdaryo viloyati,1724206,Oqoltin,tuman
+1724,Sirdaryo viloyati,1724212,Boyovut,tuman
+1724,Sirdaryo viloyati,1724216,Sayxunobod,tuman
+1724,Sirdaryo viloyati,1724220,Guliston,tuman
+1724,Sirdaryo viloyati,1724226,Sardoba,tuman
+1724,Sirdaryo viloyati,1724228,Mirzaobod,tuman
+1724,Sirdaryo viloyati,1724231,Sirdaryo,tuman
+1724,Sirdaryo viloyati,1724235,Xovos,tuman
+1724,Sirdaryo viloyati,1724401,Guliston shahri,shahar
+1724,Sirdaryo viloyati,1724410,Shirin shahri,shahar
+1724,Sirdaryo viloyati,1724413,Yangiyer shahri,shahar
+1726,Toshkent shahri,1726262,Uchtepa,tuman
+1726,Toshkent shahri,1726264,Bektemir,tuman
+1726,Toshkent shahri,1726266,Yunusobod,tuman
+1726,Toshkent shahri,1726269,Mirzo Ulug'bek,tuman
+1726,Toshkent shahri,1726273,Mirobod,tuman
+1726,Toshkent shahri,1726277,Shayxontohur,tuman
+1726,Toshkent shahri,1726280,Olmazor,tuman
+1726,Toshkent shahri,1726283,Sirg'ali,tuman
+1726,Toshkent shahri,1726287,Yakkasaroy,tuman
+1726,Toshkent shahri,1726290,Yashnobod,tuman
+1726,Toshkent shahri,1726292,Yangihayot,tuman
+1726,Toshkent shahri,1726294,Chilonzor,tuman
+1727,Toshkent viloyati,1727206,Oqqo'rg'on,tuman
+1727,Toshkent viloyati,1727212,Ohangaron,tuman
+1727,Toshkent viloyati,1727220,Bekobod,tuman
+1727,Toshkent viloyati,1727224,Bo'stonliq,tuman
+1727,Toshkent viloyati,1727228,Bo'ka,tuman
+1727,Toshkent viloyati,1727233,Quyichirchiq,tuman
+1727,Toshkent viloyati,1727237,Zangiota,tuman
+1727,Toshkent viloyati,1727239,Yuqorichirchiq,tuman
+1727,Toshkent viloyati,1727248,Qibray,tuman
+1727,Toshkent viloyati,1727249,Parkent,tuman
+1727,Toshkent viloyati,1727250,Piskent,tuman
+1727,Toshkent viloyati,1727253,O'rtachirchiq,tuman
+1727,Toshkent viloyati,1727256,Chinoz,tuman
+1727,Toshkent viloyati,1727259,Yangiyo'l,tuman
+1727,Toshkent viloyati,1727265,Toshkent,tuman
+1727,Toshkent viloyati,1727401,Nurafshon shahri,shahar
+1727,Toshkent viloyati,1727404,Olmaliq shahri,shahar
+1727,Toshkent viloyati,1727407,Angren shahri,shahar
+1727,Toshkent viloyati,1727413,Bekobod shahri,shahar
+1727,Toshkent viloyati,1727415,Ohangaron shahri,shahar
+1727,Toshkent viloyati,1727419,Chirchiq shahri,shahar
+1727,Toshkent viloyati,1727424,Yangiyo'l shahri,shahar
+1730,Farg'ona viloyati,1730203,Oltiariq,tuman
+1730,Farg'ona viloyati,1730206,Qo'shtepa,tuman
+1730,Farg'ona viloyati,1730209,Bog'dod,tuman
+1730,Farg'ona viloyati,1730212,Buvayda,tuman
+1730,Farg'ona viloyati,1730215,Beshariq,tuman
+1730,Farg'ona viloyati,1730218,Quva,tuman
+1730,Farg'ona viloyati,1730221,Uchko'prik,tuman
+1730,Farg'ona viloyati,1730224,Rishton,tuman
+1730,Farg'ona viloyati,1730226,So'x,tuman
+1730,Farg'ona viloyati,1730227,Toshloq,tuman
+1730,Farg'ona viloyati,1730230,O'zbekiston,tuman
+1730,Farg'ona viloyati,1730233,Farg'ona,tuman
+1730,Farg'ona viloyati,1730236,Dang'ara,tuman
+1730,Farg'ona viloyati,1730238,Furqat,tuman
+1730,Farg'ona viloyati,1730242,Yozyovon,tuman
+1730,Farg'ona viloyati,1730401,Farg'ona shahri,shahar
+1730,Farg'ona viloyati,1730405,Qo'qon shahri,shahar
+1730,Farg'ona viloyati,1730408,Quvasoy shahri,shahar
+1730,Farg'ona viloyati,1730412,Marg'ilon shahri,shahar
+1733,Xorazm viloyati,1733204,Bog'ot,tuman
+1733,Xorazm viloyati,1733208,Gurlan,tuman
+1733,Xorazm viloyati,1733212,Qo'shko'pir,tuman
+1733,Xorazm viloyati,1733217,Urganch,tuman
+1733,Xorazm viloyati,1733220,Xazorasp,tuman
+1733,Xorazm viloyati,1733221,Tuproqqal'a,tuman
+1733,Xorazm viloyati,1733223,Xonqa,tuman
+1733,Xorazm viloyati,1733226,Xiva,tuman
+1733,Xorazm viloyati,1733230,Shovot,tuman
+1733,Xorazm viloyati,1733233,Yangiariq,tuman
+1733,Xorazm viloyati,1733236,Yangibozor,tuman
+1733,Xorazm viloyati,1733401,Urganch shahri,shahar
+1733,Xorazm viloyati,1733406,Xiva shahri,shahar
+1735,Qoraqalpog'iston Respublikasi,1735204,Amudaryo,tuman
+1735,Qoraqalpog'iston Respublikasi,1735207,Beruniy,tuman
+1735,Qoraqalpog'iston Respublikasi,1735209,Bo'zatov,tuman
+1735,Qoraqalpog'iston Respublikasi,1735211,Qorao'zak,tuman
+1735,Qoraqalpog'iston Respublikasi,1735212,Kegeyli,tuman
+1735,Qoraqalpog'iston Respublikasi,1735215,Qo'ng'irot,tuman
+1735,Qoraqalpog'iston Respublikasi,1735218,Qanliko'l,tuman
+1735,Qoraqalpog'iston Respublikasi,1735222,Mo'ynoq,tuman
+1735,Qoraqalpog'iston Respublikasi,1735225,Nukus,tuman
+1735,Qoraqalpog'iston Respublikasi,1735228,Taxiatosh,tuman
+1735,Qoraqalpog'iston Respublikasi,1735230,Taxtako'pir,tuman
+1735,Qoraqalpog'iston Respublikasi,1735233,To'rtko'l,tuman
+1735,Qoraqalpog'iston Respublikasi,1735236,Xo'jayli,tuman
+1735,Qoraqalpog'iston Respublikasi,1735240,Chimboy,tuman
+1735,Qoraqalpog'iston Respublikasi,1735243,Shumanay,tuman
+1735,Qoraqalpog'iston Respublikasi,1735250,Ellikqal'a,tuman
+1735,Qoraqalpog'iston Respublikasi,1735401,Nukus shahri,shahar
