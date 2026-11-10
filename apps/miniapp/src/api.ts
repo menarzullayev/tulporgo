@@ -106,7 +106,8 @@ export const api = {
   userbotCode: (code: string) => post<unknown>('/userbot/login/code', { code }),
   userbotPassword: (password: string) => post<unknown>('/userbot/login/password', { password }),
 
-  // W4 (packages/payments): checkout payload is provider specific
-  checkout: (plan: string, months = 1, provider = 'p2p') =>
+  // W4 (packages/payments): configured providers, then checkout -> { payment_id, ..., start: { type, ... } }
+  paymentProviders: () => request<{ free_period: boolean; providers: string[] }>('/payments/providers'),
+  checkout: (plan: string, months: number, provider: string) =>
     post<Record<string, unknown>>('/payments/checkout', { plan, months, provider }),
 }

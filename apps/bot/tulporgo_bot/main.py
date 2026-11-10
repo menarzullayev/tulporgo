@@ -58,6 +58,24 @@ def build_dispatcher(settings: Settings, maker, bus, storage=None) -> Dispatcher
     return dp
 
 
+# Background jobs owned by other workstreams: (module, function). Each returns a handle with `.cancel()`.
+OPTIONAL_JOBS = [("tulporgo_payments.jobs", "setup_jobs")]   # W4: expiry reminders, paid notices, Stars subscriptions
+
+
+def start_optional_jobs(bot, maker, settings: Settings, bus) -> list:
+    handles = []
+    for mod_name, attr in OPTIONAL_JOBS:
+        try:
+            setup_jobs = getattr(importlib.import_module(mod_name), attr)
+        except ModuleNotFoundError as e:
+            if e.name and mod_name.startswith(e.name):
+                log.info("jobs %s.%s not available", mod_name, attr)
+                continue
+            raise
+        handles.append(setup_jobs(bot, maker, settings, bus))
+    return handles
+
+
 def finish_dispatcher(dp: Dispatcher) -> Dispatcher:
     """Free-text orders and the stale-button catch-all must come after every other handler, so they are attached last
     (after any router a test or another workstream adds on top of build_dispatcher)."""
@@ -77,12 +95,15 @@ async def run() -> None:
     runtime = None
     if setup:                                            # W1 wires event subscribers / schedulers here
         runtime = await setup(bot=bot, maker=maker, settings=settings, bus=bus)
+    extra_jobs = start_optional_jobs(bot, maker, settings, bus)
     listener = asyncio.create_task(bus.listen()) if isinstance(bus, RedisBus) else None
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         if listener:
             listener.cancel()
+        for handle in extra_jobs:
+            handle.cancel()
         if runtime is not None:
             await runtime.stop()
 

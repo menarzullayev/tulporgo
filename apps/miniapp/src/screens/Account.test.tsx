@@ -215,12 +215,23 @@ describe('Driver screen', () => {
 })
 
 describe('checkoutTarget', () => {
-  it('follows only https URLs', () => {
+  it('follows only https URLs (top level or under W4 `start`)', () => {
     expect(checkoutTarget({ url: 'https://my.click.uz/pay?x=1' })).toEqual({ url: 'https://my.click.uz/pay?x=1' })
     expect(checkoutTarget({ pay_url: 'https://checkout.paycom.uz/abc' })).toEqual({ url: 'https://checkout.paycom.uz/abc' })
+    expect(checkoutTarget({ payment_id: 7, start: { type: 'url', url: 'https://my.click.uz/pay' } })).toEqual({ url: 'https://my.click.uz/pay' })
   })
   it('refuses javascript:, http: and data: targets', () => {
-    for (const url of ['javascript:alert(1)', 'http://evil.example', 'data:text/html,x', '//evil.example', '']) expect(checkoutTarget({ url }), url).toBeNull()
+    for (const url of ['javascript:alert(1)', 'http://evil.example', 'data:text/html,x', '//evil.example', '']) {
+      expect(checkoutTarget({ url }), url).toBeNull()
+      expect(checkoutTarget({ start: { type: 'url', url } }), url).toBeNull()
+    }
+  })
+  it('opens Stars invoices only from t.me', () => {
+    expect(checkoutTarget({ start: { type: 'stars', invoice_link: 'https://t.me/$AbC123' } })).toEqual({ invoice: 'https://t.me/$AbC123' })
+    expect(checkoutTarget({ start: { type: 'stars', invoice_link: 'https://evil.example/$x' } })).toBeNull()
+  })
+  it('sends P2P to the bot, where the receipt is uploaded', () => {
+    expect(checkoutTarget({ start: { type: 'p2p', card: '8600', holder: 'X' } })).toEqual({ bot: true })
   })
   it('falls back to showing instructions text', () => {
     expect(checkoutTarget({ instructions: 'Send to card 8600 ...' })).toEqual({ text: 'Send to card 8600 ...' })
@@ -230,19 +241,19 @@ describe('checkoutTarget', () => {
 })
 
 describe('Subscription page', () => {
-  const plans = {
-    free_period: true,
-    free_period_until: '2026-12-31',
-    trial_days: 7,
-    plans: [
-      { plan: 'basic' as const, price_uzs: 29000, max_groups: 0, autopost: false, priority: false },
-      { plan: 'pro' as const, price_uzs: 59000, max_groups: 15, autopost: true, priority: false },
-      { plan: 'business' as const, price_uzs: 99000, max_groups: null, autopost: true, priority: true },
-    ],
-  }
+  const planList = [
+    { plan: 'basic' as const, price_uzs: 29000, max_groups: 0, autopost: false, priority: false },
+    { plan: 'pro' as const, price_uzs: 59000, max_groups: 15, autopost: true, priority: false },
+    { plan: 'business' as const, price_uzs: 99000, max_groups: null, autopost: true, priority: true },
+  ]
+  const free = { free_period: true, free_period_until: '2026-12-31', trial_days: 7, plans: planList }
+  const paid = { free_period: false, free_period_until: null, trial_days: 7, plans: planList }
+  const providers = (list: string[], freePeriod = false) =>
+    vi.spyOn(api, 'paymentProviders').mockResolvedValue({ free_period: freePeriod, providers: list })
+  const openProCheckout = async () => userEvent.click((await screen.findAllByRole('button', { name: 'Pay' }))[1])
 
   it('lists the plans with the prices from the API and the free period', async () => {
-    vi.spyOn(api, 'plans').mockResolvedValue(plans)
+    vi.spyOn(api, 'plans').mockResolvedValue(free)
     renderApp(<Subscription />)
     expect(await screen.findByText(/29.000 UZS \/ month/)).toBeInTheDocument()
     expect(screen.getByText(/59.000 UZS/)).toBeInTheDocument()
@@ -251,41 +262,100 @@ describe('Subscription page', () => {
     expect(screen.getByText('7-day free trial')).toBeInTheDocument()
   })
 
-  it('opens the provider page for a checkout URL', async () => {
-    const tg = installTelegram()
-    vi.spyOn(api, 'plans').mockResolvedValue(plans)
-    const checkout = vi.spyOn(api, 'checkout').mockResolvedValue({ url: 'https://my.click.uz/pay' })
+  it('offers nothing to pay during the free period', async () => {
+    vi.spyOn(api, 'plans').mockResolvedValue(free)
     renderApp(<Subscription />)
-    await userEvent.click((await screen.findAllByRole('button', { name: 'Pay' }))[1])
-    expect(checkout).toHaveBeenCalledWith('pro')
+    await screen.findByText(/29.000 UZS/)
+    expect(screen.queryByRole('button', { name: 'Pay' })).toBeNull()
+  })
+
+  it('pays only after the terms are accepted, with the chosen months and provider', async () => {
+    const tg = installTelegram()
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers(['click', 'payme', 'stars', 'p2p'])
+    const checkout = vi.spyOn(api, 'checkout').mockResolvedValue({ start: { type: 'url', url: 'https://my.click.uz/pay' } })
+    renderApp(<Subscription />)
+    await openProCheckout()
+    await userEvent.click(await screen.findByRole('radio', { name: '3 mo.' }))
+    expect(screen.getByText(/Total: 177.000 UZS/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Read the terms' })).toHaveAttribute('href', 'https://tulporgo.uz/legal/terms')
+    expect(checkout).not.toHaveBeenCalled() // negative: choosing a plan never starts a payment
+    await userEvent.click(screen.getByRole('button', { name: 'I agree, pay' }))
+    expect(checkout).toHaveBeenCalledWith('pro', 3, 'click')
     expect(tg.openLink).toHaveBeenCalledWith('https://my.click.uz/pay')
+  })
+
+  it('opens a Stars invoice inside Telegram', async () => {
+    const openInvoice = vi.fn((_url: string, cb: (s: string) => void) => cb('paid'))
+    installTelegram({ openInvoice })
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers(['stars'])
+    vi.spyOn(api, 'checkout').mockResolvedValue({ start: { type: 'stars', invoice_link: 'https://t.me/$Inv1' } })
+    renderApp(<Subscription />)
+    await openProCheckout()
+    await userEvent.click(await screen.findByRole('button', { name: 'I agree, pay' }))
+    expect(openInvoice).toHaveBeenCalledWith('https://t.me/$Inv1', expect.any(Function))
+    expect(await screen.findByText(/Payment received/)).toBeInTheDocument()
+  })
+
+  it('sends a card transfer to the bot without creating a payment here', async () => {
+    const tg = installTelegram()
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers(['p2p'])
+    const checkout = vi.spyOn(api, 'checkout')
+    renderApp(<Subscription />)
+    await openProCheckout()
+    await userEvent.click(await screen.findByRole('button', { name: 'I agree, pay' }))
+    expect(checkout).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Open the bot' }))
+    expect(tg.openTelegramLink).toHaveBeenCalledWith('https://t.me/tulporgobot?start=obuna')
+  })
+
+  it('shows no checkout when the server says the free period is on', async () => {
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers(['click'], true)
+    renderApp(<Subscription />)
+    await openProCheckout()
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'I agree, pay' })).toBeNull())
   })
 
   it('does not open an unsafe URL from the server', async () => {
     const tg = installTelegram()
     const open = vi.spyOn(window, 'open').mockReturnValue(null)
-    vi.spyOn(api, 'plans').mockResolvedValue(plans)
-    vi.spyOn(api, 'checkout').mockResolvedValue({ url: 'javascript:alert(1)' })
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers(['click'])
+    vi.spyOn(api, 'checkout').mockResolvedValue({ start: { type: 'url', url: 'javascript:alert(1)' } })
     renderApp(<Subscription />)
-    await userEvent.click((await screen.findAllByRole('button', { name: 'Pay' }))[0])
+    await openProCheckout()
+    await userEvent.click(await screen.findByRole('button', { name: 'I agree, pay' }))
     expect(tg.openLink).not.toHaveBeenCalled()
     expect(open).not.toHaveBeenCalled()
     expect(await screen.findByText('Payments will be available soon.')).toBeInTheDocument()
   })
 
-  it('says payments are coming when checkout is not deployed', async () => {
-    vi.spyOn(api, 'plans').mockResolvedValue(plans)
-    vi.spyOn(api, 'checkout').mockRejectedValue(new ApiError('generic', 404))
+  it('says payments are coming when no provider is configured or the API is missing', async () => {
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers([])
     renderApp(<Subscription />)
-    await userEvent.click((await screen.findAllByRole('button', { name: 'Pay' }))[0])
+    await openProCheckout()
+    expect(await screen.findByText('Payments will be available soon.')).toBeInTheDocument()
+  })
+
+  it('says payments are coming when checkout is not deployed', async () => {
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    vi.spyOn(api, 'paymentProviders').mockRejectedValue(new ApiError('generic', 404))
+    renderApp(<Subscription />)
+    await openProCheckout()
     expect(await screen.findByText('Payments will be available soon.')).toBeInTheDocument()
   })
 
   it('shows a real checkout error as an error', async () => {
-    vi.spyOn(api, 'plans').mockResolvedValue(plans)
+    vi.spyOn(api, 'plans').mockResolvedValue(paid)
+    providers(['click'])
     vi.spyOn(api, 'checkout').mockRejectedValue(new ApiError('not_a_driver', 403))
     renderApp(<Subscription />)
-    await userEvent.click((await screen.findAllByRole('button', { name: 'Pay' }))[0])
+    await openProCheckout()
+    await userEvent.click(await screen.findByRole('button', { name: 'I agree, pay' }))
     expect(await screen.findByRole('alert')).toHaveTextContent('Register as a driver first.')
   })
 })

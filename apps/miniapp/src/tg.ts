@@ -42,6 +42,7 @@ export interface WebApp {
   }
   openTelegramLink?(url: string): void
   openLink?(url: string): void
+  openInvoice?(url: string, cb?: (status: InvoiceStatus) => void): void
   onEvent?(event: string, cb: () => void): void
   offEvent?(event: string, cb: () => void): void
   setHeaderColor?(color: string): void
@@ -165,6 +166,16 @@ export function openTelegram(url: string): void {
   const app = webApp()
   if (app?.openTelegramLink) app.openTelegramLink(url)
   else window.open(url, '_blank', 'noopener')
+}
+
+export type InvoiceStatus = 'paid' | 'cancelled' | 'failed' | 'pending'
+
+/** Telegram Stars invoice inside the Mini App; outside Telegram the invoice link opens in Telegram instead. */
+export function openInvoice(url: string): Promise<InvoiceStatus> {
+  const app = webApp()
+  if (app?.openInvoice) return new Promise((resolve) => app.openInvoice?.(url, resolve))
+  openTelegram(url)
+  return Promise.resolve('pending')
 }
 
 export function confirmDialog(message: string): Promise<boolean> {
