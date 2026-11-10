@@ -47,7 +47,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | Click / Payme live keys | ⛔ | merchant contract needs YATT/MChJ; sandbox integration is in scope |
 | Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | ✅ | Mini App profile card → `?start=malumotlarim` deep link → bot screen; `/malumotlarim`: JSON export, delete after confirmation; refused during a trip; userbot logged out on Telegram's side first (core 6 + bot 5 tests) |
 | Public pages for the final legal texts (`tulporgo.uz/legal/...`) | ⏳ | after lawyer review |
-| Driver document photos: Telegram storage chat vs localisation (art. 27-1) | 🔄 | decision 57: encrypted copy on the server + Telegram copy; being built |
+| Driver document photos: Telegram storage chat vs localisation (art. 27-1) | ✅ | decision 57: Fernet-encrypted copy in the database on the Uzbek server (migration 0003, magic-byte check, 10 MB cap) + Telegram copy; admin can fetch the server copy; deleted on rejection and on data deletion; 24 tests |
 | Off-site backup copy | ✅ | decision 58: monthly dump, 1 copy; `offsite` service encrypts here and copies to Cloudflare R2 (1 copy); verified with an S3-compatible stand-in; R2 account + keys ⛔ owner; R2 abroad → lawyer question |
 
 ## Log
@@ -80,3 +80,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
   the BotFather client secret to demo.
 - 2026-11-10 — decision 55: Saidakbar aka approved the GOAL §4 features; defaults switched ON (tests: defaults on, each switch off, all three together in one trip).
 - 2026-11-10 — decisions 56–59: Stars 165 so'm confirmed; documents server+Telegram; backups monthly, 1 copy, encrypted copy to R2 (built + verified); BotFather: Threaded Mode NOT enabled (it adds a fee to Stars purchases) → trip topics off, Guest Chat Mode enabled (`supports_guest_queries=true`).
+- 2026-11-10 — decision 57 merged (documents encrypted on the server + Telegram); privacy policy §5/§6 updated; full suite 1 257 passed.

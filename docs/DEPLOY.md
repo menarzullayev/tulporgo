@@ -46,8 +46,10 @@ nano .env        # POSTGRES_PASSWORD, TULPORGO_BOT_TOKEN, TULPORGO_USERBOT_ENCRY
 Before the `telegram` profile starts on the VPS, **stop the PC "coming soon" stub** (Task Scheduler task
 `TulporGo coming-soon bot`): Telegram allows only one `getUpdates` consumer per token.
 
-`TULPORGO_USERBOT_ENCRYPTION_KEY` encrypts every driver session. Keep a copy offline (password manager): without it,
-backups of `userbot_accounts` cannot be decrypted and drivers must log in again.
+Three keys are generated on the server and kept offline as well (password manager) — without them encrypted data is lost:
+`TULPORGO_USERBOT_ENCRYPTION_KEY` (driver sessions), `TULPORGO_DOCUMENTS_ENCRYPTION_KEY` (driver documents, decision 57)
+— both Fernet: `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"` — and
+`TULPORGO_BACKUP_ENCRYPTION_KEY` (off-site backups, decision 58): `python -m tulporgo_core.offsite keygen`.
 
 ## Telegram features (on by default, decision 55)
 

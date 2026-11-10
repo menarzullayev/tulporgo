@@ -62,14 +62,17 @@ Ma'lumotlaringiz sotilmaydi va reklama uchun uchinchi shaxslarga berilmaydi.
 
 O'zbekiston fuqarolarining shaxsga doir ma'lumotlari **O'zbekiston hududidagi serverda** saqlanadi (43-qaror).
 
-> `[yurist + egasi: ochiq masala]` Joriy loyihada haydovchi hujjatlari rasmlari Telegram'ning yopiq chatida saqlanib,
-> bazada faqat havolasi (`file_id`) turadi — ya'ni rasm Telegram serverida. Lokalizatsiya talabi bilan solishtirish
-> kerak; muqobil — rasmlarni O'zbekistondagi serverda shifrlangan holda saqlash.
+Haydovchi hujjatlari (guvohnoma, texpasport) rasmlari O'zbekistondagi serverda **shifrlangan** holda saqlanadi;
+tekshiruv qulayligi uchun nusxasi Telegram'ning yopiq chatida ham turadi (57-qaror). Hujjat rad etilsa yoki
+ma'lumot o'chirilsa, server nusxasi o'chiriladi.
+
+Oylik zaxira nusxa serverda shifrlanib, Cloudflare R2'ga ham ko'chiriladi; shifr kaliti O'zbekistonda qoladi
+(58-qaror). `[yurist: Telegram nusxasi va shifrlangan xorijiy zaxira lokalizatsiya talabiga mosmi]`
 
 ## 6. Qancha saqlanadi
 
 - Hisob ma'lumotlari — hisob faol ekan; o'chirish so'ralsa — `[yurist: N]` kun ichida o'chiriladi.
-- Zaxira nusxalar — 14 kun, keyin avtomatik o'chiriladi.
+- Zaxira nusxa — oyiga bitta, faqat oxirgisi saqlanadi (serverda va shifrlangan holda R2'da).
 - Avto-e'lon sessiyasi — «Hisobni uzish» bosilganda darhol o'chiriladi.
 - To'lov yozuvlari — `[yurist: buxgalteriya va soliq qonunchiligidagi muddat]`.
 - Shikoyat va bloklash yozuvlari — `[yurist: muddat]` (qayta ro'yxatdan o'tib qoidani chetlab o'tishning oldini olish uchun).
