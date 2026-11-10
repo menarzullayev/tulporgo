@@ -4,7 +4,7 @@ All provider callbacks (Stars, Click, Payme, P2P approval) end in `confirm()`, w
 `billing.mark_paid` — idempotent, so a replayed callback never extends a subscription twice.
 """
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -73,11 +73,13 @@ async def confirm(s: AsyncSession, payment: Payment, bus=None, external_id: str 
     return await billing.mark_paid(s, payment, driver, bus=bus, external_id=external_id, reviewer=reviewer)
 
 
-async def revert_paid(s: AsyncSession, payment: Payment) -> None:
-    """A confirmed payment was refunded (Payme CancelTransaction after perform): take its days back."""
+async def revert_paid(s: AsyncSession, payment: Payment, floor: datetime | None = None) -> None:
+    """A confirmed payment was refunded (Payme cancel after perform, Stars refund): take its days back.
+    `floor` (e.g. now) stops the subscription from being shortened below that moment."""
     driver = await driver_of_user(s, payment.user_id)
     if driver and driver.subscription_until:
-        driver.subscription_until = driver.subscription_until - timedelta(days=30 * payment.months)
+        new = driver.subscription_until - timedelta(days=30 * payment.months)
+        driver.subscription_until = max(new, floor) if floor else new
     payment.status = PaymentStatus.REFUNDED
 
 

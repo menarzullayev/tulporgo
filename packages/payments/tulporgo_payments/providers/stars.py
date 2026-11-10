@@ -13,9 +13,11 @@ from typing import Any
 import httpx
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from tulporgo_core.db import utcnow
 from tulporgo_core.enums import PaymentStatus
 from tulporgo_core.errors import Conflict, Forbidden, Invalid
 from tulporgo_core.models import Payment, User
+from tulporgo_core.services import billing
 
 from .. import service
 from .base import GatewayProvider
@@ -85,6 +87,11 @@ class StarsProvider(GatewayProvider):
     async def verify(self, payload: dict) -> bool:
         """Structural check of a pre_checkout / successful_payment payload (DB checks live in the functions below)."""
         return payload.get("currency") == "XTR" and parse_payload(payload.get("invoice_payload")) is not None
+
+
+def expected_amount(plan, months: int, settings) -> int:
+    """Stars the plan costs (decision-10 price converted at settings.stars_rate_uzs)."""
+    return billing.stars_amount(billing.price_of(plan, months), settings)
 
 
 async def validate_pre_checkout(s: AsyncSession, user: User, invoice_payload: str, currency: str,
@@ -160,3 +167,27 @@ async def record_subscription_state(s: AsyncSession, invoice_payload: str, state
     p.payload = {**(p.payload or {}), "stars_subscription": state}
     return p
 
+
+
+RefundCall = Callable[[int, str], Awaitable[Any]]
+
+
+async def refund(s: AsyncSession, admin: User, payment: Payment, refund_call: RefundCall) -> tuple[Payment, bool]:
+    """Admin refund of a paid Stars payment via refundStarPayment(user_id, telegram_payment_charge_id).
+    Returns (payment, changed); a second refund is a no-op. The subscription is shortened by the paid period but
+    never below now. Telegram is called first: if it fails nothing changes."""
+    if not admin.is_admin:
+        raise Forbidden("admin_only")
+    if payment.provider != "stars" or payment.currency != "XTR":
+        raise Invalid("not_stars_payment")
+    if payment.status == PaymentStatus.REFUNDED:
+        return payment, False
+    if payment.status != PaymentStatus.PAID or not payment.external_id:
+        raise Conflict("not_refundable")
+    owner = await s.get(User, payment.user_id)
+    if owner is None:
+        raise Invalid("user_not_found")
+    await refund_call(owner.tg_id, payment.external_id)
+    await service.revert_paid(s, payment, floor=utcnow())
+    payment.payload = {**(payment.payload or {}), "refunded_by": admin.id}
+    return payment, True

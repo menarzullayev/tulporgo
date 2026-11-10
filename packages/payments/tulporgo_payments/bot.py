@@ -9,10 +9,12 @@ Handlers receive the W1 context (`session, settings, bus, user, lang, t`). Callb
 Everything works with plain text + plain buttons; styles (Bot API 9.4) are only decoration.
 """
 import logging
+import re
 from datetime import datetime
 
 from aiogram import Bot, F, Router
-from aiogram.filters import Command
+from aiogram.dispatcher.event.bases import SkipHandler
+from aiogram.filters import Command, CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import (
@@ -23,6 +25,7 @@ from aiogram.types import (
     Message,
     PreCheckoutQuery,
 )
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core.config import Settings
 from tulporgo_core.db import session_scope
@@ -34,7 +37,7 @@ from tulporgo_core.models import Payment, User
 from tulporgo_core.services import billing
 from tulporgo_core.services.drivers import get_driver
 
-from . import service
+from . import TERMS_URL, service
 from .jobs import run_reminders, setup_jobs  # noqa: F401  (setup_jobs is called by the bot)
 from .providers import available_providers, get_provider, p2p, stars
 
@@ -183,6 +186,28 @@ async def cb_months(cb: CallbackQuery, session, settings, user, lang):
 
 
 @router.callback_query(F.data.startswith("pay:go:"))
+async def cb_terms(cb: CallbackQuery, session, settings, user, lang):
+    """Step before any payment: show the terms and require one explicit confirm. Nothing is created here."""
+    if not await _guard(cb, session, settings, user, lang):
+        return
+    try:
+        _, _, plan_s, months_s, provider = cb.data.split(":")
+        plan, months = service.parse_plan(plan_s), int(months_s)
+        price = billing.price_of(plan, months)
+    except (ValueError, DomainError):
+        return await cb.answer()
+    if provider not in available_providers(settings) or provider == "other":
+        return await cb.answer(t("pay.provider_unavailable", lang), show_alert=True)
+    cur = f"{stars.expected_amount(plan, months, settings)} Stars" if provider == "stars" else f"{money(price)} so'm"
+    rows = [[btn(t("pay.terms.btn_read", lang), url=TERMS_URL)],
+            [btn(t("pay.terms.btn_confirm", lang), data=f"pay:tc:{plan}:{months}:{provider}", style="success")],
+            [btn(t("common.back", lang), data=f"pay:mo:{plan}:{months}")]]
+    await edit_or_send(cb, t("pay.terms.accept", lang, plan=plan_name(plan, lang), months=months, price=cur,
+                             url=TERMS_URL), kb(rows))
+    await cb.answer()
+
+
+@router.callback_query(F.data.startswith("pay:tc:"))
 async def cb_go(cb: CallbackQuery, session: AsyncSession, settings: Settings, user: User, lang, bot: Bot,
                 state: FSMContext):
     parts = cb.data.split(":")
@@ -224,6 +249,88 @@ async def cb_go(cb: CallbackQuery, session: AsyncSession, settings: Settings, us
         await edit_or_send(cb, t("pay.url.text", lang, plan=name, months=p.months, price=money(p.amount)),
                            kb([[btn(t("pay.btn.pay_url", lang), url=start["url"])]]))
     await cb.answer()
+
+
+# ---------------------------------------------------------------- /terms, /paysupport, /refund
+
+class Support(StatesGroup):
+    waiting = State()
+
+
+@router.message(Command("terms"))
+async def cmd_terms(message: Message, lang):
+    await reply(message, t("pay.terms.text", lang, url=TERMS_URL))
+
+
+@router.message(Command("paysupport"))
+async def cmd_paysupport(message: Message, lang, state: FSMContext):
+    """Mandatory for bots that sell with Stars: tell the user how to get payment help."""
+    await state.set_state(Support.waiting)
+    await reply(message, t("pay.support.intro", lang))
+
+
+@router.message(Support.waiting, F.text, ~F.text.startswith("/"))
+async def on_support_text(message: Message, session: AsyncSession, settings: Settings, user: User, lang, bot: Bot,
+                          state: FSMContext):
+    await state.clear()
+    rows = (await session.execute(select(Payment.id, Payment.provider, Payment.status).where(Payment.user_id == user.id)
+                                  .order_by(Payment.id.desc()).limit(5))).all()
+    listing = ", ".join(f"#{i} {pv}/{st}" for i, pv, st in rows) or "-"
+    text = t("pay.support.from_user", lang_of(None), tg_id=user.tg_id, name=user.first_name or user.username or "-",
+             payments=listing, text=message.text[:3000])
+    for admin_id in admin_targets(settings):
+        await _send(bot, admin_id, text)
+    await reply(message, t("pay.support.sent", lang))
+
+
+@router.message(Support.waiting, ~F.text.startswith("/"))
+async def on_support_not_text(message: Message, lang):
+    await reply(message, t("pay.support.need_text", lang))
+
+
+SUPPORT_TAG = re.compile(r"\[support:(\d+)\]")
+
+
+@router.message(F.reply_to_message, F.text)
+async def on_admin_support_reply(message: Message, user: User, lang, bot: Bot, state: FSMContext):
+    """An admin replies to a forwarded support message; the user's id is read from its [support:<id>] tag."""
+    origin = message.reply_to_message
+    m = SUPPORT_TAG.search((origin.text or "") if origin else "")
+    if not m or not user.is_admin:
+        raise SkipHandler
+    target = int(m.group(1))
+    owner_lang = lang_of(None)
+    if await _send(bot, target, t("pay.support.reply", owner_lang, text=message.text)):
+        await reply(message, t("pay.support.reply_sent", lang))
+
+
+@router.message(Command("refund"))
+async def cmd_refund(message: Message, command: CommandObject, session: AsyncSession, user: User, lang, bot: Bot):
+    """Admin-only: refund a paid Stars payment (refundStarPayment) and shorten the subscription."""
+    if not user.is_admin:
+        return await reply(message, t("pay.admin.only", lang))
+    arg = (command.args or "").strip()
+    if not arg.isdigit():
+        return await reply(message, t("pay.refund.usage", lang))
+    p = await session.get(Payment, int(arg))
+    if p is None:
+        return await reply(message, t("pay.refund.refused", lang))
+
+    async def call(user_id: int, charge_id: str):
+        return await bot.refund_star_payment(user_id=user_id, telegram_payment_charge_id=charge_id)
+    try:
+        p, changed = await stars.refund(session, user, p, call)
+    except DomainError:
+        return await reply(message, t("pay.refund.refused", lang))
+    except Exception:
+        log.exception("refundStarPayment failed for payment %s", p.id)
+        return await reply(message, t("pay.refund.failed", lang))
+    if not changed:
+        return await reply(message, t("pay.refund.already", lang, id=p.id))
+    await reply(message, t("pay.refund.done", lang, id=p.id))
+    owner = await session.get(User, p.user_id)
+    if owner is not None:
+        await _send(bot, owner.tg_id, t("pay.refund.user_notice", lang_of(owner.lang)))
 
 
 # ---------------------------------------------------------------- P2P receipt + admin review

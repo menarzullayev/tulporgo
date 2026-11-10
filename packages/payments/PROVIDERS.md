@@ -48,5 +48,11 @@ checking payment exists, is pending, belongs to the user and the amount matches.
 creates a new Payment row. `BotSubscriptionUpdated` (`router.subscription`) records canceled/active/failed and tells
 the driver. `stars_rate_uzs` (165) must be confirmed by the owner before live Stars.
 
+## Telegram Stars rules (bot commands)
+`/terms` (link `TERMS_URL` in `tulporgo_payments/__init__.py`), `/paysupport` (next message is forwarded to admins with
+the user last payment ids; admins answer by replying to it, routed by the `[support:<tg_id>]` tag), and `/refund <id>`
+(admin only: `refundStarPayment`, payment -> `refunded`, subscription shortened by the paid period, never below now).
+Every purchase goes through a terms screen with one explicit confirm button (`pay:tc:`) before any invoice/link/payment.
+
 ## Adding a gateway
 See the docstring of `providers/other.py`.

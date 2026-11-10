@@ -1,9 +1,12 @@
 # ruff: noqa: F401, F811  (fixtures are imported explicitly, see pay_fixtures.py)
+from datetime import timedelta
+
 import pytest
 from pay_fixtures import bus, cfg, engine, free_cfg, maker, s
 from pay_helpers import make_driver, make_user
+from tulporgo_core.db import utcnow
 from tulporgo_core.enums import PaymentStatus
-from tulporgo_core.errors import Forbidden, Invalid
+from tulporgo_core.errors import Conflict, Forbidden, Invalid
 from tulporgo_core.models import Payment
 from tulporgo_payments import service
 from tulporgo_payments.providers import get_provider, stars
@@ -146,3 +149,74 @@ async def test_verify_checks_shape(cfg):
     assert await gw.verify({"currency": "XTR", "invoice_payload": "pay:5"})
     assert not await gw.verify({"currency": "UZS", "invoice_payload": "pay:5"})
     assert not await gw.verify({"currency": "XTR", "invoice_payload": "evil"})
+
+
+# ---- admin refund
+
+async def paid(s, cfg, months=1):
+    d, c = await checkout(s, cfg, months=months)
+    await stars.process_successful_payment(s, d.user, **paid_kwargs(c.payment))
+    return d, c.payment
+
+
+class Telegram:
+    def __init__(self, fail=False):
+        self.calls, self.fail = [], fail
+
+    async def __call__(self, user_id, charge_id):
+        self.calls.append((user_id, charge_id))
+        if self.fail:
+            raise RuntimeError("telegram said no")
+        return True
+
+
+async def test_refund_marks_refunded_and_shortens_by_paid_period(s, cfg):
+    d, p = await paid(s, cfg)
+    adm, tg = await make_user(s, is_admin=True), Telegram()
+    until = d.subscription_until
+    _, changed = await stars.refund(s, adm, p, tg)
+    assert changed and p.status == PaymentStatus.REFUNDED and tg.calls == [(d.user.tg_id, "CH-1")]
+    assert d.subscription_until == max(until - timedelta(days=30), utcnow())
+
+
+async def test_refund_never_shortens_below_now(s, cfg):
+    d, p = await paid(s, cfg)
+    d.subscription_until = utcnow() + timedelta(days=2)       # most of the paid period already used
+    await stars.refund(s, await make_user(s, is_admin=True), p, Telegram())
+    assert d.subscription_until >= utcnow() - timedelta(seconds=1)
+
+
+async def test_refund_refused_for_non_admin(s, cfg):
+    d, p = await paid(s, cfg)
+    tg = Telegram()
+    with pytest.raises(Forbidden):
+        await stars.refund(s, d.user, p, tg)
+    assert tg.calls == [] and p.status == PaymentStatus.PAID
+
+
+async def test_refund_refused_for_unpaid_and_non_stars(s, cfg):
+    adm, tg = await make_user(s, is_admin=True), Telegram()
+    d, c = await checkout(s, cfg)
+    with pytest.raises(Conflict):
+        await stars.refund(s, adm, c.payment, tg)             # still pending
+    other = await service.start_checkout(s, d.user, cfg, "click", "pro", 1)
+    with pytest.raises(Invalid):
+        await stars.refund(s, adm, other.payment, tg)
+    assert tg.calls == []
+
+
+async def test_double_refund_is_a_noop(s, cfg):
+    d, p = await paid(s, cfg)
+    adm, tg = await make_user(s, is_admin=True), Telegram()
+    await stars.refund(s, adm, p, tg)
+    until = d.subscription_until
+    _, changed = await stars.refund(s, adm, p, tg)
+    assert not changed and len(tg.calls) == 1 and d.subscription_until == until
+
+
+async def test_refund_telegram_failure_changes_nothing(s, cfg):
+    d, p = await paid(s, cfg)
+    until = d.subscription_until
+    with pytest.raises(RuntimeError):
+        await stars.refund(s, await make_user(s, is_admin=True), p, Telegram(fail=True))
+    assert p.status == PaymentStatus.PAID and d.subscription_until == until

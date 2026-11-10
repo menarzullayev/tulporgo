@@ -14,6 +14,7 @@ from aiogram.methods import (
     CreateInvoiceLink,
     EditMessageCaption,
     EditMessageText,
+    RefundStarPayment,
     SendDocument,
     SendInvoice,
     SendMessage,
@@ -37,8 +38,8 @@ from tulporgo_core.db import Base, make_engine, make_sessionmaker, utcnow
 from tulporgo_core.enums import PaymentStatus
 from tulporgo_core.events import InMemoryBus, PaymentConfirmed
 from tulporgo_core.models import Driver, Payment, User
+from tulporgo_payments import TERMS_URL, jobs
 from tulporgo_payments import bot as paybot
-from tulporgo_payments import jobs
 
 ADMIN = 900
 _n = itertools.count(1)
@@ -196,7 +197,7 @@ async def test_obuna_during_free_period_says_free_and_offers_nothing(free_env):
 async def test_checkout_screens_blocked_during_free_period(free_env):
     env = free_env
     tg = await env.seed_driver()
-    for data in ("pay:pl:pro", "pay:mo:pro:1", "pay:go:pro:1:click", "pay:home"):
+    for data in ("pay:pl:pro", "pay:mo:pro:1", "pay:go:pro:1:click", "pay:tc:pro:1:click", "pay:home"):
         await env.press(tg, data)
         text, alert = env.last_alert()
         assert alert and "free" in text.lower()
@@ -230,7 +231,7 @@ async def test_unconfigured_providers_not_offered(tmp_path):
     tg = await e.seed_driver()
     await e.press(tg, "pay:mo:pro:1")
     assert [b.callback_data for b in buttons(e.of(EditMessageText)[-1])][:1] == ["pay:go:pro:1:stars"]
-    await e.press(tg, "pay:go:pro:1:click")                 # forged callback for a hidden provider
+    await e.press(tg, "pay:tc:pro:1:click")                 # forged callback for a hidden provider
     assert e.last_alert()[1] is True and await e.payments() == []
     detach_routers()
     await eng.dispose()
@@ -238,7 +239,7 @@ async def test_unconfigured_providers_not_offered(tmp_path):
 
 async def test_forged_callbacks_are_harmless(env):
     tg = await env.seed_driver()
-    for data in ("pay:pl:gold", "pay:mo:pro:7", "pay:mo:pro:x", "pay:go:pro:5:click", "pay:go:pro", "pay:go:pro:1:nope",
+    for data in ("pay:pl:gold", "pay:mo:pro:7", "pay:mo:pro:x", "pay:go:pro:5:click", "pay:go:pro", "pay:tc:pro:5:click", "pay:tc:pro", "pay:tc:gold:1:click", "pay:go:pro:1:nope",
                  "pay:rc:abc", "pay:rc:99999"):
         await env.press(tg, data)
     assert await env.payments() == []
@@ -254,7 +255,7 @@ async def test_non_driver_cannot_open_checkout(env):
 @pytest.mark.parametrize("provider,host", [("click", "my.click.uz"), ("payme", "test.paycom.uz")])
 async def test_url_providers_show_pay_button(env, provider, host):
     tg = await env.seed_driver()
-    await env.press(tg, f"pay:go:business:6:{provider}")
+    await env.press(tg, f"pay:tc:business:6:{provider}")
     e = env.of(EditMessageText)[-1]
     url_btn = buttons(e)[0]
     assert host in url_btn.url and "594 000" in e.text
@@ -266,7 +267,7 @@ async def test_url_providers_show_pay_button(env, provider, host):
 
 async def p2p_start(env):
     tg = await env.seed_driver()
-    await env.press(tg, "pay:go:pro:1:p2p")
+    await env.press(tg, "pay:tc:pro:1:p2p")
     return tg
 
 
@@ -360,7 +361,7 @@ async def test_receipt_button_for_someone_elses_payment_refused(env):
 
 async def stars_start(env):
     tg = await env.seed_driver()
-    await env.press(tg, "pay:go:pro:1:stars")
+    await env.press(tg, "pay:tc:pro:1:stars")
     (p,) = await env.payments()
     return tg, p
 
@@ -378,7 +379,7 @@ async def test_stars_sends_xtr_invoice_and_recurring_link(env):
 
 async def test_stars_multi_month_has_no_recurring_link(env):
     tg = await env.seed_driver()
-    await env.press(tg, "pay:go:pro:3:stars")
+    await env.press(tg, "pay:tc:pro:3:stars")
     assert env.of(SendInvoice, tg) and env.of(CreateInvoiceLink) == []
 
 
@@ -521,3 +522,128 @@ async def test_setup_jobs_notifies_driver_for_payments_confirmed_elsewhere(env):
     assert len([t for t in env.texts(tg) if "Payment received" in t]) == 1
     await asyncio.gather(*paybot.PENDING, return_exceptions=True)
     assert len([t for t in env.texts(tg) if "Payment received" in t]) == 1   # notified flag prevents repeats
+
+
+# ------------------------------------------------------------------ terms acceptance before any purchase
+
+@pytest.mark.parametrize("provider", ["stars", "click", "payme", "p2p"])
+async def test_no_payment_or_invoice_without_terms_confirmation(env, provider):
+    tg = await env.seed_driver()
+    await env.press(tg, f"pay:go:pro:1:{provider}")
+    assert await env.payments() == [] and env.of(SendInvoice) == [] and env.of(CreateInvoiceLink) == []
+    e = env.of(EditMessageText)[-1]
+    assert "accept" in e.text and TERMS_URL in e.text
+    b = buttons(e)
+    assert b[0].url == TERMS_URL
+    assert (b[1].callback_data, b[1].style) == (f"pay:tc:pro:1:{provider}", "success")
+    await env.press(tg, f"pay:tc:pro:1:{provider}")          # the explicit confirm produces the payment
+    assert len(await env.payments()) == 1
+
+
+async def test_terms_screen_shows_stars_price_and_rejects_hidden_provider(tmp_path):
+    e, eng = await make_env(tmp_path, click_secret_key="")
+    tg = await e.seed_driver()
+    await e.press(tg, "pay:go:pro:1:stars")
+    assert f"{round(59_000 / 165)} Stars" in e.of(EditMessageText)[-1].text
+    await e.press(tg, "pay:go:pro:1:click")
+    assert e.last_alert()[1] is True and await e.payments() == []
+    detach_routers()
+    await eng.dispose()
+
+
+async def test_terms_screen_blocked_during_free_period(free_env):
+    tg = await free_env.seed_driver()
+    await free_env.press(tg, "pay:go:pro:1:click")
+    assert free_env.last_alert()[1] is True and free_env.of(EditMessageText) == []
+
+
+async def test_terms_command_shows_link(env):
+    await env.say(55, "/terms")
+    assert TERMS_URL in env.of(SendMessage, 55)[0].text
+
+
+# ------------------------------------------------------------------ /paysupport
+
+def reply_msg(env, uid, text, origin_text):
+    origin = Message(message_id=next(_n), date=datetime.now(), chat=Chat(id=uid, type="private"), text=origin_text,
+                     from_user=TgUser(id=1, is_bot=True, first_name="bot"))
+    return Message(message_id=next(_n), date=datetime.now(), chat=Chat(id=uid, type="private"), text=text,
+                   from_user=env.tg(uid), reply_to_message=origin)
+
+
+async def test_paysupport_forwards_next_message_to_admins_with_payment_ids(env):
+    tg, p = await stars_start(env)
+    await env.say(tg, "/paysupport")
+    assert any("Payment help" in t for t in env.texts(tg))
+    await env.say(tg, "I paid but nothing happened")
+    (fwd,) = env.of(SendMessage, ADMIN)
+    assert f"[support:{tg}]" in fwd.text and "I paid but nothing happened" in fwd.text
+    assert f"#{p.id} stars/pending" in fwd.text
+    assert any("sent to the admins" in t for t in env.texts(tg))
+    await env.say(tg, "second message, not in support mode")     # the mode is one-shot
+    assert len(env.of(SendMessage, ADMIN)) == 1
+
+
+async def test_plain_text_is_not_forwarded_without_paysupport(env):
+    tg = await env.seed_driver()
+    await env.say(tg, "hello admins")
+    assert env.of(SendMessage, ADMIN) == []
+
+
+async def test_paysupport_rejects_non_text(env):
+    tg = await env.seed_driver()
+    await env.say(tg, "/paysupport")
+    await env.say(tg, photo=[PhotoSize(file_id="P", file_unique_id="u", width=1, height=1)])
+    assert any("text" in t.lower() for t in env.texts(tg)) and env.of(SendMessage, ADMIN) == []
+
+
+async def test_admin_reply_reaches_the_user(env):
+    tg = await env.seed_driver()
+    await env.feed(message=reply_msg(env, ADMIN, "Fixed, thanks", f"Payment support [support:{tg}]"))
+    assert any("Fixed, thanks" in t for t in env.texts(tg))
+    assert any("Reply sent" in t for t in env.texts(ADMIN))
+
+
+async def test_non_admin_cannot_use_the_support_reply_channel(env):
+    victim = await env.seed_driver()
+    attacker = await env.seed_driver()
+    await env.feed(message=reply_msg(env, attacker, "spam", f"x [support:{victim}]"))
+    assert env.texts(victim) == []
+
+
+# ------------------------------------------------------------------ /refund (Stars, admin only)
+
+async def paid_stars(env):
+    tg, p = await stars_start(env)
+    await env.feed(message=success_msg(env, tg, p))
+    return tg, p
+
+
+async def test_admin_refund_calls_telegram_and_shortens_subscription(env):
+    tg, p = await paid_stars(env)
+    before = (await env.driver(tg)).subscription_until
+    await env.say(ADMIN, f"/refund {p.id}")
+    (call,) = env.of(RefundStarPayment)
+    assert call.user_id == tg and call.telegram_payment_charge_id == "CHG1"
+    (p2,) = await env.payments()
+    assert p2.status == PaymentStatus.REFUNDED
+    assert (await env.driver(tg)).subscription_until < before
+    assert any("refunded" in t for t in env.texts(tg))
+    await env.say(ADMIN, f"/refund {p.id}")                 # double refund: no second Telegram call
+    assert len(env.of(RefundStarPayment)) == 1 and any("already" in t for t in env.texts(ADMIN))
+
+
+async def test_non_admin_refund_refused(env):
+    tg, p = await paid_stars(env)
+    await env.say(tg, f"/refund {p.id}")
+    assert env.of(RefundStarPayment) == [] and (await env.payments())[0].status == PaymentStatus.PAID
+    assert any("Admins only" in t for t in env.texts(tg))
+
+
+async def test_refund_of_unpaid_or_non_stars_or_unknown_refused(env):
+    tg, p = await stars_start(env)                           # pending Stars payment
+    await env.press(tg, "pay:tc:pro:1:click")
+    for arg in (str(p.id), "2", "999999", "abc", ""):
+        await env.say(ADMIN, f"/refund {arg}".strip())
+    assert env.of(RefundStarPayment) == []
+    assert all(x.status != PaymentStatus.REFUNDED for x in await env.payments())
