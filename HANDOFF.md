@@ -201,3 +201,14 @@ Gotchas (all in MUAMMOLAR.md):
 2. Check whether the scheduled Reactions attempt ran (scheduled-tasks list / `getStickerSet tulporgo_reactions_by_tulporgobot`).
 3. `python -m pytest -q` in `brand/mascot/poses/vector` → expect 23 passed.
 4. Greet "Saidakbar aka" in Uzbek with a 3-line status and ask which open item to take.
+
+## 7. Build goal (2026-11-10)
+
+Decisions 42–54 (QARORLAR.md) and `GOAL.md`: bot + driver side + driver userbot + Mini App built together; VPS in
+Uzbekistan; free 1–2 months but P2P/Stars/Click/Payme integrated now; no deadline; foundation first (Phase 0, Claude),
+then 4 parallel worktree agents (W1 bot, W2 userbot, W3 Mini App + API, W4 payments + referral). Public repo with
+internal docs; brand only final deliverables (`.gitignore`), third-party refs excluded; code AGPL-3.0, brand rights
+reserved (`BRAND.md`).
+Phase 0 done so far: git + public repo (commit 70b8177), LICENSE, BRAND.md, README, `.gitignore`, secret scanner
+(+tests). Next in Phase 0: monorepo skeleton (`packages/core`, `apps/*`), domain model + Alembic migrations
+(PostgreSQL + SQLite, MySQL optional), OpenAPI contract, CI (lint/types/tests/secret scan), `docs/goals/W1–W4.md`.
