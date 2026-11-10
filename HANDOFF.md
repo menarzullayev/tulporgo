@@ -21,7 +21,9 @@ Everything below was measured on 2026-11-10 unless marked otherwise.
   `.secrets/owner_chat_id`. **Never print them.**
 - Telegram user accounts: WorkBuddy's `~/.mcp-telegram/session` is **never** touched. On any
   FloodWait — stop, never hammer (his words: "akkauntga zarar yetmasin").
-- Not a git repo (`D:\Linux\coding\taxi-bot`). No CI. Windows 11, Git Bash + PowerShell.
+- Git repo, PUBLIC: https://github.com/menarzullayev/tulporgo (decisions 46, 54). Repo-local author email is the
+  GitHub noreply address (personal email must never be in public commits). `python tools/secret_scan.py` before
+  every push. No CI yet (Phase 0). Windows 11, Git Bash + PowerShell.
 
 ## 1. Project in one paragraph
 
