@@ -72,3 +72,6 @@ deploy/deployed.log
 
 # agent worktrees (local only)
 .claude/worktrees/
+
+# reproducible builds: the Python lock file IS committed (Dockerfile uses `uv sync --frozen`)
+!uv.lock

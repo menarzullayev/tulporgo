@@ -314,6 +314,9 @@ TEXTS = {
     "bot.status.withdrawn": _t("qaytarib olingan", "отозвано", "withdrawn"),
 
     # ---- errors: stable domain codes (tulporgo_core.errors) → short, human texts ----
+    "bot.err.active_trip": _t("Avval joriy qatnovni yakunlang yoki bekor qiling.",
+                             "Сначала завершите или отмените текущую поездку.",
+                             "Finish or cancel your current trip first."),
     "bot.err.blocked": _t("Hisobingiz bloklangan.", "Ваш аккаунт заблокирован.", "Your account is blocked."),
     "bot.err.bad_seats": _t("O'rinlar soni 1 dan 8 gacha bo'lsin.", "Число мест — от 1 до 8.", "Seats must be 1 to 8."),
     "bot.err.route_required": _t("Yo'nalishni ko'rsating.", "Укажите маршрут.", "Please give the route."),
