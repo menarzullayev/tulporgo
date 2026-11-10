@@ -10,8 +10,9 @@ from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.client.session.base import BaseSession
 from aiogram.enums import ParseMode
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.methods import TelegramMethod
-from aiogram.types import Chat, ForumTopic, Message, SentGuestMessage
+from aiogram.types import Chat, File, ForumTopic, Message, SentGuestMessage
 from aiogram.types import User as TgUser
 from tulporgo_bot import delivery
 from tulporgo_bot.delivery import strip_tags
@@ -46,14 +47,14 @@ class FakeSession(BaseSession):
         self.errors: dict[type, Any] = {}
         self._ids = itertools.count(1000)
         self._topics = itertools.count(7000)
+        self.files: dict[str, bytes] = {}              # file_id -> bytes served by getFile + file download
         self.has_topics = True                         # what getMe reports (BotFather: topics in private chats)
 
     async def close(self) -> None:
         return None
 
-    async def stream_content(self, *a, **kw):                      # pragma: no cover
-        raise NotImplementedError
-        yield b""
+    async def stream_content(self, url, *a, **kw):
+        yield self.files[url.rsplit("/", 1)[-1]]                       # file_path == file_id in this fake
 
     async def make_request(self, bot, method, timeout=None):
         err = self.errors.get(type(method))
@@ -66,6 +67,10 @@ class FakeSession(BaseSession):
         name = type(method).__name__
         if name.startswith("Send") and hasattr(method, "chat_id"):
             return Message(message_id=next(self._ids), date=datetime.now(), chat=Chat(id=method.chat_id, type="private"))
+        if name == "GetFile":
+            if method.file_id not in self.files:
+                raise TelegramBadRequest(method=method, message="Bad Request: file not found")
+            return File(file_id=method.file_id, file_unique_id=method.file_id + "u", file_path=method.file_id)
         if name == "GetMe":
             return TgUser(id=BOT_ID, is_bot=True, first_name="TulporGo", username="tulporgobot",
                           has_topics_enabled=self.has_topics)
