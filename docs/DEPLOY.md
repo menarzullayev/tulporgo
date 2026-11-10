@@ -40,6 +40,7 @@ sudo -iu tulporgo
 cd /opt/tulporgo/deploy
 cp .env.example .env && chmod 600 .env
 nano .env        # POSTGRES_PASSWORD, TULPORGO_BOT_TOKEN, TULPORGO_USERBOT_ENCRYPTION_KEY, admin ids, ...
+# TULPORGO_TELEGRAM_API_ID / _HASH: copy the two lines from .secrets/telegram_app.env on the owner's PC (verified 2026-11-10)
 ./scripts/deploy.sh
 ```
 

@@ -86,3 +86,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — PROGRESS rows corrected (topics OFF per decision 59; CI incl. MySQL green); public legal pages built.
 - 2026-11-10 — **goal closed by Saidakbar aka.** Open, owner-only: VPS purchase + deploy, lawyer review, Click/Payme merchant contract, my.telegram.org app, Cloudflare R2 keys, BotFather Login Widget client secret.
 - 2026-11-10 — my.telegram.org: existing app renamed TulporGo/`tulporgo` (decision 60), verified after reload.
+- 2026-11-10 — userbot API credentials stored by Saidakbar aka in `.secrets/telegram_app.env` (git-ignored); format ok and accepted by Telegram (`auth.exportLoginToken` → LoginToken, no code sent, nothing saved).
