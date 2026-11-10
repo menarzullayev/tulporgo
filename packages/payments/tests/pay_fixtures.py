@@ -1,4 +1,5 @@
-"""Payment test fixtures: SQLite in memory, fake keys only (never real credentials, never the network)."""
+"""Payment test fixtures. Not a conftest.py on purpose: that name would shadow packages/core/tests/conftest.py
+(same module name); test modules import these fixtures explicitly."""
 from datetime import date, timedelta
 
 import pytest

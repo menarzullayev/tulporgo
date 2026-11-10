@@ -1,4 +1,6 @@
+# ruff: noqa: F401, F811  (fixtures are imported explicitly, see pay_fixtures.py)
 import pytest
+from pay_fixtures import bus, cfg, engine, free_cfg, maker, s
 from pay_helpers import make_driver, make_settings, make_user
 from tulporgo_core.enums import PaymentStatus, Plan
 from tulporgo_core.errors import Conflict, Forbidden, Invalid
