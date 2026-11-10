@@ -220,6 +220,8 @@ Status 2026-11-10 (end of the `/goal` build) — **live status is `PROGRESS.md`*
 - Checks: `uv run pytest -q` (≈1 130), `uv run mypy`, `uv run ruff check packages apps tests`,
   `npm --prefix apps/miniapp test`, `python tools/secret_scan.py`. Test helpers are `*_fixtures.py` / `bot_harness.py`,
   never a second `conftest.py` (it shadows `packages/core/tests/conftest.py`).
+- GOAL §4 features are built but OFF until the owner approves them: `TULPORGO_TRIP_TOPICS`, `TULPORGO_EPHEMERAL_GROUP`,
+  `TULPORGO_WIDGETS`, `TULPORGO_LOGIN_CLIENT_SECRET` (see `docs/DEPLOY.md`). Migrations: 0001, 0002.
 - Blocked on the owner (⛔ in PROGRESS.md): VPS purchase + deploy, lawyer review, Click/Payme merchant contract,
   TulporGo app at my.telegram.org (userbot logins), Stars rate (165 so'm), off-server backup location, driver
   document storage vs localisation, approval of the UX-changing Telegram features (topics, ephemeral, Widgets, Login).

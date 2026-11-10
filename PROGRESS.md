@@ -73,3 +73,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
   Everything left is ⛔ owner-side (see tables). Owner notified in chat and via @tulporgobot.
 - 2026-11-10 — deploy rehearsal on a fresh clone found and fixed the `.env.example` crash; GOAL §4 Telegram features being built behind flags (default off).
 - 2026-11-10 — GOAL §4 features merged behind flags; Login with Telegram (OIDC) merged; full suite 1 213 pytest + 176 vitest, mypy clean on 106 files.
+- 2026-11-10 — final: CI 6/6 green with no error annotations (14cc793); GOAL.md items done or ⛔ owner-only.
