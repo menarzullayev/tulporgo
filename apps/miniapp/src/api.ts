@@ -12,6 +12,7 @@ import type {
   SharedTrip,
   Trip,
 } from './types'
+import { clearWebToken, getWebToken, type LoginConfig } from './webAuth'
 
 export class ApiError extends Error {
   constructor(
@@ -25,6 +26,8 @@ export class ApiError extends Error {
 
 const base = (): string => ((import.meta.env.VITE_API_BASE as string | undefined) ?? '/api').replace(/\/$/, '')
 
+export const apiBase = base
+
 interface Opts {
   method?: 'GET' | 'POST' | 'PATCH'
   body?: unknown
@@ -35,9 +38,15 @@ interface Opts {
 
 export async function request<T>(path: string, opts: Opts = {}): Promise<T> {
   const headers: Record<string, string> = {}
+  let webSession = false
   if (opts.auth !== false) {
     const data = initData()
+    const web = data ? null : getWebToken() // inside Telegram initData always wins; the web token is for plain browsers
     if (data) headers.Authorization = `tma ${data}`
+    else if (web) {
+      headers.Authorization = `tgweb ${web}`
+      webSession = true
+    }
   }
   let body: BodyInit | undefined
   if (opts.form) body = opts.form
@@ -59,6 +68,7 @@ export async function request<T>(path: string, opts: Opts = {}): Promise<T> {
     /* empty or non-JSON body */
   }
   if (!res.ok) {
+    if (res.status === 401 && webSession) clearWebToken() // expired or forged: show the sign-in button again
     const j = (json ?? {}) as { error?: string; detail?: unknown }
     const code = res.status === 401 ? 'unauthorized' : typeof j.error === 'string' ? j.error : 'generic'
     throw new ApiError(code, res.status, typeof j.detail === 'string' ? j.detail : '')
@@ -72,6 +82,10 @@ export const api = {
   me: () => request<Me>('/me'),
   patchMe: (body: { lang?: string; is_woman?: boolean }) => request<Me>('/me', { method: 'PATCH', body }),
   plans: () => request<Plans>('/plans'),
+
+  /** Login with Telegram (outside Telegram only). Any failure counts as "not available". */
+  loginConfig: (): Promise<LoginConfig> =>
+    request<LoginConfig>('/auth/telegram/config', { auth: false }).catch(() => ({ enabled: false, client_id: null })),
 
   searchPlaces: (q: string, signal?: AbortSignal) =>
     request<{ items: PlaceItem[] }>(`/places?q=${encodeURIComponent(q)}`, { signal }),

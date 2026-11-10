@@ -15,6 +15,7 @@ import Trip from './screens/Trip'
 import Trips from './screens/Trips'
 import UserbotLogin from './screens/UserbotLogin'
 import { inTelegram, telegramLang, useBackButton } from './tg'
+import { WebLogin } from './components/WebLogin'
 import type { Me } from './types'
 
 const TABS = [
@@ -115,6 +116,7 @@ function OpenInTelegram() {
       <Mascot name="hello" size={140} />
       <h1>TulporGo</h1>
       <p>{t('common.open_in_telegram')}</p>
+      <WebLogin />
     </div>
   )
 }

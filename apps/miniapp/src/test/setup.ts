@@ -7,6 +7,7 @@ afterEach(() => {
   vi.restoreAllMocks()
   delete (window as { Telegram?: unknown }).Telegram
   window.location.hash = ''
+  sessionStorage.clear()
   document.documentElement.removeAttribute('style')
   delete document.documentElement.dataset.scheme
 })
