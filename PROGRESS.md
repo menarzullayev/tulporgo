@@ -68,3 +68,5 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — W1 and W3 merged; integration fixes; `/malumotlarim`; e2e tests; OpenAPI file; join-request guard;
   full Docker stack verified over HTTPS. Full suite 1 110 pytest + 159 vitest, CI green. Telegram check: Bot API 10.4,
   blog 2026-08-25 — nothing newer than `TELEGRAM-YANGILIKLAR.md`.
+- 2026-11-10 — goal build complete: mypy clean (CI step), 1 129 pytest + 159 vitest, GitHub CI 6/6 green (e93704e).
+  Everything left is ⛔ owner-side (see tables). Owner notified in chat and via @tulporgobot.
