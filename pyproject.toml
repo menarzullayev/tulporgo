@@ -30,6 +30,7 @@ dev = [
     "pytest-asyncio>=0.25",
     "ruff>=0.11",
     "fakeredis>=2.26",
+    "mypy==1.18.2",
 ]
 brand = [
     "pillow>=11",
@@ -47,7 +48,7 @@ package = false
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 pythonpath = ["packages/core", "packages/payments", "apps/bot", "apps/userbot", "apps/api"]
-testpaths = ["packages/core/tests", "packages/payments/tests", "apps/bot/tests", "apps/userbot/tests", "apps/api/tests"]
+testpaths = ["packages/core/tests", "packages/payments/tests", "apps/bot/tests", "apps/userbot/tests", "apps/api/tests", "tests/e2e"]
 
 [tool.ruff]
 line-length = 120
@@ -65,3 +66,12 @@ ignore = ["E501"]
 [tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Header", "fastapi.Query", "fastapi.Body", "fastapi.Path",
                           "fastapi.File", "fastapi.Form", "fastapi.Security"]
+
+[tool.mypy]
+# GOAL.md §1 Quality: "lint, types". Run: uv run mypy
+python_version = "3.13"
+mypy_path = "packages/core,packages/payments,apps/bot,apps/userbot,apps/api"
+packages = ["tulporgo_core", "tulporgo_payments", "tulporgo_bot", "tulporgo_userbot", "tulporgo_api"]
+explicit_package_bases = true
+ignore_missing_imports = true
+warn_unused_ignores = true
