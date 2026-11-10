@@ -45,7 +45,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | ToS + privacy drafts (uz/ru), userbot consent text | ✅ | `docs/legal/` (6 texts + questions for the lawyer); lawyer review ⛔ owner |
 | TulporGo app at my.telegram.org (`TULPORGO_TELEGRAM_API_ID` / `_HASH`) for drivers' logins | ⛔ | owner registers the app (needs his phone + code) |
 | Click / Payme live keys | ⛔ | merchant contract needs YATT/MChJ; sandbox integration is in scope |
-| Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | ✅ | `/malumotlarim`: JSON export, delete after confirmation; refused during a trip; userbot logged out on Telegram's side first (core 6 + bot 5 tests) |
+| Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | ✅ | Mini App profile card → `?start=malumotlarim` deep link → bot screen; `/malumotlarim`: JSON export, delete after confirmation; refused during a trip; userbot logged out on Telegram's side first (core 6 + bot 5 tests) |
 | Public pages for the final legal texts (`tulporgo.uz/legal/...`) | ⏳ | after lawyer review |
 | Driver document photos: Telegram storage chat vs localisation (art. 27-1) | ⛔ | question for the lawyer + owner (`docs/legal/README.md` §3) |
 | Off-server backup copy inside Uzbekistan | ⛔ | owner chooses the second location (`docs/DEPLOY.md`) |
@@ -74,3 +74,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — deploy rehearsal on a fresh clone found and fixed the `.env.example` crash; GOAL §4 Telegram features being built behind flags (default off).
 - 2026-11-10 — GOAL §4 features merged behind flags; Login with Telegram (OIDC) merged; full suite 1 213 pytest + 176 vitest, mypy clean on 106 files.
 - 2026-11-10 — final: CI 6/6 green with no error annotations (14cc793); GOAL.md items done or ⛔ owner-only.
+- 2026-11-10 — owner approval flow started (CLAUDE.md rule 4): sample trip widget sent to Saidakbar aka via @tulporgobot
+  with the real `sendWidget` (accepted by Telegram production, message 183). Topics: `getMe.has_topics_enabled=false` →
+  owner enables topics for the bot in BotFather before `TULPORGO_TRIP_TOPICS=true`. Ephemeral and Login need a group /
+  the BotFather client secret to demo.
