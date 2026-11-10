@@ -17,6 +17,8 @@ jobs:
       - run: uv sync --group dev --python 3.13
       - name: ruff
         run: uv run ruff check packages apps tests
+      - name: types (mypy)
+        run: uv run mypy
       - name: secret scan (decisions 46, 54)
         run: python3 tools/secret_scan.py
 

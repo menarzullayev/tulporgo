@@ -16,7 +16,8 @@ OUT = Path(__file__).resolve().parents[3] / "docs" / "openapi.json"
 
 
 def render() -> str:
-    settings = Settings(_env_file=None, database_url="sqlite+aiosqlite:///:memory:")   # no secrets, no DB needed
+    # model_validate skips the environment and .env sources: no secrets, no DB needed
+    settings = Settings.model_validate({"database_url": "sqlite+aiosqlite:///:memory:"})
     app = create_app(settings, None, InMemoryBus())
     return json.dumps(app.openapi(), ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
