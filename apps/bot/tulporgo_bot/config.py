@@ -3,7 +3,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BotExtra(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="TULPORGO_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="TULPORGO_", env_file=".env", extra="ignore",
+                                      env_ignore_empty=True)
 
     drivers_group_id: int | None = None        # closed drivers group: member tags "Tasdiqlangan" / "Elchi" (Bot API 9.5)
     chat_username: str = "tulporgo_chat"       # public Q&A group (decision 27)

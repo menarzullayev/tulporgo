@@ -17,7 +17,8 @@ TASHKENT_UTC_OFFSET_HOURS = 5     # "daily cap" counts the driver's local day (U
 
 
 class TelegramApiSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="TULPORGO_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="TULPORGO_", env_file=".env", extra="ignore",
+                                      env_ignore_empty=True)
 
     telegram_api_id: int = 0
     telegram_api_hash: str = ""

@@ -6,7 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="TULPORGO_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="TULPORGO_", env_file=".env", extra="ignore",
+                                      env_ignore_empty=True)
 
     # storage — PostgreSQL in production, SQLite for development/tests, MySQL optional (decision 46)
     database_url: str = "sqlite+aiosqlite:///./tulporgo.db"
