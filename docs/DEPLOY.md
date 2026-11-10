@@ -22,7 +22,10 @@ stays on the server in Uzbekistan — do not copy dumps to storage abroad (Teleg
 ## Server requirements
 
 - Ubuntu 24.04 LTS, 2 vCPU, 4 GB RAM, 40 GB SSD is enough for the pilot (Samarqand).
-- A public IPv4 address; DNS `A` record `tulporgo.uz` → that address (Eskiz panel).
+- A public IPv4 address; DNS `A` record `tulporgo.uz` → that address (Eskiz panel). The zone already has
+  `www` CNAME → tulporgo.uz, SPF/DMARC "no mail" and CAA `0 issue "letsencrypt.org"`. Caddy asks Let's Encrypt first
+  and ZeroSSL only as a fallback; the CAA record lets only Let's Encrypt issue, so the fallback is refused — if it is
+  ever needed, add CAA `0 issue "sectigo.com"` (ZeroSSL's CA) first.
 - Ports 80 and 443 reachable from the internet (Let's Encrypt HTTP challenge).
 
 ## First deploy

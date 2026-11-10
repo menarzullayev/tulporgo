@@ -209,8 +209,10 @@ Gotchas (all in MUAMMOLAR.md):
    Fixed 2026-11-10 after a power cut: the single-instance check used os.kill with signal 0, which on Windows
    TERMINATES that pid (logs show nothing was killed that time). Now an OS file lock (msvcrt/fcntl, released by the OS
    on any death) and in-process network retries instead of re-exec; tests incl. crash/stale-lock + no-os.kill guard. Domain tulporgo.uz: whois (whois.cctld.uz, 2026-11-10)
-   `Status: ACTIVE`, created 09-Nov-2026, expires 09-Nov-2027, NS ns1–ns4.eskiz.uz; **no A record
-   yet** (`getaddrinfo failed` for tulporgo.uz and www) — DNS records still to be set at Eskiz.
+   `Status: ACTIVE`, created 09-Nov-2026, expires 09-Nov-2027, NS ns1–ns4.eskiz.uz. DNS zone at Eskiz (2026-11-11,
+   verified via ns1.eskiz.uz and 1.1.1.1): `www` CNAME tulporgo.uz, TXT `v=spf1 -all`, `_dmarc` TXT `v=DMARC1; p=reject`
+   (the domain sends no mail), CAA `0 issue "letsencrypt.org"`; Eskiz defaults (apex/ftp/mail/webmail A, MX) removed;
+   WHOIS contacts hidden. **No apex A record yet** — add it (→ VPS IP) after the VPS is bought.
 5. Brand guide; post templates finalisation (decisions 32–37).
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
