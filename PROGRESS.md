@@ -30,6 +30,9 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | Item | Status | Notes |
 |---|---|---|
 | Merge, end-to-end tests | ⏳ | |
+| Type checking in CI (GOAL §1 Quality: "lint, types") | ⏳ | after all merges, so `pyproject.toml` / `uv.lock` do not conflict with the workstreams |
+| OpenAPI contract file `docs/openapi.json` + CI check that it is current | ⏳ | after W3 merge |
+| Telegram features of GOAL §4 (Guest Mode, Rich Messages, `date_time`, member tags, join-request guard, topics, colored buttons, custom emoji) | ⏳ | checklist against the merged bot |
 | Docker Compose (bot, userbot, api, miniapp, PostgreSQL, Redis, proxy), backups + restore test | 🔄 | `deploy/` — postgres, redis, migrate, api, backup verified locally (Docker 29.8); restore test OK + negative tests; proxy/bot/userbot start after the merge |
 | Deploy scripts for the Uzbekistan VPS | ✅ | `deploy/scripts/` (bootstrap-vps, deploy with backup + health + revision check + rollback hint, restore, restore-test); runbook `docs/DEPLOY.md` |
 | Deploy to VPS, retire PC stub | ⛔ | needs a VPS bought by the owner (money) |

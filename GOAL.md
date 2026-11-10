@@ -27,7 +27,7 @@ apps/bot/           aiogram 3 — passenger, driver and admin flows. The ONLY pr
 apps/userbot/       Telethon workers, one per connected driver session; scheduler with the safety limits
 apps/api/           FastAPI — Mini App backend, payment webhooks (Click/Payme), Stars receipts
 apps/miniapp/       React + Telegram Mini App SDK
-infra/              docker-compose, proxy, backups, deploy scripts
+deploy/             docker-compose, proxy, backups, deploy scripts (runbook: docs/DEPLOY.md)
 docs/               OpenAPI contract, ADRs, workstream goals (docs/goals/W*.md)
 brand/ content/     existing assets — brand rights reserved (50), see BRAND.md
 ```
