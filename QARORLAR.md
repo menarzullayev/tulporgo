@@ -83,6 +83,7 @@ Barchasi @menarzullayev (Premium) hisobidan ochiladi. Telegram yangiliklari: `TE
 | 57 | Haydovchi hujjatlari (2026-11-10) | **Serverda shifrlab + Telegram yopiq chatida ham** | Server nusxasi O'zbekistonda (43-qaror), Fernet kaliti `TULPORGO_DOCUMENTS_ENCRYPTION_KEY`; Telegram nusxasi admin ko'rishi uchun qoladi |
 | 58 | Backup (2026-11-10) | **Oyiga 1 marta, 1 nusxa, avtomatik R2 ga ham**; qolgan paytda Saidakbar aka qo'lda qiladi | R2 ga faqat serverda shifrlangan fayl ketadi, kalit O'zbekistonda; lokalizatsiya bilan taranglik — yurist savoli |
 | 59 | BotFather sozlamalari (2026-11-10) | **Threaded Mode (topic'lar) yoqilmaydi; Guest Chat Mode yoqildi** | BotFather: Threaded Mode yoqilsa Telegram Stars xaridlariga qo'shimcha haq olinadi → qatnov topic'lari o'chiq (`TULPORGO_TRIP_TOPICS=false`, 55-qarordan istisno). Guest Chat Mode — Claude yoqdi, `getMe.supports_guest_queries=true` |
+| 60 | Telegram API ilovasi (2026-11-10) | **Mavjud ilova TulporGo nomiga o'zgartirildi** (title `TulporGo`, short name `tulporgo`) | Bitta hisobga bitta `api_id`; eski ilova Saidakbar aka so'zi bilan ishlatilmaydi. `api_id`/`api_hash` serverdagi `.env` ga (`TULPORGO_TELEGRAM_API_ID`/`_HASH`) Saidakbar aka ko'chiradi — chatga yozilmaydi |
 
 ## Taklif etilgan KPI (tasdiqlandi 2026-11-10, 53-qaror)
 
