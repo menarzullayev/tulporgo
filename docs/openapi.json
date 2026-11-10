@@ -704,7 +704,7 @@
     },
     "/api/driver/documents": {
       "post": {
-        "description": "Driving licence + vehicle registration (both required -> \"Tasdiqlangan\" badge after admin review), optional\ncar photo. Each file is sent to the private storage chat; only the returned file ids are stored.",
+        "description": "Driving licence + vehicle registration (both required -> \"Tasdiqlangan\" badge after admin review), optional\ncar photo. Each file is sent to the private storage chat (file ids are kept) and, when a documents key is\nconfigured, the licence and tech passport are also stored encrypted on our server (decision 57). Both copies or\nan error: if the server copy fails the request fails (the Telegram copy may remain, it is logged).",
         "operationId": "upload_documents_api_driver_documents_post",
         "parameters": [
           {

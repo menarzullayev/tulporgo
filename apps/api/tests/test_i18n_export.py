@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parents[3]
 PLACEHOLDER = re.compile(r"\{(\w+)\}")
 # error codes raised by core services that the Mini App can never trigger (admin/complaint/billing internals)
 SERVER_ONLY = {"admin_only", "cannot_block_self", "complaint_closed", "complaint_too_short", "documents_missing",
-               "payment_closed", "bad_months", "driver_only"}
+               "payment_closed", "bad_months", "driver_only", "bad_document_kind", "document_not_found",
+               "documents_key_missing",
+               "documents_key_invalid"}          # server misconfiguration: the Mini App shows its generic error
 
 
 def test_no_duplicate_keys_in_the_api_catalog():
