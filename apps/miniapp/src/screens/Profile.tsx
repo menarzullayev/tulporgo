@@ -6,7 +6,7 @@ import { formatDate } from '../format'
 import { useAction } from '../hooks'
 import { LANGS, useI18n } from '../i18n'
 import { href } from '../router'
-import { haptic, shareLink } from '../tg'
+import { haptic, openTelegram, shareLink } from '../tg'
 import { LogoutButton } from '../components/WebLogin'
 import type { LangCode, Me } from '../types'
 
@@ -24,6 +24,9 @@ export function subscriptionLine(
   const until = me.driver?.subscription_until
   return me.driver?.subscription_active && until ? t('profile.sub_until', { date: formatDate(until, lang) }) : t('profile.sub_none')
 }
+
+/** Privacy policy §8: export or delete own data — handled by the bot's /malumotlarim screen. */
+export const MY_DATA_URL = 'https://t.me/tulporgobot?start=malumotlarim'
 
 export default function Profile() {
   const { t, lang, setLang } = useI18n()
@@ -144,6 +147,14 @@ export default function Profile() {
           </a>
         </Card>
       ) : null}
+
+      <Card className="stack">
+        <h2>{t('profile.my_data')}</h2>
+        <p className="hint">{t('profile.my_data_hint')}</p>
+        <Button variant="secondary" onClick={() => openTelegram(MY_DATA_URL)}>
+          {t('profile.my_data_open')}
+        </Button>
+      </Card>
 
       <LogoutButton />
     </div>

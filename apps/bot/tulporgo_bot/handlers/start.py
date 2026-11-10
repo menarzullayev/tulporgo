@@ -65,6 +65,9 @@ async def run_start(msg: Message, payload: str | None, *, state: FSMContext, ses
         return await send_help(msg, user, settings, t)
     if p in ("elon", "obuna"):
         return await show(msg, t("bot.hint.cmd", cmd=f"/{p}"))
+    if p == "malumotlarim":                            # privacy policy §8, linked from the Mini App profile
+        from . import privacy
+        return await privacy.menu(msg, state, t)
     if p.startswith("trip_"):
         return await show_shared_trip(msg, session, p[5:], t)
     if p.startswith("g_"):

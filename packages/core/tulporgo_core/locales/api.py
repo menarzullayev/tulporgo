@@ -242,6 +242,9 @@ _ROWS: list[tuple[str, str, str, str]] = [
     ("userbot.done_hint", "Guruhlarni tanlash va chegaralarni sozlash botdagi /elon menyusida.", "Выбор групп и лимитов — в меню /elon в боте.", "Pick groups and limits in the bot's /elon menu."),
     ("userbot.unavailable", "Avto-e'lon hozircha mavjud emas.", "Автообъявления пока недоступны.", "Auto-posting is not available yet."),
     # --- subscription ---
+    ("profile.my_data", "Ma'lumotlarim", "Мои данные", "My data"),
+    ("profile.my_data_hint", "Siz haqingizdagi ma'lumotlarni yuklab olish yoki o'chirish botda.", "Скачать или удалить данные о вас можно в боте.", "Download or delete the data about you in the bot."),
+    ("profile.my_data_open", "Botda ochish", "Открыть в боте", "Open in the bot"),
     ("sub.title", "Obuna", "Подписка", "Subscription"),
     ("sub.free_now", "Hozir hamma uchun bepul. To'lov yo'llari tayyorlanmoqda.", "Сейчас для всех бесплатно. Способы оплаты готовятся.", "Everything is free for now. Payment methods are being prepared."),
     ("sub.trial", "{n} kun bepul sinov", "{n} дней бесплатного пробного периода", "{n}-day free trial"),

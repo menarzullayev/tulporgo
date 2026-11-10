@@ -214,6 +214,15 @@ describe('Driver screen', () => {
   })
 })
 
+describe('Profile: my data (privacy policy §8)', () => {
+  it('opens the bot data screen through Telegram', async () => {
+    const tg = installTelegram()
+    renderApp(<Profile />)
+    await userEvent.click(screen.getByRole('button', { name: 'Open in the bot' }))
+    expect(tg.openTelegramLink).toHaveBeenCalledWith('https://t.me/tulporgobot?start=malumotlarim')
+  })
+})
+
 describe('checkoutTarget', () => {
   it('follows only https URLs (top level or under W4 `start`)', () => {
     expect(checkoutTarget({ url: 'https://my.click.uz/pay?x=1' })).toEqual({ url: 'https://my.click.uz/pay?x=1' })

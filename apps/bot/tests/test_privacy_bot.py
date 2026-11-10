@@ -93,3 +93,17 @@ async def test_driver_delete_logs_the_userbot_out_first(env, monkeypatch):
 async def _add_account(s, driver_id):
     s.add(UserbotAccount(driver_id=driver_id, session_encrypted=SESSION, status=UserbotStatus.CONNECTED))
     await s.flush()
+
+
+async def test_deep_link_from_the_mini_app_opens_the_menu(env):
+    await env.user(1)
+    await env.say(1, "/start malumotlarim")
+    assert env.last_text(1).startswith("Ma'lumotlarim")
+    assert env.buttons(1) == ["pv:x", "pv:d"]
+
+
+async def test_other_deep_links_do_not_open_it(env):
+    # negative: a plain /start greets as before
+    await env.user(1)
+    await env.say(1, "/start")
+    assert "pv:x" not in env.buttons(1)
