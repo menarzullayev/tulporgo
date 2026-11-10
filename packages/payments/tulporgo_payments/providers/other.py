@@ -22,7 +22,7 @@ class OtherGateway(GatewayProvider):
     def configured(self) -> bool:
         return False                                       # stub: never offered to users
 
-    async def start(self, payment: Payment) -> dict:
+    async def start(self, payment: Payment, *, recurring: bool = False, **texts: str) -> dict:
         raise Invalid("provider_unavailable", "no third-party gateway is connected")
 
     async def verify(self, payload: dict) -> bool:

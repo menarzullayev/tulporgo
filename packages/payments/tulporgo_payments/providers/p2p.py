@@ -23,7 +23,7 @@ class P2PProvider(GatewayProvider):
     def configured(self) -> bool:
         return bool(self.settings.p2p_card_number.strip())
 
-    async def start(self, payment: Payment) -> dict:
+    async def start(self, payment: Payment, *, recurring: bool = False, **texts: str) -> dict:
         return {"type": "p2p", "card": self.settings.p2p_card_number, "holder": self.settings.p2p_card_holder,
                 "amount": payment.amount, "currency": "UZS", "reference": reference(payment),
                 "payment_id": payment.id}

@@ -6,7 +6,7 @@ Order on delete: refuse during an active trip → log the userbot session out on
 import json
 import logging
 
-from aiogram import F, Router
+from aiogram import Bot, F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile, CallbackQuery, Message
@@ -32,11 +32,15 @@ async def menu(msg: Message, state: FSMContext, t) -> None:
 
 
 @router.callback_query(F.data == "pv:x")
-async def export(cq: CallbackQuery, session: AsyncSession, user: User, t) -> None:
+async def export(cq: CallbackQuery, session: AsyncSession, user: User, bot: Bot, t) -> None:
     data = await privacy.export_user_data(session, user)
     payload = json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
-    await cq.message.answer_document(BufferedInputFile(payload, filename="tulporgo-data.json"),
-                                     caption=t("bot.privacy.export_caption"))
+    doc = BufferedInputFile(payload, filename="tulporgo-data.json")
+    caption = t("bot.privacy.export_caption")
+    if cq.message is not None:                  # Message or InaccessibleMessage: both can answer
+        await cq.message.answer_document(doc, caption=caption)
+    else:                                       # inline-mode callback: no message to answer
+        await bot.send_document(cq.from_user.id, doc, caption=caption)
     await cq.answer()
 
 

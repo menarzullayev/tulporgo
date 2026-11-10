@@ -82,7 +82,7 @@ class PaymeProvider(GatewayProvider):
     def configured(self) -> bool:
         return bool(self.settings.payme_merchant_id and self.settings.payme_key)
 
-    async def start(self, payment: Payment) -> dict:
+    async def start(self, payment: Payment, *, recurring: bool = False, **texts: str) -> dict:
         return {"type": "url", "url": build_checkout_url(self.settings, payment), "amount": payment.amount,
                 "amount_tiyin": payment.amount * 100, "currency": "UZS", "payment_id": payment.id}
 
@@ -111,8 +111,8 @@ def _tx_view(p: Payment) -> dict:
 
 async def _order(s: AsyncSession, params: dict) -> Payment:
     account = params.get("account")
-    raw = account.get(ACCOUNT_FIELD) if isinstance(account, dict) else None
-    if not str(raw or "").isdigit():
+    raw = str((account.get(ACCOUNT_FIELD) if isinstance(account, dict) else None) or "")
+    if not raw.isdigit():
         raise PaymeError(-31050, ACCOUNT_FIELD)
     p = (await s.execute(select(Payment).where(Payment.id == int(raw)).with_for_update())).scalar_one_or_none()
     if p is None or p.provider != "payme":

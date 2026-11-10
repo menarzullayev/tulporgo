@@ -50,10 +50,16 @@ def _kb(*rows: list[InlineKeyboardButton]) -> InlineKeyboardMarkup:
 async def _show(target: Message | CallbackQuery, text: str, markup: InlineKeyboardMarkup | None = None) -> None:
     text = decorate(text)
     if isinstance(target, CallbackQuery):
-        try:
-            await target.message.edit_text(text, reply_markup=markup)
-        except Exception:                                      # noqa: BLE001 - "message is not modified" / too old
-            await target.message.answer(text, reply_markup=markup)
+        msg = target.message
+        if isinstance(msg, Message):
+            try:
+                await msg.edit_text(text, reply_markup=markup)
+            except Exception:                                  # noqa: BLE001 - "message is not modified" / too old
+                await msg.answer(text, reply_markup=markup)
+        elif msg is not None:                                  # InaccessibleMessage: cannot be edited, can be answered
+            await msg.answer(text, reply_markup=markup)
+        elif target.bot is not None:                           # inline-mode callback: no message at all
+            await target.bot.send_message(target.from_user.id, text, reply_markup=markup)
         await target.answer()
     else:
         await target.answer(text, reply_markup=markup)
@@ -93,14 +99,15 @@ def _menu_text(account: UserbotAccount | None, settings, t) -> str:
 
 
 def _menu_markup(account: UserbotAccount | None, settings, t) -> InlineKeyboardMarkup:
-    connected = account is not None and account.session_encrypted and account.status != UserbotStatus.NEEDS_LOGIN
+    status = account.status if account is not None else None
+    connected = account is not None and bool(account.session_encrypted) and status != UserbotStatus.NEEDS_LOGIN
     rows: list[list[InlineKeyboardButton]] = []
-    if not connected or account.status == UserbotStatus.STOPPED:
+    if not connected or status == UserbotStatus.STOPPED:
         rows.append([InlineKeyboardButton(text=t("userbot.btn.connect"), style="primary",
                                           web_app=WebAppInfo(url=f"{settings.miniapp_url}?page=userbot"))])
-    if connected and account.status != UserbotStatus.STOPPED:
+    if connected and status != UserbotStatus.STOPPED:
         rows.append([_btn(t("userbot.btn.groups"), "ub:groups:0"), _btn(t("userbot.btn.interval"), "ub:int")])
-        toggle = (_btn(t("userbot.btn.resume"), "ub:resume", "success") if account.status == UserbotStatus.PAUSED
+        toggle = (_btn(t("userbot.btn.resume"), "ub:resume", "success") if status == UserbotStatus.PAUSED
                   else _btn(t("userbot.btn.pause"), "ub:pause"))
         rows.append([_btn(t("userbot.btn.template"), "ub:tpl"), toggle])
     if connected:
@@ -147,7 +154,8 @@ async def cb_menu(cq: CallbackQuery, state: FSMContext, session, settings, user,
 @router.callback_query(F.data == "ub:close")
 async def cb_close(cq: CallbackQuery, **_):
     try:
-        await cq.message.delete()
+        if isinstance(cq.message, Message):                     # None / inaccessible: nothing we can delete
+            await cq.message.delete()
     except Exception:                                           # noqa: BLE001
         log.debug("could not delete the risk screen")
     await cq.answer()
@@ -262,7 +270,7 @@ async def cb_interval_safe(cq: CallbackQuery, session, settings, user, lang, t, 
 
 @router.callback_query(F.data.startswith("ub:ir:"))
 async def cb_interval_warn(cq: CallbackQuery, lang, settings, t, **_):
-    minutes = int(cq.data.split(":")[2])
+    minutes = int((cq.data or "").split(":")[2])
     await _show(cq, t("userbot.interval.warn", minutes=minutes, min=settings.userbot_min_interval_minutes),
                 _kb([_btn(t("userbot.btn.ack"), f"ub:ia:{minutes}", "danger")], [_btn(t("userbot.btn.back"), "ub:int")]))
 
@@ -318,25 +326,25 @@ async def _step(message: Message, state: FSMContext, t, field: str, value: str, 
 
 @router.message(TemplateForm.from_, F.text)
 async def tpl_from(message: Message, state: FSMContext, t, **_):
-    await _step(message, state, t, "from_", message.text, lambda v: template.clean_text("from", v), TemplateForm.to,
+    await _step(message, state, t, "from_", message.text or "", lambda v: template.clean_text("from", v), TemplateForm.to,
                 "userbot.template.ask_to")
 
 
 @router.message(TemplateForm.to, F.text)
 async def tpl_to(message: Message, state: FSMContext, t, **_):
-    await _step(message, state, t, "to", message.text, lambda v: template.clean_text("to", v), TemplateForm.time,
+    await _step(message, state, t, "to", message.text or "", lambda v: template.clean_text("to", v), TemplateForm.time,
                 "userbot.template.ask_time")
 
 
 @router.message(TemplateForm.time, F.text)
 async def tpl_time(message: Message, state: FSMContext, t, **_):
-    await _step(message, state, t, "time", message.text, lambda v: template.clean_text("time", v), TemplateForm.seats,
+    await _step(message, state, t, "time", message.text or "", lambda v: template.clean_text("time", v), TemplateForm.seats,
                 "userbot.template.ask_seats")
 
 
 @router.message(TemplateForm.seats, F.text)
 async def tpl_seats(message: Message, state: FSMContext, t, **_):
-    await _step(message, state, t, "seats", message.text, template.parse_seats, TemplateForm.price,
+    await _step(message, state, t, "seats", message.text or "", template.parse_seats, TemplateForm.price,
                 "userbot.template.ask_price")
 
 

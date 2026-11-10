@@ -1,6 +1,7 @@
 """Offers: the driver types a price (decision 7), the passenger accepts / counters / declines, the driver answers the
 counter. Business rules live in tulporgo_core.services.rides; every button here re-checks ownership through it."""
 import re
+from typing import cast
 
 from aiogram import Bot, F, Router
 from aiogram.filters import StateFilter
@@ -16,7 +17,7 @@ from tulporgo_core.services import drivers, rides
 from .. import delivery
 from . import states
 from .cards import offer_card, offer_keyboard, price_keyboard, request_card
-from .common import PRIVATE, btn, int_arg, kb, parse_cb, price, show, user_t
+from .common import PRIVATE, btn, get_required, int_arg, kb, parse_cb, price, show, user_t
 
 router = Router(name="offers")
 router.message.filter(F.chat.type == PRIVATE)
@@ -113,7 +114,7 @@ async def offer_typed(msg: Message, state: FSMContext, session: AsyncSession, us
     if amount is None:
         await show(msg, t("bot.err.bad_price"))
         return
-    rid = (await state.get_data()).get("rid")
+    rid = (await state.get_data()).get("rid", 0)
     await _make_offer(msg, session, user, settings, bus, t, rid, amount)   # an invalid amount raises → alert, state kept
     await state.clear()
 
@@ -154,7 +155,7 @@ async def decline(cb: CallbackQuery, session: AsyncSession, user: User, bot: Bot
     o = await decline_offer(session, user, await get_offer(session, oid))
     await cb.answer()
     await show(cb, t("bot.offer.declined"))
-    d = await session.get(Driver, o.driver_id)
+    d = await get_required(session, Driver, o.driver_id)
     r = await rides.get_request(session, o.request_id)
     td = user_t(d.user)
     await delivery.send(bot, d.user.tg_id, f"✖ {td('bot.offer.declined_driver', route=f'{r.from_text} → {r.to_text}')}")
@@ -182,7 +183,8 @@ async def counter_prompt(cb: CallbackQuery, state: FSMContext, session: AsyncSes
 
 async def _counter(event, session: AsyncSession, user: User, bus, t, oid: int, amount: int) -> None:
     o = await rides.counter_offer(session, user, await get_offer(session, oid), amount, bus)   # event → the driver
-    await show(event, t("bot.counter.sent", price=price(o.counter_price, t)))
+    # counter_offer() has just stored the passenger's price on the offer
+    await show(event, t("bot.counter.sent", price=price(cast(int, o.counter_price), t)))
 
 
 @router.callback_query(F.data.startswith("cq:"))
@@ -234,7 +236,7 @@ async def counter_decline(cb: CallbackQuery, session: AsyncSession, user: User, 
     await cb.answer()
     await show(cb, t("bot.counter.kept", price=price(o.price, t)))
     r: RideRequest = await rides.get_request(session, o.request_id)
-    passenger = await session.get(User, r.passenger_id)
+    passenger = await get_required(session, User, r.passenger_id)
     tp = user_t(passenger)
     await delivery.send(bot, passenger.tg_id, f"ℹ {tp('bot.counter.refused')}\n\n{offer_card(o, d, r, tp)}",
                         offer_keyboard(o, tp))

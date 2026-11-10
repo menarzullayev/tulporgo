@@ -16,7 +16,7 @@ from tulporgo_core.services import kpi, rides
 from tulporgo_core.text.alphabet import convert
 
 from . import delivery
-from .handlers.common import esc, local_to_utc, to_local, user_t
+from .handlers.common import esc, get_required, local_to_utc, to_local, user_t
 
 log = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ async def expire_once(bot: Bot, maker: async_sessionmaker[AsyncSession], bus, no
         notes = []
         if ids:
             for r in (await s.execute(select(RideRequest).where(RideRequest.id.in_(ids)))).scalars():
-                p = await s.get(User, r.passenger_id)
+                p = await get_required(s, User, r.passenger_id)
                 notes.append((p.tg_id, user_t(p)("bot.order.expired", route=f"{r.from_text} → {r.to_text}")))
     for i in ids:                                         # committed: now announce
         await bus.publish(RequestClosed(i, "expired"))

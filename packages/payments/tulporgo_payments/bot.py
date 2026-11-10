@@ -10,7 +10,8 @@ Everything works with plain text + plain buttons; styles (Bot API 9.4) are only 
 """
 import logging
 import re
-from datetime import datetime
+from datetime import date, datetime
+from typing import Any
 
 from aiogram import Bot, F, Router
 from aiogram.dispatcher.event.bases import SkipHandler
@@ -39,7 +40,7 @@ from tulporgo_core.services.drivers import get_driver
 
 from . import TERMS_URL, service
 from .jobs import run_reminders, setup_jobs  # noqa: F401  (setup_jobs is called by the bot)
-from .providers import available_providers, get_provider, p2p, stars
+from .providers import available_providers, p2p, stars
 
 log = logging.getLogger(__name__)
 router = Router(name="payments")
@@ -57,7 +58,7 @@ def money(n: int) -> str:
     return f"{n:,}".replace(",", " ")
 
 
-def fmt_date(dt: datetime | None) -> str:
+def fmt_date(dt: date | datetime | None) -> str:
     return dt.strftime("%d.%m.%Y") if dt else "—"
 
 
@@ -77,14 +78,28 @@ async def reply(message: Message, text: str, markup=None):
     return await message.answer(decorate(text), reply_markup=markup)
 
 
+def cb_message(cb: CallbackQuery) -> Message | None:
+    """The message a button sits on when it can be edited. Inline-mode callbacks have no message (None) and old
+    messages arrive as InaccessibleMessage: it can only be answered, not edited, so it maps to None here too."""
+    return cb.message if isinstance(cb.message, Message) else None
+
+
+def cb_data(cb: CallbackQuery) -> str:
+    """Callback data; every handler here is registered with an `F.data` filter, so "" never reaches the split."""
+    return cb.data or ""
+
+
 async def edit_or_send(cb: CallbackQuery, text: str, markup=None) -> None:
-    if cb.message is not None:
+    if cb.message is None:                                 # inline-mode callback: nowhere to show it
+        return
+    msg = cb_message(cb)
+    if msg is not None:
         try:
-            await cb.message.edit_text(decorate(text), reply_markup=markup)
+            await msg.edit_text(decorate(text), reply_markup=markup)
             return
         except Exception:                                  # message too old / unchanged: fall back to a new one
             log.debug("edit failed, sending a new message", exc_info=True)
-        await cb.message.answer(decorate(text), reply_markup=markup)
+    await cb.message.answer(decorate(text), reply_markup=markup)   # InaccessibleMessage can be answered, not edited
 
 
 def admin_targets(settings: Settings) -> list[int]:
@@ -102,8 +117,8 @@ async def status_text(s: AsyncSession, user: User, settings: Settings, lang) -> 
     if driver is None:
         return t("pay.driver_only", lang), False
     if billing.in_free_period(settings):
-        return t("pay.status.free", lang, date=fmt_date(datetime.combine(settings.free_period_until,
-                                                                         datetime.min.time()))), False
+        # in_free_period() is True only when free_period_until is set
+        return t("pay.status.free", lang, date=fmt_date(settings.free_period_until)), False
     if billing.subscription_active(driver, settings):
         head = t("pay.status.active", lang, plan=plan_name(driver.plan or Plan.BASIC, lang),
                  date=fmt_date(driver.subscription_until))
@@ -145,7 +160,7 @@ async def cb_plan(cb: CallbackQuery, session, settings, user, lang):
     if not await _guard(cb, session, settings, user, lang):
         return
     try:
-        plan = service.parse_plan(cb.data.split(":")[2])
+        plan = service.parse_plan(cb_data(cb).split(":")[2])
     except DomainError:
         return await cb.answer()
     rows = [[btn(t("pay.btn.months", lang, n=m, price=money(billing.price_of(plan, m))),
@@ -168,7 +183,7 @@ async def cb_months(cb: CallbackQuery, session, settings, user, lang):
     if not await _guard(cb, session, settings, user, lang):
         return
     try:
-        _, _, plan_s, months_s = cb.data.split(":")
+        _, _, plan_s, months_s = cb_data(cb).split(":")
         plan, months = service.parse_plan(plan_s), int(months_s)
         price = billing.price_of(plan, months)
     except (ValueError, DomainError):
@@ -191,7 +206,7 @@ async def cb_terms(cb: CallbackQuery, session, settings, user, lang):
     if not await _guard(cb, session, settings, user, lang):
         return
     try:
-        _, _, plan_s, months_s, provider = cb.data.split(":")
+        _, _, plan_s, months_s, provider = cb_data(cb).split(":")
         plan, months = service.parse_plan(plan_s), int(months_s)
         price = billing.price_of(plan, months)
     except (ValueError, DomainError):
@@ -210,7 +225,7 @@ async def cb_terms(cb: CallbackQuery, session, settings, user, lang):
 @router.callback_query(F.data.startswith("pay:tc:"))
 async def cb_go(cb: CallbackQuery, session: AsyncSession, settings: Settings, user: User, lang, bot: Bot,
                 state: FSMContext):
-    parts = cb.data.split(":")
+    parts = cb_data(cb).split(":")
     try:
         plan_s, months, provider = parts[2], int(parts[3]), parts[4]
     except (IndexError, ValueError):
@@ -232,10 +247,10 @@ async def cb_go(cb: CallbackQuery, session: AsyncSession, settings: Settings, us
                                                style="success")]]))
     elif start["type"] == "stars":
         await edit_or_send(cb, t("pay.stars.text", lang, plan=name, months=p.months, stars=p.amount))
-        gw = get_provider("stars", settings)
-        texts = {"title": t("pay.stars.invoice_title", lang, plan=name),
-                 "description": t("pay.stars.invoice_desc", lang, plan=name, months=p.months),
-                 "label": t("pay.stars.label", lang)}
+        gw = stars.StarsProvider(settings)             # built directly: get_provider() is typed Optional
+        texts: dict[str, Any] = {"title": t("pay.stars.invoice_title", lang, plan=name),
+                                 "description": t("pay.stars.invoice_desc", lang, plan=name, months=p.months),
+                                 "label": t("pay.stars.label", lang)}
         params = gw.invoice_params(p, **texts)
         params.pop("provider_token", None)
         await bot.send_invoice(chat_id=cb.from_user.id, **params)
@@ -277,7 +292,7 @@ async def on_support_text(message: Message, session: AsyncSession, settings: Set
                                   .order_by(Payment.id.desc()).limit(5))).all()
     listing = ", ".join(f"#{i} {pv}/{st}" for i, pv, st in rows) or "-"
     text = t("pay.support.from_user", lang_of(None), tg_id=user.tg_id, name=user.first_name or user.username or "-",
-             payments=listing, text=message.text[:3000])
+             payments=listing, text=(message.text or "")[:3000])
     for admin_id in admin_targets(settings):
         await _send(bot, admin_id, text)
     await reply(message, t("pay.support.sent", lang))
@@ -337,7 +352,8 @@ async def cmd_refund(message: Message, command: CommandObject, session: AsyncSes
 
 @router.callback_query(F.data.startswith("pay:rc:"))
 async def cb_receipt(cb: CallbackQuery, session, user, lang, state: FSMContext):
-    pid = int(cb.data.split(":")[2]) if cb.data.split(":")[2].isdigit() else 0
+    pid_s = cb_data(cb).split(":")[2]
+    pid = int(pid_s) if pid_s.isdigit() else 0
     p = await session.get(Payment, pid) if pid else None
     if p is None or p.user_id != user.id or p.provider != "p2p":
         return await cb.answer(t("common.error", lang), show_alert=True)
@@ -345,6 +361,8 @@ async def cb_receipt(cb: CallbackQuery, session, user, lang, state: FSMContext):
         return await cb.answer(t("pay.p2p.already_submitted", lang), show_alert=True)
     if p.status != "pending":
         return await cb.answer(t("pay.p2p.closed", lang), show_alert=True)
+    if cb.message is None:                                 # inline-mode callback: nowhere to reply
+        return await cb.answer()
     await state.set_state(Receipt.waiting)
     await state.update_data(payment_id=p.id)
     await cb.message.answer(decorate(t("pay.p2p.send_receipt", lang)))
@@ -359,7 +377,12 @@ async def on_receipt(message: Message, session: AsyncSession, settings: Settings
     if p is None:
         await state.clear()
         return await reply(message, t("common.error", lang))
-    file_id = message.photo[-1].file_id if message.photo else message.document.file_id
+    if message.photo:
+        file_id = message.photo[-1].file_id
+    elif message.document:
+        file_id = message.document.file_id
+    else:                                                  # the router filter guarantees one of the two
+        return await reply(message, t("pay.p2p.need_photo", lang))
     try:
         await p2p.attach_receipt(session, user, p, file_id)
     except DomainError as e:
@@ -390,13 +413,14 @@ async def on_receipt_not_photo(message: Message, lang):
 
 
 async def _finish_review(cb: CallbackQuery, label: str) -> None:
-    if cb.message is None:
+    msg = cb_message(cb)
+    if msg is None:
         return
     try:
-        if cb.message.caption is not None:
-            await cb.message.edit_caption(caption=cb.message.caption + "\n\n" + label, reply_markup=None)
+        if msg.caption is not None:
+            await msg.edit_caption(caption=msg.caption + "\n\n" + label, reply_markup=None)
         else:
-            await cb.message.edit_text((cb.message.text or "") + "\n\n" + label, reply_markup=None)
+            await msg.edit_text((msg.text or "") + "\n\n" + label, reply_markup=None)
     except Exception:
         log.debug("could not edit review message", exc_info=True)
 
@@ -405,7 +429,7 @@ async def _finish_review(cb: CallbackQuery, label: str) -> None:
 async def cb_review(cb: CallbackQuery, session: AsyncSession, settings: Settings, bus, user: User, lang, bot: Bot):
     if not user.is_admin:                                  # admins only — checked before anything is loaded
         return await cb.answer(t("pay.admin.only", lang), show_alert=True)
-    _, action, pid_s = cb.data.split(":")
+    _, action, pid_s = cb_data(cb).split(":")
     p = await session.get(Payment, int(pid_s)) if pid_s.isdigit() else None
     if p is None:
         return await cb.answer(t("common.error", lang), show_alert=True)
@@ -445,6 +469,8 @@ async def on_pre_checkout(q: PreCheckoutQuery, session: AsyncSession, user: User
 async def on_successful_payment(message: Message, session: AsyncSession, settings: Settings, bus, user: User, lang,
                                 bot: Bot):
     sp = message.successful_payment
+    if sp is None:                                         # the F.successful_payment filter guarantees it
+        return
     try:
         p, new = await stars.process_successful_payment(
             session, user, invoice_payload=sp.invoice_payload, currency=sp.currency, total_amount=sp.total_amount,

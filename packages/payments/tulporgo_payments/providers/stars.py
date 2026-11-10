@@ -20,13 +20,12 @@ from tulporgo_core.models import Payment, User
 from tulporgo_core.services import billing
 
 from .. import service
-from .base import GatewayProvider
+from .base import GatewayProvider, TgCall
 
 log = logging.getLogger(__name__)
 SUBSCRIPTION_PERIOD = 2_592_000           # 30 days — the only value Telegram accepts
 MAX_SUBSCRIPTION_STARS = 10_000
 PAYLOAD_RE = re.compile(r"^pay:(\d+)$")
-TgCall = Callable[[str, dict], Awaitable[Any]]
 
 
 def make_payload(payment: Payment) -> str:
@@ -52,10 +51,6 @@ def http_tg_call(token: str) -> TgCall:
 
 class StarsProvider(GatewayProvider):
     name = "stars"
-
-    def __init__(self, settings, tg_call: TgCall | None = None) -> None:
-        super().__init__(settings)
-        self.tg_call = tg_call
 
     def configured(self) -> bool:
         return self.settings.stars_rate_uzs > 0

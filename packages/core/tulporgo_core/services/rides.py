@@ -1,6 +1,7 @@
 """Passenger request → driver offers → (counter) → accept → trip (decisions 6, 7, 13)."""
 import secrets
 from datetime import datetime, timedelta
+from typing import Literal, overload
 
 from sqlalchemy import or_, select, update
 from sqlalchemy.exc import IntegrityError
@@ -138,6 +139,12 @@ async def counter_offer(s: AsyncSession, passenger: User, o: Offer, counter_pric
     return o
 
 
+@overload
+async def respond_counter(s: AsyncSession, driver: Driver, o: Offer, accept: Literal[False], bus=None) -> Offer: ...
+@overload
+async def respond_counter(s: AsyncSession, driver: Driver, o: Offer, accept: Literal[True], bus=None) -> Trip: ...
+@overload
+async def respond_counter(s: AsyncSession, driver: Driver, o: Offer, accept: bool, bus=None) -> Offer | Trip: ...
 async def respond_counter(s: AsyncSession, driver: Driver, o: Offer, accept: bool, bus=None) -> Offer | Trip:
     """Driver agrees to the passenger's price → trip at that price; or declines → offer back at the driver's price."""
     if o.driver_id != driver.id:

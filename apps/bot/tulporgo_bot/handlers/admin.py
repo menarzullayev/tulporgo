@@ -6,7 +6,7 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.methods import SendPhoto
 from aiogram.types import CallbackQuery, Message
-from sqlalchemy import func, select
+from sqlalchemy import Select, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core.config import Settings
 from tulporgo_core.enums import ComplaintStatus
@@ -17,7 +17,7 @@ from tulporgo_core.text.alphabet import convert
 
 from .. import delivery
 from . import states
-from .common import PRIVATE, btn, esc, int_arg, is_admin, kb, parse_cb, person, show, user_t
+from .common import PRIVATE, btn, esc, get_required, int_arg, is_admin, kb, parse_cb, person, show, user_t
 from .recipients import admin_targets
 
 router = Router(name="admin")
@@ -29,7 +29,7 @@ def need_admin(user: User, settings: Settings) -> None:
         raise Forbidden("admin_only")
 
 
-def pending_docs_query():
+def pending_docs_query() -> Select[Driver]:
     return select(Driver).where(Driver.license_file_id.is_not(None), Driver.techpass_file_id.is_not(None),
                                 Driver.verified.is_(False)).order_by(Driver.id)
 
@@ -75,6 +75,8 @@ async def docs_list(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: Us
         await show(cb, t("bot.admin.none"), kb([btn(f"↩ {t('common.back')}", "ad:menu")]))
         return
     for d in rows:
+        if d.license_file_id is None or d.techpass_file_id is None:       # the query only returns complete sets
+            continue
         await delivery.call(bot, SendPhoto(chat_id=cb.from_user.id, photo=d.license_file_id))
         caption = f"{person(d.user)} · {esc(d.car_make)} {esc(d.car_plate)}\n{esc(d.user.phone or '')}"
         await delivery.call(bot, SendPhoto(chat_id=cb.from_user.id, photo=d.techpass_file_id, caption=caption,
@@ -83,7 +85,7 @@ async def docs_list(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: Us
              btn(f"✖ {t('bot.admin.reject')}", f"ad:dr:{d.id}", style="danger")])))
 
 
-async def _driver(session: AsyncSession, cb: CallbackQuery) -> Driver | None:
+async def _driver(session: AsyncSession, cb: CallbackQuery) -> Driver:
     parts = parse_cb(cb.data, 3)
     did = int_arg(parts[2]) if parts else None
     d = await session.get(Driver, did) if did else None
@@ -130,7 +132,7 @@ async def complaints(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: U
         await show(cb, t("bot.admin.none"), kb([btn(f"↩ {t('common.back')}", "ad:menu")]))
         return
     for c in rows:
-        author = await session.get(User, c.from_user_id)
+        author = await get_required(session, User, c.from_user_id)
         against = await session.get(User, c.against_user_id) if c.against_user_id else None
         text = f"📝 #{c.id} · {person(author)}" + (f" → {person(against)}" if against else "") + f"\n\n{esc(c.text[:800])}"
         row2 = [btn(f"🚫 {t('bot.admin.block')}", f"ad:bu:{against.id}", style="danger")] if against else []
@@ -151,7 +153,7 @@ async def resolve(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: User
     await feedback.resolve(session, user, c, accepted, t("bot.admin.resolution_ok" if accepted else "bot.admin.resolution_no"))
     await cb.answer(t("bot.admin.done"))
     await _drop_buttons(cb)
-    author = await session.get(User, c.from_user_id)
+    author = await get_required(session, User, c.from_user_id)
     ta = user_t(author)
     await delivery.send(bot, author.tg_id, f"📝 {ta('bot.complaint.resolved', id=c.id)}\n{esc(c.resolution or '')}")
 

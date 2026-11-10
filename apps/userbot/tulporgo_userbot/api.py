@@ -104,6 +104,13 @@ async def consent(driver: Driver = Depends(_driver), s: AsyncSession = Depends(g
     return await _view(s, driver, settings)
 
 
+def _login_result(result) -> tuple[str, int]:
+    """A finished login always carries the session string and the Telegram user id; anything else is a failure."""
+    if result.session is None or result.tg_user_id is None:
+        raise Invalid("login_failed")
+    return result.session, result.tg_user_id
+
+
 @router.post("/login/start")
 async def login_start(body: PhoneIn, driver: Driver = Depends(_driver), s: AsyncSession = Depends(get_session),
                       settings: Settings = Depends(get_settings)):
@@ -120,7 +127,8 @@ async def login_code(request: Request, driver: Driver = Depends(_driver), s: Asy
     result = await runtime.logins().submit_code(driver.id, await _secret(request, "code"))
     if result.status == "password_required":
         return {"status": "password_required"}
-    await service.finish_login(s, account, settings, result.session, result.tg_user_id)
+    session_string, tg_user_id = _login_result(result)
+    await service.finish_login(s, account, settings, session_string, tg_user_id)
     return await _view(s, driver, settings)
 
 
@@ -129,7 +137,8 @@ async def login_password(request: Request, driver: Driver = Depends(_driver), s:
                          settings: Settings = Depends(get_settings)):
     account = service.require_consent(await service.get_account(s, driver))
     result = await runtime.logins().submit_password(driver.id, await _secret(request, "password"))
-    await service.finish_login(s, account, settings, result.session, result.tg_user_id)
+    session_string, tg_user_id = _login_result(result)
+    await service.finish_login(s, account, settings, session_string, tg_user_id)
     return await _view(s, driver, settings)
 
 

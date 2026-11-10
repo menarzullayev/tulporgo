@@ -14,7 +14,7 @@ from tulporgo_core.services import drivers, referral, rides
 from ..config import get_extra
 from . import commands, driver as driver_flow, order
 from .cards import trip_status
-from .common import PRIVATE, bind, btn, kb, lang_name, parse_cb, show
+from .common import PRIVATE, bind, btn, get_required, kb, lang_name, parse_cb, show
 
 router = Router(name="start")
 router.message.filter(F.chat.type == PRIVATE)
@@ -115,7 +115,7 @@ async def pick_lang(cb: CallbackQuery, state: FSMContext, session: AsyncSession,
 async def show_shared_trip(msg: Message, session: AsyncSession, token: str, t) -> None:
     trip = await rides.trip_by_share_token(session, token)
     r = await rides.get_request(session, trip.request_id)
-    d = await session.get(Driver, trip.driver_id)
+    d = await get_required(session, Driver, trip.driver_id)
     await show(msg, trip_status(trip, r, d, t))
 
 
