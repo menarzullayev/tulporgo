@@ -121,10 +121,14 @@ def env(tmp_path):
 
     asyncio.run(setup())
     bus, uploader = InMemoryBus(), FakeUploader()
-    app = create_app(settings, maker=make_sessionmaker(make_engine(url)), bus=bus)
+    engine = make_engine(url)
+    app = create_app(settings, maker=make_sessionmaker(engine), bus=bus)
     app.dependency_overrides[get_uploader] = lambda: uploader
     with TestClient(app) as client:
         yield Env(client, bus, uploader, url, settings)
+        # close pooled aiosqlite connections on the client's own loop; otherwise their worker threads call back into
+        # a closed loop after the test ("Event loop is closed", seen as an error annotation in CI)
+        client.portal.call(engine.dispose)
 
 
 class Flow:

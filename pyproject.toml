@@ -49,6 +49,10 @@ package = false
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 pythonpath = ["packages/core", "packages/payments", "apps/bot", "apps/userbot", "apps/api"]
+filterwarnings = [
+    # a background thread failing after a test (e.g. a DB connection outliving its event loop) must fail the run
+    "error::pytest.PytestUnhandledThreadExceptionWarning",
+]
 testpaths = ["packages/core/tests", "packages/payments/tests", "apps/bot/tests", "apps/userbot/tests", "apps/api/tests", "tests/e2e", "tests/contract"]
 
 [tool.ruff]
