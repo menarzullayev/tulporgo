@@ -79,6 +79,10 @@ Barchasi @menarzullayev (Premium) hisobidan ochiladi. Telegram yangiliklari: `TE
 | 53 | KPI | **20-qaror taklifi qabul**, «pullik obuna» o'rniga «faol haydovchi (7 kunda 1+ qatnov)»; bot haftalik hisobotni Saidakbar akaga yuboradi | KPI bo'limi yangilandi |
 | 54 | Ochiq repo tarkibi (2026-11-10) | **Ichki hujjatlar ham ochiq** (QARORLAR, HANDOFF, MUAMMOLAR, TELEGRAM-REJA, naming); **brenddan faqat tayyor fayllar** (avatarlar, belgilar, emoji/stiker eksportlari, quvur skriptlari) | Hech qachon kirmaydi: `.secrets/`, sessiyalar, tokenlar, telefon raqamlari; oraliq brend fayllari va `.ai` manbalar lokal (skriptlar qayta yaratadi) |
 | 55 | Telegram yangi imkoniyatlari (2026-11-10) | **Hammasi yoqiladi (sukut bo'yicha)**: qatnov topic'lari, guruhda ephemeral javoblar (`/taksi`, `/yordam`), qatnov widget'i (Bot API 10.4), tulporgo.uz'da Telegram orqali kirish | Widget namunasi @tulporgobot orqali ko'rsatildi. Topic'lar BotFather'da yoqilgach ishlaydi; kirish — Client Secret kiritilgach. Har biri `deploy/.env` da `false` bilan o'chiriladi; eski ilovalarga oddiy karta |
+| 56 | Stars kursi (2026-11-10) | **1 Star = 165 so'm** | Asosiy 176, Pro 358, Biznes 600 Stars/oy; `TULPORGO_STARS_RATE_UZS` |
+| 57 | Haydovchi hujjatlari (2026-11-10) | **Serverda shifrlab + Telegram yopiq chatida ham** | Server nusxasi O'zbekistonda (43-qaror), Fernet kaliti `TULPORGO_DOCUMENTS_ENCRYPTION_KEY`; Telegram nusxasi admin ko'rishi uchun qoladi |
+| 58 | Backup (2026-11-10) | **Oyiga 1 marta, 1 nusxa, avtomatik R2 ga ham**; qolgan paytda Saidakbar aka qo'lda qiladi | R2 ga faqat serverda shifrlangan fayl ketadi, kalit O'zbekistonda; lokalizatsiya bilan taranglik — yurist savoli |
+| 59 | BotFather sozlamalari (2026-11-10) | **Threaded Mode (topic'lar) yoqilmaydi; Guest Chat Mode yoqildi** | BotFather: Threaded Mode yoqilsa Telegram Stars xaridlariga qo'shimcha haq olinadi → qatnov topic'lari o'chiq (`TULPORGO_TRIP_TOPICS=false`, 55-qarordan istisno). Guest Chat Mode — Claude yoqdi, `getMe.supports_guest_queries=true` |
 
 ## Taklif etilgan KPI (tasdiqlandi 2026-11-10, 53-qaror)
 
@@ -104,6 +108,8 @@ Asos: Qovunchi va O'razmat guruhlarida yiliga ~4 500 yo'lovchi so'rovi, Qo'shrab
 7. Telegram: 3-bosqich bajarildi 2026-11-10 (bot profili). Qolgan: «tez orada» javobi uchun doim ishlaydigan jarayon; 4-bosqich (2026-11-10): kanal @tulporgo OCHIQ, savol-javob va haydovchilar guruhi, Welcome Message ×3, Hamjamiyat — bajarildi. @tulporgo_chat ham ochiq (limit uchun @rankwant_chat hozircha yopiq qilindi — Saidakbar aka qarori, tiklash ma'lumoti `brand/telegram/released_usernames.json`). «Tez orada» javobi 2026-11-10 dan ishlayapti (`bot/coming_soon.py`, kompyuterda doim yoniq). Keyingi: bot kodi (aiogram, 17-qaror).
 
 ## Qarorlar orasidagi taranglik (e'tibor uchun)
+
+- **58 ↔ 43:** backup R2 (Cloudflare, O'zbekistondan tashqarida) ga ham ko'chiriladi. Fayl serverda shifrlanadi, kalit O'zbekistonda qoladi, lekin shifrlangan shaxsiy ma'lumotning xorijda saqlanishi ham lokalizatsiya talabiga zid bo'lishi mumkin — yurist ko'rib chiqadi (`docs/legal/README.md`).
 
 - **Keng reklama + PC'da pilot (18, 20).** Butun Samarqand bo'ylab e'lon tez yuklama keltirishi mumkin, uydagi PC esa elektr yoki internet uzilsa, barcha userbotlar to'xtaydi. Reklama boshlanishidan oldin server rejasi tayyor turishi kerak.
 - **Cheklovsiz avto-e'lon + keng reklama (8, 20).** Haydovchilar ko'p guruhga cheklovsiz e'lon bersa, guruh adminlari va Telegram spam tizimi tez sezadi. Birinchi haftalarda bloklangan hisoblar sonini kuzatish shart.

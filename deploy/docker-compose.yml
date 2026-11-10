@@ -100,7 +100,9 @@ services:
       PGUSER: tulporgo
       PGDATABASE: tulporgo
       PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
-      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+      # decision 58: one dump a month, only the newest kept; manual dumps: docker compose run --rm backup --once
+      BACKUP_KEEP_COUNT: ${BACKUP_KEEP_COUNT:-1}
+      BACKUP_DAY_OF_MONTH: ${BACKUP_DAY_OF_MONTH:-1}
       BACKUP_AT_UTC: ${BACKUP_AT_UTC:-22:00}     # 03:00 Tashkent
     volumes:
       - ./backups:/backups
@@ -110,7 +112,16 @@ services:
       postgres: {condition: service_healthy}
     restart: unless-stopped
 
+  offsite:
+    # decision 58: each new dump is encrypted here (key stays on this server) and copied to Cloudflare R2
+    <<: *app
+    command: ["python", "-m", "tulporgo_core.offsite", "watch"]
+    volumes:
+      - ./backups:/backups:ro
+      - offsite_state:/app/state
+
 volumes:
+  offsite_state:
   pgdata:
   caddy_data:
   caddy_config:

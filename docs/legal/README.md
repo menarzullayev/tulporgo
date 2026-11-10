@@ -24,6 +24,8 @@ Every product fact comes from `QARORLAR.md`. Places marked `[yurist: â€¦]` / `[Ñ
 5. **Subscriptions:** refund terms, notice period for price changes, consumer-protection requirements; Telegram Stars
    rules require `/terms`, `/paysupport` and explicit acceptance of the terms before a purchase.
 6. **Userbot:** liability wording when Telegram limits a driver's account.
+8. **Backups abroad (decision 58):** monthly database backups are also copied to Cloudflare R2 (outside Uzbekistan),
+   encrypted on our server with the key kept in Uzbekistan. Is an encrypted copy abroad compatible with art. 27-1?
 7. Minimum age for passengers; retention periods for payment records, complaints and bans; response deadline for
    data-subject requests.
 

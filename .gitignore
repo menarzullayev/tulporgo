@@ -75,3 +75,4 @@ deploy/deployed.log
 
 # reproducible builds: the Python lock file IS committed (Dockerfile uses `uv sync --frozen`)
 !uv.lock
+deploy/restore/

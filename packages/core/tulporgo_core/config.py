@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     userbot_jitter_minutes: int = 15
 
     # payments (decision 44) — sandbox keys in development, live keys only after a merchant contract
-    stars_rate_uzs: int = 165                       # so'm per Telegram Star — OWNER TO CONFIRM before live Stars
+    stars_rate_uzs: int = 165                       # so'm per Telegram Star — decision 56 (confirmed 2026-11-10)
     p2p_card_number: str = ""
     p2p_card_holder: str = ""
     click_service_id: str = ""
@@ -50,6 +50,15 @@ class Settings(BaseSettings):
     payme_key: str = ""
     payme_test_mode: bool = True
 
+
+    # off-site backup copy (decision 58): encrypted here, copied to Cloudflare R2; empty = off
+    backup_encryption_key: str = ""                 # 32-byte urlsafe base64: python -m tulporgo_core.offsite keygen
+    r2_endpoint: str = ""                           # https://<account id>.r2.cloudflarestorage.com
+    r2_bucket: str = ""
+    r2_access_key_id: str = ""
+    r2_secret_access_key: str = ""
+    r2_prefix: str = "tulporgo/"
+    offsite_keep_count: int = 1
 
 def get_settings() -> Settings:
     return Settings()

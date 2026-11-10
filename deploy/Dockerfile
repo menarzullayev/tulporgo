@@ -23,7 +23,8 @@ COPY apps/bot ./apps/bot
 COPY apps/api ./apps/api
 COPY apps/userbot ./apps/userbot
 
-RUN useradd --system --uid 10001 --home-dir /app tulporgo
+RUN useradd --system --uid 10001 --home-dir /app tulporgo \
+    && mkdir -p /app/state && chown tulporgo:tulporgo /app/state   # offsite backup state (named volume)
 USER tulporgo
 
 # default: HTTP API; compose overrides the command for bot / userbot / migrate

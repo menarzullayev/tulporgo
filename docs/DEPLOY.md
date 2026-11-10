@@ -14,7 +14,8 @@ stays on the server in Uzbekistan — do not copy dumps to storage abroad (Teleg
 | `bot` | `tulporgo-app` | aiogram polling — profile `telegram` |
 | `userbot` | `tulporgo-app` | Telethon worker for drivers' accounts — profile `telegram` |
 | `proxy` | `tulporgo-proxy` | Caddy: HTTPS (Let's Encrypt), Mini App at `/app/`, `/api/*` → api — profile `web` |
-| `backup` | `postgres:17-alpine` | daily `pg_dump` at `BACKUP_AT_UTC` (22:00 UTC = 03:00 Tashkent), keeps `BACKUP_KEEP_DAYS` |
+| `backup` | `postgres:17-alpine` | monthly `pg_dump` (decision 58), keeps the newest one |
+| `offsite` | `tulporgo-app` | encrypts each new dump here and copies it to Cloudflare R2 (one copy kept) |
 
 `COMPOSE_PROFILES=web,telegram` in `deploy/.env` turns everything on.
 
@@ -55,7 +56,7 @@ Approved by Saidakbar aka on 2026-11-10. Each is a switch in `deploy/.env` (`fal
 
 | Variable | What it does | Extra step |
 |---|---|---|
-| `TULPORGO_TRIP_TOPICS` | one topic per trip in each party's chat with the bot | BotFather: enable topics for the bot (until then the bot skips topics by itself: `getMe.has_topics_enabled`) |
+| `TULPORGO_TRIP_TOPICS` (default **false**, decision 59) | one topic per trip in each party's chat with the bot | needs BotFather → Bot Settings → Threaded Mode, which adds a fee to Telegram Stars purchases |
 | `TULPORGO_EPHEMERAL_GROUP` | `/taksi`, `/yordam` in groups answered only to the asking user | — |
 | `TULPORGO_WIDGETS` | trip-status HTML widget in private chats | — |
 | `TULPORGO_LOGIN_CLIENT_SECRET=<secret>` | "Login with Telegram" on tulporgo.uz outside Telegram (OpenID Connect) | BotFather → Bot Settings → Login Widget: origin `https://tulporgo.uz`, redirect `https://tulporgo.uz/api/auth/telegram/callback` |
@@ -76,18 +77,27 @@ It prints the live commit and appends it to `deploy/deployed.log`. On failure it
 
 Migrations only add (expand first, remove later), so rolling back the code never needs a database downgrade.
 
-## Backups
+## Backups (decision 58)
 
-- Automatic: `deploy/backups/tulporgo-<UTC timestamp>.dump` (PostgreSQL custom format), daily + before every deploy.
-- Prove they restore (throwaway container, live DB untouched): `./scripts/restore-test.sh` — run it weekly and after
-  changing anything in the backup setup. Check an older file: `./scripts/restore-test.sh tulporgo-<ts>.dump`.
-- Restore into the live database (destructive, takes a safety dump first): `./scripts/restore.sh backups/<file> --yes`.
-- Off-server copy: **open item for the owner** — a second storage location inside Uzbekistan (another VPS or a local
-  disk via `scp`). Not automated until that location exists.
+- Automatic: **one `pg_dump` a month** (`BACKUP_DAY_OF_MONTH`, default the 1st, at 22:00 UTC = 03:00 Tashkent), and one
+  before every deploy. Only the newest dump stays on the server (`BACKUP_KEEP_COUNT=1`):
+  `deploy/backups/tulporgo-<UTC timestamp>.dump`.
+- Manual (any time — Saidakbar aka does these by hand between the monthly ones):
+  `docker compose run --rm backup --once`
+- Off-site: the `offsite` service encrypts every new dump **on this server** (streaming AES-256-GCM, key
+  `TULPORGO_BACKUP_ENCRYPTION_KEY`, generate with `docker compose run --rm --no-deps offsite python -m
+  tulporgo_core.offsite keygen`) and copies only the ciphertext to Cloudflare R2 (`TULPORGO_R2_*`); R2 keeps the newest
+  copy only. **Keep the key offline too** (password manager): without it the R2 copy cannot be read. R2 is outside
+  Uzbekistan — see the lawyer question in `docs/legal/README.md`.
+- Prove a dump restores (throwaway container, live DB untouched): `./scripts/restore-test.sh`.
+- Restore from R2: download the `.enc` object from the R2 dashboard into `deploy/restore/`, then
+  `docker compose run --rm --no-deps --user root -v "$PWD/restore:/work" offsite python -m tulporgo_core.offsite decrypt /work/<file>.enc /work/<file>.dump`
+  and `./scripts/restore.sh restore/<file>.dump --yes` (replaces the live database; takes a safety dump first).
 
-Verified locally on 2026-11-10 (Docker 29.8): stack up, `migrate` at head with 1 301 places, API healthy, dump →
-restore into a throwaway PostgreSQL with identical tables and row counts; a truncated dump is rejected, `restore.sh`
-refuses without `--yes`.
+Verified locally on 2026-11-10 (Docker 29.8): two manual dumps leave exactly one file; the `offsite` service copied the
+new dump to an S3-compatible store (SeaweedFS standing in for R2) as ciphertext only (no `PGDMP` marker), the
+downloaded object decrypts byte-for-byte to the local dump, and after the next dump the store again holds one object;
+`restore-test.sh` OK. A truncated or tampered encrypted file and a wrong key are refused (`packages/core/tests/test_offsite.py`).
 
 ## Useful commands
 

@@ -69,7 +69,8 @@ def test_flags_default_to_on(monkeypatch):
     for var in FLAGS.values():
         monkeypatch.delenv(var, raising=False)
     extra = BotExtra(_env_file=None)                                       # type: ignore[call-arg]
-    assert (extra.trip_topics, extra.ephemeral_group, extra.widgets) == (True, True, True)
+    # decision 59: topics stay off (Threaded Mode adds a fee to Stars purchases)
+    assert (extra.trip_topics, extra.ephemeral_group, extra.widgets) == (False, True, True)
 
 
 @pytest.mark.parametrize("name", list(FLAGS))

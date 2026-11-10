@@ -15,7 +15,8 @@ class BotExtra(BaseSettings):
     report_hour: int = 9                       # 09:00 Asia/Tashkent
     # Optional Telegram features: OFF until the owner approves the UX (CLAUDE.md "Telegram ishlari", rule 4).
     # decision 55 (2026-11-10): the GOAL §4 features are ON by default; set a variable to false to turn one off
-    trip_topics: bool = True                   # one topic per trip in each party's private chat (Bot API 9.3; needs topics enabled in BotFather)
+    # decision 59: OFF — BotFather's Threaded Mode adds a fee to Telegram Stars purchases
+    trip_topics: bool = False                  # one topic per trip in each party's private chat (Bot API 9.3; needs topics enabled in BotFather)
     ephemeral_group: bool = True               # group commands + stale group buttons answered ephemerally (Bot API 10.2)
     widgets: bool = True                       # trip-status HTML widget in private chats (Bot API 10.4; raw sendWidget)
 
