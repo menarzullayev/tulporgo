@@ -4,6 +4,7 @@ import importlib
 import logging
 
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from tulporgo_core.config import Settings, get_settings
@@ -24,21 +25,44 @@ def make_bus(settings: Settings):
     return InMemoryBus()
 
 
-def build_dispatcher(settings: Settings, maker, bus) -> Dispatcher:
-    dp = Dispatcher()
+def detached(router):
+    """The routers are module-level singletons; letting a new dispatcher adopt one that an earlier dispatcher still
+    holds makes `build_dispatcher` callable more than once (tests, reloads)."""
+    router._parent_router = None
+    return router
+
+
+def make_storage(settings: Settings):
+    """FSM state survives restarts when Redis is configured; otherwise in memory (development, tests)."""
+    if settings.redis_url:
+        from aiogram.fsm.storage.redis import RedisStorage
+        return RedisStorage.from_url(settings.redis_url)
+    return MemoryStorage()
+
+
+def build_dispatcher(settings: Settings, maker, bus, storage=None) -> Dispatcher:
+    dp = Dispatcher(storage=storage or MemoryStorage())
     mw = ContextMiddleware(maker, settings, bus)
     for observer in (dp.message, dp.callback_query, dp.inline_query, dp.pre_checkout_query, dp.my_chat_member,
-                     dp.chat_join_request):
+                     dp.chat_join_request, dp.guest_message):
         observer.outer_middleware(mw)
     for spec in OPTIONAL_ROUTERS:
         mod_name, attr = spec.split(":")
         try:
-            dp.include_router(getattr(importlib.import_module(mod_name), attr))
+            dp.include_router(detached(getattr(importlib.import_module(mod_name), attr)))
         except ModuleNotFoundError as e:
             if e.name and mod_name.startswith(e.name):
                 log.info("router %s not available yet", spec)
             else:
                 raise
+    return dp
+
+
+def finish_dispatcher(dp: Dispatcher) -> Dispatcher:
+    """Free-text orders and the stale-button catch-all must come after every other handler, so they are attached last
+    (after any router a test or another workstream adds on top of build_dispatcher)."""
+    from tulporgo_bot.handlers import fallback
+    dp.include_router(detached(fallback))
     return dp
 
 
@@ -48,16 +72,19 @@ async def run() -> None:
     maker = make_sessionmaker(make_engine(settings.database_url))
     bus = make_bus(settings)
     bot = Bot(settings.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = build_dispatcher(settings, maker, bus)
+    dp = finish_dispatcher(build_dispatcher(settings, maker, bus, make_storage(settings)))
     setup = getattr(importlib.import_module("tulporgo_bot.handlers"), "setup", None)
+    runtime = None
     if setup:                                            # W1 wires event subscribers / schedulers here
-        await setup(bot=bot, maker=maker, settings=settings, bus=bus)
+        runtime = await setup(bot=bot, maker=maker, settings=settings, bus=bus)
     listener = asyncio.create_task(bus.listen()) if isinstance(bus, RedisBus) else None
     try:
         await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
     finally:
         if listener:
             listener.cancel()
+        if runtime is not None:
+            await runtime.stop()
 
 
 if __name__ == "__main__":
