@@ -167,11 +167,6 @@ Gotchas (all in MUAMMOLAR.md):
    `brand/icons/pack_ids.json` (`brand/icons/pack_ids.py`), `emoji_system.py` and `content/i18n/build/emoji_map.json` use them
    (verified in a real bot message), and the 15 test emoji were removed from `tulporgo_emoji_by_tulporgobot` (back to 51).
    Head emoji (Reactions, 24 TGS) stay **static** — animation offered 2026-11-10, Saidakbar aka: "hozircha kerak emas".
-   Do not change `telegram/emoji_head_tgs/` before the 2026-11-11 10:00 attempt.
-   Reactions now exists (`tulporgo_reactions`, via @Stickers 2026-11-11). Next: the icons pack — the bot is
-   rate-limited on set creation (429), so @Stickers from his account is the realistic route (his go-ahead first);
-   then
-   point `emoji_system.py` at the new packs, then `python brand/icons/test_in_pack.py remove`.
 4. Bot avatar (02 on yellow), description; channel @tulporgo, groups @tulporgo_chat + hidden drivers
    group, Community (decisions 26–31). Full staged plan: `TELEGRAM-REJA.md`. Stage 1 texts (5 languages, `content/i18n/`) **APPROVED 2026-11-10 (decision 40)**.
    Stage 2 visuals drafted 2026-11-10 and shown via bot: `brand/telegram/avatars.py` (bot yellow + solid black 02 —
@@ -232,7 +227,7 @@ Gotchas (all in MUAMMOLAR.md):
 ## 6. First 5 minutes for a new agent
 
 1. Read `C:\Users\nsn\.claude\CLAUDE.md`, this file, `QARORLAR.md`, `poses/vector/MUAMMOLAR.md`.
-2. Reactions pack exists (`tulporgo_reactions`, 2026-11-11). Next brand step: the icons pack + removing the 15 test emoji (§5 item 3b).
+2. Emoji packs are done (`tulporgo_icons`, `tulporgo_reactions`, 2026-11-11; §5 item 3b). Open work: §5 item 6.
 3. `uv run pytest -q` at the repo root → ≈1 290 passed; `python -m pytest -q` in `brand/mascot/poses/vector` → 33 passed.
 4. Greet "Saidakbar aka" in Uzbek with a 3-line status and ask which open item to take.
 
