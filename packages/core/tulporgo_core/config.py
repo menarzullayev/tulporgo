@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     admin_ids: list[int] = Field(default_factory=list)
     channel_username: str = "tulporgo"
     miniapp_url: str = "https://tulporgo.uz/app"
+    storage_chat_id: int | None = None              # private chat where uploaded documents are stored as file ids
 
     # product rules
     free_period_until: date | None = None          # decision 44: everyone free until this date (inclusive)

@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group dev --python 3.13
+      - name: ruff
+        run: uv run ruff check packages apps
+      - name: secret scan (decisions 46, 54)
+        run: python3 tools/secret_scan.py
+
+  tests-sqlite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group dev --python 3.13
+      - run: uv run pytest -q
+
+  tests-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: tulporgo_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TULPORGO_TEST_DATABASE_URL: postgresql+asyncpg://postgres:test@localhost:5432/tulporgo_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group dev --python 3.13
+      - run: uv run pytest -q packages/core/tests
+
+  tests-mysql:
+    # decision 46: MySQL is optional — this job reports but never blocks a merge
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: test
+          MYSQL_DATABASE: tulporgo_test
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd "mysqladmin ping -ptest" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      TULPORGO_TEST_DATABASE_URL: mysql+aiomysql://root:test@127.0.0.1:3306/tulporgo_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group dev --extra mysql --python 3.13
+      - run: uv run pytest -q packages/core/tests
+
+  tests-brand-and-content:
+    # brand pipeline + content tooling (Windows fonts and paths)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --group dev --group brand --python 3.13
+      - name: ffmpeg
+        run: choco install ffmpeg -y --no-progress
+      - name: content + tools + coming-soon bot
+        run: |
+          uv run python -m pytest -q -p no:cacheprovider content/i18n content/prototype bot tools
+      - name: brand
+        run: |
+          uv run python -m pytest -q -p no:cacheprovider brand/mascot/poses/vector brand/icons brand/telegram
+
+  miniapp:
+    if: ${{ hashFiles('apps/miniapp/package.json') != '' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/miniapp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run lint --if-present
+      - run: npm test --if-present
+      - run: npm run build

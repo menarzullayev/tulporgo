@@ -2,14 +2,14 @@
 
 Decision 16: texts are written once in the current Latin alphabet and converted automatically, then checked
 by hand. New Latin (decision 29, law of 2026-10-21): only o' -> ö, g' -> ğ, sh -> ş, ch -> ç; "ng" unchanged,
-never the dotless ı. Brand names, @usernames, /commands, URLs and Telegram HTML tags are never converted.
+never the dotless ı. Brand names, @usernames, /commands, URLs and Telegram HTML tags are never converted, nor are {format} placeholders.
 """
 import re
 
 APOS = "'‘’ʻʼ`"               # ' ‘ ’ ʻ ʼ `
 KEEP_WORDS = ("TulporGo", "Telegram", "Mini App", "Click", "Payme", "Premium")
 # tokens that must pass through unchanged: tags, entities, urls, @user, /command, brand words
-PROTECT = re.compile(r"<[^>]+>|&\w+;|https?://\S+|t\.me/\S+|@\w+|(?<![\w'])/\w+|"
+PROTECT = re.compile(r"\{[^{}]*\}|<[^>]+>|&\w+;|https?://\S+|t\.me/\S+|@\w+|(?<![\w'])/\w+|"
                      + "|".join(re.escape(w) for w in KEEP_WORDS))
 A = f"[{APOS}]"
 

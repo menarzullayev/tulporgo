@@ -45,8 +45,8 @@ package = false
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
-pythonpath = ["packages/core", "apps/bot", "apps/userbot", "apps/api"]
-testpaths = ["packages/core/tests", "apps/bot/tests", "apps/userbot/tests", "apps/api/tests"]
+pythonpath = ["packages/core", "packages/payments", "apps/bot", "apps/userbot", "apps/api"]
+testpaths = ["packages/core/tests", "packages/payments/tests", "apps/bot/tests", "apps/userbot/tests", "apps/api/tests"]
 
 [tool.ruff]
 line-length = 120
@@ -60,3 +60,7 @@ ignore = ["E501"]
 [tool.ruff.lint.per-file-ignores]
 "packages/core/tulporgo_core/text/alphabet.py" = ["E702", "B023", "B905"]
 "packages/core/migrations/versions/*" = ["W291"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Header", "fastapi.Query", "fastapi.Body", "fastapi.Path",
+                          "fastapi.File", "fastapi.Form", "fastapi.Security"]

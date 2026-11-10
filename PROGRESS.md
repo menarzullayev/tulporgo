@@ -8,13 +8,13 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | Item | Status | Notes |
 |---|---|---|
 | Public repo, LICENSE (AGPL-3.0), BRAND.md, README, `.gitignore`, secret scan | ✅ | https://github.com/menarzullayev/tulporgo |
-| Python workspace (uv, Python 3.13) + test config | 🔄 | |
-| `packages/core`: config, DB, models, migrations (PostgreSQL + SQLite, MySQL optional) | ⏳ | |
-| `packages/core`: services (users, drivers, requests, offers, trips, ratings, complaints, referral, billing, KPI, pricing), route parser, places, events | ⏳ | |
-| Places data: Uzbekistan regions, Samarqand districts + mahallas | 🔄 | dataset from `QARORLAR` (1 063 mahalla) not found on disk — research agent looking for official open data |
-| API contract (OpenAPI) | ⏳ | |
-| CI (GitHub Actions): ruff, tests on SQLite + PostgreSQL, secret scan, Mini App build | ⏳ | |
-| Workstream briefs `docs/goals/W1–W4.md` | ⏳ | |
+| Python workspace (uv, Python 3.13) + test config | ✅ | `pyproject.toml`, `uv.lock`; groups dev / brand; extra mysql |
+| `packages/core`: config, DB, models, migrations (PostgreSQL + SQLite, MySQL optional) | ✅ | Alembic 0001 + models-vs-migrations check; suite green on SQLite and PostgreSQL 17 |
+| `packages/core`: services (users, drivers, requests, offers, trips, ratings, complaints, referral, billing, KPI, pricing), route parser, places, events, i18n (5 languages), emoji (decision 39) | ✅ | 56 core tests |
+| Places data: Uzbekistan regions, Samarqand districts + mahallas | ✅ | 14 regions, 206 districts/cities (MHOBT codes), 1 080 / 1 102 Samarqand mahallas (data.egov.uz + kenjebaev/regions), Russian aliases; 22 mahallas missing in every source — see `data/SOURCES.md` |
+| API contract | ✅ | `docs/goals/W3.md` (endpoints), FastAPI app factory + Mini App initData auth (`apps/api/tulporgo_api/deps.py`) |
+| CI (GitHub Actions): ruff, tests on SQLite + PostgreSQL (+ MySQL, non-blocking), secret scan, brand tests on Windows, Mini App build | 🔄 | `.github/workflows/ci.yml` — first run pending |
+| Workstream briefs `docs/goals/W1–W4.md` + shared contracts (bot context middleware, API deps, router slots) | ✅ | |
 
 ## Phase 1 — parallel build (agents in worktrees)
 
@@ -44,3 +44,8 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 ## Log
 
 - 2026-11-10 — goal set; PROGRESS.md created.
+- 2026-11-10 — Phase 0 core landed (models, services, migrations, places data, i18n, emoji, contracts).
+- 2026-11-10 — incident: a push went out although the secret scan reported 5 findings (scan output was piped
+  through `tail`, hiding its exit code). Findings were only placeholder numbers (+998 90 123 45 67) — no real
+  data. Fixed: placeholder rule + negative test, pre-commit hook blocks commits on findings.
+- 2026-11-10 — owner to confirm: `stars_rate_uzs` (so'm per Telegram Star, default 165) before live Stars.
