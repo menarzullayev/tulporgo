@@ -1,8 +1,4 @@
-{
-	# set TULPORGO_ACME_EMAIL in deploy/.env to get certificate expiry notices
-	email {$TULPORGO_ACME_EMAIL:}
-}
-
+# Let's Encrypt needs no email; an empty `email` directive would stop Caddy from starting.
 {$TULPORGO_DOMAIN:localhost} {
 	encode zstd gzip
 
