@@ -23,7 +23,8 @@ Everything below was measured on 2026-11-10 unless marked otherwise.
   FloodWait — stop, never hammer (his words: "akkauntga zarar yetmasin").
 - Git repo, PUBLIC: https://github.com/menarzullayev/tulporgo (decisions 46, 54). Repo-local author email is the
   GitHub noreply address (personal email must never be in public commits). `python tools/secret_scan.py` before
-  every push. No CI yet (Phase 0). Windows 11, Git Bash + PowerShell.
+  every push (also a pre-commit hook). CI: GitHub Actions (ruff, mypy, SQLite/PostgreSQL/MySQL tests, secret scan,
+  Windows brand tests, Mini App). Windows 11, Git Bash + PowerShell.
 
 ## 1. Project in one paragraph
 
@@ -211,6 +212,16 @@ Uzbekistan; free 1–2 months but P2P/Stars/Click/Payme integrated now; no deadl
 then 4 parallel worktree agents (W1 bot, W2 userbot, W3 Mini App + API, W4 payments + referral). Public repo with
 internal docs; brand only final deliverables (`.gitignore`), third-party refs excluded; code AGPL-3.0, brand rights
 reserved (`BRAND.md`).
-Phase 0 done so far: git + public repo (commit 70b8177), LICENSE, BRAND.md, README, `.gitignore`, secret scanner
-(+tests). Next in Phase 0: monorepo skeleton (`packages/core`, `apps/*`), domain model + Alembic migrations
-(PostgreSQL + SQLite, MySQL optional), OpenAPI contract, CI (lint/types/tests/secret scan), `docs/goals/W1–W4.md`.
+Status 2026-11-10 (end of the `/goal` build) — **live status is `PROGRESS.md`**, read it first:
+- Phases 0, 1 and the code part of 2 are done and on `main`: `packages/core` (models, services, Alembic 0001, places,
+  i18n, privacy export/delete), `apps/bot` (W1), `apps/userbot` (W2), `apps/api` + `apps/miniapp` (W3),
+  `packages/payments` (W4), `tests/e2e`, `tests/contract` (`docs/openapi.json`), `deploy/` (Compose, Caddy, backups,
+  restore test, VPS scripts, runbook `docs/DEPLOY.md`), legal drafts `docs/legal/` (uz/ru).
+- Checks: `uv run pytest -q` (≈1 130), `uv run mypy`, `uv run ruff check packages apps tests`,
+  `npm --prefix apps/miniapp test`, `python tools/secret_scan.py`. Test helpers are `*_fixtures.py` / `bot_harness.py`,
+  never a second `conftest.py` (it shadows `packages/core/tests/conftest.py`).
+- Blocked on the owner (⛔ in PROGRESS.md): VPS purchase + deploy, lawyer review, Click/Payme merchant contract,
+  TulporGo app at my.telegram.org (userbot logins), Stars rate (165 so'm), off-server backup location, driver
+  document storage vs localisation, approval of the UX-changing Telegram features (topics, ephemeral, Widgets, Login).
+- The PC stub `bot/coming_soon.py` still answers @tulporgobot; stop its scheduled task before the bot runs anywhere
+  else (one `getUpdates` consumer per token).
