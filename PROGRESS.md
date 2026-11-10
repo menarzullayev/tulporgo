@@ -23,7 +23,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | W1 bot — passenger, driver, admin, KPI report | 🔄 | worktree agent | started 2026-11-10 |
 | W2 userbot — consent, encrypted sessions, safe scheduler | 🔄 | worktree agent | started 2026-11-10; consent wording aligned with `docs/legal/userbot-consent.uz.md` |
 | W3 Mini App + API | 🔄 | worktree agent | started 2026-11-10 |
-| W4 payments + referral | 🔄 | worktree agent | started 2026-11-10; added Telegram Stars rules: `/terms`, `/paysupport`, terms acceptance before paying, admin refund |
+| W4 payments + referral | ✅ | merged (7dad311) | P2P (admin review), Stars (invoice, pre-checkout, recurring link, refund), Click SHOP API, Payme Merchant API (6 methods), other-gateway base class, `/obuna`, `/terms`, `/paysupport`, terms confirmation, 3-day reminders, API checkout + webhooks; 566 payment tests. Gaps: sandbox consoles of Click/Payme not run yet; reminder de-dup in memory; Payme fiscal `detail` not sent |
 
 ## Phase 2 — integration
 
@@ -40,7 +40,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 |---|---|---|
 | ToS + privacy drafts (uz/ru), userbot consent text | ✅ | `docs/legal/` (6 texts + questions for the lawyer); lawyer review ⛔ owner |
 | Click / Payme live keys | ⛔ | merchant contract needs YATT/MChJ; sandbox integration is in scope |
-| Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | ⏳ | after the merge |
+| Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | 🔄 | core service `services/privacy.py` ✅ (6 tests); bot button after W1 merge |
 | Public pages for the final legal texts (`tulporgo.uz/legal/...`) | ⏳ | after lawyer review |
 | Driver document photos: Telegram storage chat vs localisation (art. 27-1) | ⛔ | question for the lawyer + owner (`docs/legal/README.md` §3) |
 | Off-server backup copy inside Uzbekistan | ⛔ | owner chooses the second location (`docs/DEPLOY.md`) |
@@ -59,3 +59,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — Phase 1 started: 4 agents in worktrees (W1–W4).
 - 2026-11-10 — `deploy/` stack + `tulporgo_core.manage` (migrate / seed-places / check); restore test proven locally.
 - 2026-11-10 — legal drafts uz/ru in `docs/legal/`; Telegram Stars rules (`/terms`, `/paysupport`) sent to W4.
+- 2026-11-10 — W4 merged; full suite 646 passed, ruff clean, secret scan 0. Core fix from W4: Cyrillic converter broke words ending in o/g/y (`"" in APOS` is always true).
