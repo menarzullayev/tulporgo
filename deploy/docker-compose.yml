@@ -1,0 +1,116 @@
+# TulporGo production stack (decision 43: one VPS in Uzbekistan).
+#   cd deploy && cp .env.example .env   # fill in, never commit
+#   docker compose up -d --build
+# Personal data (PostgreSQL volume, backups) stays on this server.
+name: tulporgo
+
+x-app: &app
+  image: tulporgo-app:${TULPORGO_IMAGE_TAG:-local}
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+  env_file: .env
+  environment:
+    TULPORGO_DATABASE_URL: postgresql+asyncpg://tulporgo:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}@postgres:5432/tulporgo
+    TULPORGO_REDIS_URL: redis://redis:6379/0
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "5"}
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: tulporgo
+      POSTGRES_USER: tulporgo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tulporgo -d tulporgo"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]   # pub/sub + short-lived state only
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    <<: *app
+    command: ["sh", "-c", "python -m tulporgo_core.manage migrate && python -m tulporgo_core.manage seed-places"]
+    restart: "no"
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  api:
+    <<: *app
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  bot:
+    <<: *app
+    command: ["python", "-m", "tulporgo_bot"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    profiles: ["telegram"]
+
+  userbot:
+    <<: *app
+    command: ["python", "-m", "tulporgo_userbot"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    profiles: ["telegram"]
+
+  proxy:
+    build:
+      context: ..
+      dockerfile: deploy/proxy.Dockerfile
+    image: tulporgo-proxy:${TULPORGO_IMAGE_TAG:-local}
+    environment:
+      TULPORGO_DOMAIN: ${TULPORGO_DOMAIN:-localhost}
+      TULPORGO_ACME_EMAIL: ${TULPORGO_ACME_EMAIL:-}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes: [caddy_data:/data, caddy_config:/config]
+    depends_on:
+      api: {condition: service_healthy}
+    restart: unless-stopped
+    profiles: ["web"]
+
+  backup:
+    image: postgres:17-alpine
+    environment:
+      PGHOST: postgres
+      PGUSER: tulporgo
+      PGDATABASE: tulporgo
+      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+      BACKUP_AT_UTC: ${BACKUP_AT_UTC:-22:00}     # 03:00 Tashkent
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup-loop.sh:/backup-loop.sh:ro
+    entrypoint: ["sh", "/backup-loop.sh"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

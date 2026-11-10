@@ -64,3 +64,11 @@ naming/mascot-refs/maskot-namunalari.html
 # python tooling
 .venv/
 *.db
+
+# deploy runtime (server only)
+deploy/backups/
+deploy/deployed.log
+!**/.env.example
+
+# agent worktrees (local only)
+.claude/worktrees/

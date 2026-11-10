@@ -1,0 +1,21 @@
+# Build context = repository root. Only code goes into images — never secrets, sessions or brand sources.
+**
+!pyproject.toml
+!uv.lock
+!packages/**
+!apps/bot/**
+!apps/api/**
+!apps/userbot/**
+!apps/miniapp/**
+!deploy/Caddyfile
+
+# re-exclude inside the allowed folders
+**/__pycache__
+**/*.pyc
+**/tests/**
+**/node_modules/**
+apps/miniapp/dist/**
+**/*.db
+**/*.session
+**/.env
+**/*.env

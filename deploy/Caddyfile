@@ -1,0 +1,31 @@
+{
+	# set TULPORGO_ACME_EMAIL in deploy/.env to get certificate expiry notices
+	email {$TULPORGO_ACME_EMAIL:}
+}
+
+{$TULPORGO_DOMAIN:localhost} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# no X-Frame-Options: Telegram Web clients embed the Mini App in an iframe
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+
+	redir /app /app/ 308
+	handle_path /app/* {
+		root * /srv/app
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle {
+		redir https://t.me/tulporgobot 302
+	}
+}
