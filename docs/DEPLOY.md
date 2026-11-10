@@ -95,6 +95,10 @@ Migrations only add (expand first, remove later), so rolling back the code never
   tulporgo_core.offsite keygen`) and copies only the ciphertext to Cloudflare R2 (`TULPORGO_R2_*`); R2 keeps the newest
   copy only. **Keep the key offline too** (password manager): without it the R2 copy cannot be read. R2 is outside
   Uzbekistan — see the lawyer question in `docs/legal/README.md`.
+  The R2 side is ready (decision 62): Cloudflare account "TulporGo" (separate from the owner's other projects), private
+  bucket `tulporgo-backup` (EEUR), token `tulporgo-offsite` = Object Read & Write on that bucket only. The four
+  `TULPORGO_R2_*` values are in the owner's git-ignored `.secrets/r2.env`; copy those four lines into `deploy/.env`.
+  Once the VPS has its IP, add it to the token's "Client IP Address Filtering" in the R2 dashboard.
 - Prove a dump restores (throwaway container, live DB untouched): `./scripts/restore-test.sh`.
 - Restore from R2: download the `.enc` object from the R2 dashboard into `deploy/restore/`, then
   `docker compose run --rm --no-deps --user root -v "$PWD/restore:/work" offsite python -m tulporgo_core.offsite decrypt /work/<file>.enc /work/<file>.dump`

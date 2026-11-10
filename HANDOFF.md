@@ -217,7 +217,8 @@ Gotchas (all in MUAMMOLAR.md):
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
      lawyer review (`docs/legal/README.md`, 8 questions); legal status (YATT/MChJ) + Click/Payme merchant contracts;
-     Cloudflare R2 account + keys (decision 58); BotFather Login Widget client secret; after deploy: BotFather
+     BotFather Login Widget client secret; after deploy: R2 values from `.secrets/r2.env` into `deploy/.env` and the
+     VPS IP on the R2 token (decision 62; account, bucket and token are ready and verified); BotFather
      "Configure Mini App" + menu button (`getMe.has_main_web_app=false`).
    - **Owner to confirm (rules the agents chose, not in QARORLAR):** 3 open requests per passenger, max price
      5 000 000 so'm, request TTL 120 min / offer TTL 30 min; userbot 5-minute absolute floor; userbot posts in the
