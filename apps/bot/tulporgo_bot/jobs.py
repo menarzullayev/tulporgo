@@ -1,5 +1,5 @@
 """Background jobs started by `handlers.setup`: expire requests every minute, weekly KPI report to the owner
-(Monday 09:00 Asia/Tashkent), member-tag sync in the drivers group."""
+(Monday 09:00 Asia/Tashkent), member-tag sync in the drivers group, hourly purge of rejected document copies."""
 import asyncio
 import logging
 from collections.abc import Awaitable, Callable
@@ -12,7 +12,7 @@ from tulporgo_core.config import Settings
 from tulporgo_core.db import session_scope, utcnow
 from tulporgo_core.events import RequestClosed
 from tulporgo_core.models import RideRequest, User
-from tulporgo_core.services import kpi, rides
+from tulporgo_core.services import documents, kpi, rides
 from tulporgo_core.text.alphabet import convert
 
 from . import delivery
@@ -44,6 +44,15 @@ async def expire_once(bot: Bot, maker: async_sessionmaker[AsyncSession], bus, no
     for tg_id, text in notes:
         await delivery.send(bot, tg_id, f"⌛ {esc(text)}")
     return ids
+
+
+async def purge_documents_once(maker: async_sessionmaker[AsyncSession], now: datetime | None = None) -> int:
+    """Remove the rejected document copies whose keeping period is over (decision 63). Returns the rows removed."""
+    async with session_scope(maker) as s:
+        removed = await documents.purge_rejected(s, now)
+    if removed:
+        log.info("purged %d rejected document copies", removed)
+    return removed
 
 
 async def weekly_report(bot: Bot, maker: async_sessionmaker[AsyncSession], settings: Settings,

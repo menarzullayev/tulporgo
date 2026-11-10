@@ -63,8 +63,9 @@ Ma'lumotlaringiz sotilmaydi va reklama uchun uchinchi shaxslarga berilmaydi.
 O'zbekiston fuqarolarining shaxsga doir ma'lumotlari **O'zbekiston hududidagi serverda** saqlanadi (43-qaror).
 
 Haydovchi hujjatlari (guvohnoma, texpasport) rasmlari O'zbekistondagi serverda **shifrlangan** holda saqlanadi;
-tekshiruv qulayligi uchun nusxasi Telegram'ning yopiq chatida ham turadi (57-qaror). Hujjat rad etilsa yoki
-ma'lumot o'chirilsa, server nusxasi o'chiriladi.
+tekshiruv qulayligi uchun nusxasi Telegram'ning yopiq chatida ham turadi (57-qaror). Hujjat rad etilsa, server
+nusxasi 7 kun saqlanadi (e'tiroz yoki qayta ko'rib chiqish uchun), so'ng avtomatik o'chiriladi (63-qaror).
+Ma'lumotlarni o'chirishni so'rasangiz, server nusxasi darhol o'chiriladi.
 
 Oylik zaxira nusxa serverda shifrlanib, Cloudflare R2'ga ham ko'chiriladi; shifr kaliti O'zbekistonda qoladi
 (58-qaror). `[yurist: Telegram nusxasi va shifrlangan xorijiy zaxira lokalizatsiya talabiga mosmi]`

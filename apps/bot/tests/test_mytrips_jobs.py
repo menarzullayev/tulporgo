@@ -161,7 +161,8 @@ async def test_weekly_report_without_an_owner_chat_sends_nothing(env):
 async def test_setup_starts_and_stops_background_jobs(env):
     runtime = await setup(bot=env.bot, maker=env.maker, settings=env.settings, bus=env.bus, jobs=True)
     try:
-        assert len(runtime.tasks) == 3 and not any(t.done() for t in runtime.tasks)
+        # expire, weekly report, member tags, rejected-documents purge (decision 63)
+        assert len(runtime.tasks) == 4 and not any(t.done() for t in runtime.tasks)
     finally:
         await runtime.stop()
     assert all(t.cancelled() or t.done() for t in runtime.tasks)

@@ -215,10 +215,10 @@ Gotchas (all in MUAMMOLAR.md):
      BotFather Login Widget client secret; after deploy: R2 values from `.secrets/r2.env` into `deploy/.env` and the
      VPS IP on the R2 token (decision 62; account, bucket and token are ready and verified); BotFather
      "Configure Mini App" + menu button (`getMe.has_main_web_app=false`).
-   - **Owner to confirm (rules the agents chose, not in QARORLAR):** 3 open requests per passenger, max price
-     5 000 000 so'm, request TTL 120 min / offer TTL 30 min; userbot 5-minute absolute floor; userbot posts in the
-     driver's language (new alphabet in public groups); rejected documents delete the server copy; a Stars refund
-     shortens the subscription; the share page shows the car plate; a driver cancelling before start reopens the request.
+   - ~~Owner to confirm (rules the agents chose)~~ — **confirmed 2026-11-11, decision 63**; one change: a rejected
+     document's server copy is purged after 7 days (`rejected_documents_keep_days`, hourly bot job), not at once.
+   - **Email (decision 64):** `info@tulporgo.uz` — pick a mail service, then MX + SPF/DMARC at Eskiz (today they say
+     "no mail"), then put the address into the `[yurist: … email]` places of `docs/legal/privacy.*` and `terms.*`.
    - **Later:** other regions' mahallas (+22 missing in Samarqand); new-alphabet spelling rules (decision 16); the
      userbot *reading* groups to pick up passenger requests (decision 8 — not built, it only posts); Click/Payme sandbox
      consoles; watch blocked driver accounts in the first weeks of auto-posting.

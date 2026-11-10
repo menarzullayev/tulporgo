@@ -135,7 +135,7 @@ async def reject(cb: CallbackQuery, bot: Bot, session: AsyncSession, user: User,
     if d.verified:
         raise Forbidden("already_verified")
     d.license_file_id = d.techpass_file_id = None        # the driver can send clearer photos
-    await documents.delete_for_driver(session, d)        # the rejected server copy goes too
+    await documents.mark_rejected(session, d, settings)  # decision 63: kept 7 days, then the hourly job purges it
     await cb.answer(t("bot.admin.rejected"))
     await _drop_buttons(cb)
     await delivery.send(bot, d.user.tg_id, f"✖ {user_t(d.user)('bot.docs.rejected')}",

@@ -115,6 +115,9 @@ class DriverDocument(Base):
     # LONGBLOB on MySQL (plain BLOB tops out at 64 KB), BYTEA on PostgreSQL, BLOB on SQLite
     data_encrypted: Mapped[bytes] = mapped_column(LargeBinary().with_variant(LONGBLOB(), "mysql"))
     created_at: Mapped[datetime] = _now_col()
+    # set when an admin rejects the documents (decision 63): the row is purged once this moment has passed;
+    # a new upload clears it
+    delete_after: Mapped[datetime | None] = mapped_column(DateTime, nullable=True, index=True)
 
 
 class RideRequest(Base):

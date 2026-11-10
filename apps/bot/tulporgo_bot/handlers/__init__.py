@@ -57,5 +57,7 @@ async def setup(bot, maker, settings, bus, jobs: bool = True) -> Runtime:
                                               "expire")),
             asyncio.create_task(job_mod.weekly_loop(bot, maker, settings, extra.report_weekday, extra.report_hour)),
             asyncio.create_task(job_mod.every(extra.tags_every_seconds, notifier.tags.sync, "member-tags")),
+            asyncio.create_task(job_mod.every(extra.documents_purge_every_seconds,
+                                              lambda: job_mod.purge_documents_once(maker), "documents-purge")),
         ]
     return runtime

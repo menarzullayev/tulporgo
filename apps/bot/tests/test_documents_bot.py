@@ -1,7 +1,11 @@
 """Driver documents kept encrypted on our server too (decision 57): bot upload path and admin retrieval."""
+from datetime import timedelta
+
 from bot_harness import Env, tx
 from cryptography.fernet import Fernet
 from sqlalchemy import select
+from tulporgo_bot import jobs
+from tulporgo_core.db import utcnow
 from tulporgo_core.models import Driver, DriverDocument, User
 from tulporgo_core.services import documents
 
@@ -139,14 +143,39 @@ async def test_non_admin_cannot_fetch_the_server_copy(tmp_path):
         await env.stop()
 
 
-async def test_admin_reject_removes_the_server_copy(tmp_path):
+async def test_admin_reject_keeps_the_server_copy_seven_days_then_the_job_purges_it(tmp_path):
+    """Decision 63: a rejected copy stays 7 days (a dispute, a second look), then the hourly job removes it."""
     env = await start(tmp_path, documents_encryption_key=KEY)
     try:
         env.fake.files.update({"lic-1": LICENCE, "tp-1": TECHPASS})
         await send_both(env)
         d = await driver_row(env)
+        before = utcnow()
         await env.press(50, f"ad:dr:{d.id}")
+        rows = await server_rows(env)
+        assert [r.kind for r in rows] == ["license", "techpass"]                 # not deleted at once
+        for r in rows:
+            assert before + timedelta(days=7) <= r.delete_after <= utcnow() + timedelta(days=7)
+        # negative: the job leaves it alone while the 7 days run
+        assert await jobs.purge_documents_once(env.maker, now=utcnow() + timedelta(days=6, hours=23)) == 0
+        assert len(await server_rows(env)) == 2
+        assert await jobs.purge_documents_once(env.maker, now=utcnow() + timedelta(days=7, minutes=1)) == 2
         assert await server_rows(env) == []
         assert env.settings.documents_encryption_key == KEY and documents.enabled(env.settings)
+    finally:
+        await env.stop()
+
+
+async def test_a_new_upload_after_a_rejection_is_not_purged(tmp_path):
+    env = await start(tmp_path, documents_encryption_key=KEY)
+    try:
+        env.fake.files.update({"lic-1": LICENCE, "tp-1": TECHPASS, "lic-2": LICENCE, "tp-2": TECHPASS})
+        await send_both(env)
+        d = await driver_row(env)
+        await env.press(50, f"ad:dr:{d.id}")
+        await send_both(env, "lic-2", "tp-2")                                      # clearer photos, under review
+        assert all(r.delete_after is None for r in await server_rows(env))
+        assert await jobs.purge_documents_once(env.maker, now=utcnow() + timedelta(days=30)) == 0
+        assert len(await server_rows(env)) == 2
     finally:
         await env.stop()

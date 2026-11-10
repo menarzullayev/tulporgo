@@ -98,3 +98,27 @@ def test_driver_documents_table_is_added_and_dropped_by_0003(tmp_path):
     assert inspected() is None
     command.upgrade(c, "head")
     command.check(c)
+
+
+def test_document_delete_after_is_added_and_dropped_by_0004(tmp_path):
+    from sqlalchemy import create_engine, inspect
+    if os.environ.get("TULPORGO_TEST_DATABASE_URL"):
+        pytest.skip("column inspection below is written for the SQLite file; other databases are covered by `check`")
+    path = tmp_path / "e.db"
+    c = cfg(f"sqlite+aiosqlite:///{path.as_posix()}")
+
+    def columns():
+        eng = create_engine(f"sqlite:///{path.as_posix()}")
+        try:
+            return {col["name"] for col in inspect(eng).get_columns("driver_documents")}
+        finally:
+            eng.dispose()
+
+    command.upgrade(c, "0003")
+    assert "delete_after" not in columns()
+    command.upgrade(c, "0004")
+    assert "delete_after" in columns()
+    command.downgrade(c, "0003")                         # negative: the downgrade really drops the column
+    assert "delete_after" not in columns()
+    command.upgrade(c, "head")
+    command.check(c)

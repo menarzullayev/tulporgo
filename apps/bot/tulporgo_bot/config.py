@@ -11,6 +11,7 @@ class BotExtra(BaseSettings):
     rate_per_second: float = 25.0              # Telegram allows ~30 msg/s to different chats; keep headroom
     expire_every_seconds: int = 60
     tags_every_seconds: int = 1800
+    documents_purge_every_seconds: int = 3600            # rejected document copies (decision 63)
     report_weekday: int = 0                    # Monday
     report_hour: int = 9                       # 09:00 Asia/Tashkent
     # Optional Telegram features: OFF until the owner approves the UX (CLAUDE.md "Telegram ishlari", rule 4).

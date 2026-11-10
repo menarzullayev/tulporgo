@@ -10,10 +10,11 @@ Development: with an empty key `store` does nothing and returns None. PRODUCTION
 Document bytes and the key are never logged and never put into error messages.
 """
 import hashlib
+from datetime import datetime, timedelta
 from typing import Literal
 
 from cryptography.fernet import Fernet, InvalidToken
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import Settings
@@ -90,6 +91,7 @@ async def store(s: AsyncSession, driver: Driver, kind: str, content: bytes, cont
         row.content_type, row.size, row.data_encrypted = real, len(content), token
         row.sha256 = hashlib.sha256(content).hexdigest()
         row.created_at = utcnow()
+        row.delete_after = None                      # a new upload is under review again, not a rejected copy
     await s.flush()
     return row
 
@@ -117,6 +119,22 @@ async def load(s: AsyncSession, driver: Driver, kind: str, settings: Settings) -
 
 
 async def delete_for_driver(s: AsyncSession, driver: Driver) -> int:
-    """Remove every server copy of the driver's documents; returns the number of rows."""
+    """Remove every server copy of the driver's documents at once (privacy deletion); returns the number of rows."""
     res = await s.execute(delete(DriverDocument).where(DriverDocument.driver_id == driver.id))
+    return rowcount(res)
+
+
+async def mark_rejected(s: AsyncSession, driver: Driver, settings: Settings, now: datetime | None = None) -> int:
+    """Decision 63: an admin rejected the documents. Keep the server copy `rejected_documents_keep_days` more days
+    (a dispute, a second look), then `purge_rejected` removes it. Returns the number of rows marked."""
+    until = (now or utcnow()) + timedelta(days=settings.rejected_documents_keep_days)
+    res = await s.execute(update(DriverDocument).where(DriverDocument.driver_id == driver.id)
+                          .values(delete_after=until))
+    return rowcount(res)
+
+
+async def purge_rejected(s: AsyncSession, now: datetime | None = None) -> int:
+    """Delete the rejected copies whose time is up; documents that were never rejected are not touched."""
+    res = await s.execute(delete(DriverDocument).where(DriverDocument.delete_after.is_not(None),
+                                                       DriverDocument.delete_after <= (now or utcnow())))
     return rowcount(res)

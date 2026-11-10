@@ -1,5 +1,6 @@
 """Encrypted server copy of driver documents (decision 57): at rest, replace, validation, no key, privacy."""
 import hashlib
+from datetime import datetime, timedelta
 
 import pytest
 from conftest import make_driver
@@ -113,3 +114,47 @@ async def test_privacy_delete_removes_rows_and_export_has_flag_but_no_bytes(s, k
     assert [r.driver_id for r in left] == [other.id, other.id]               # only the other driver's rows remain
     assert await s.scalar(select(func.count()).select_from(DriverDocument).where(DriverDocument.driver_id == d.id)) == 0
     assert (await privacy.export_user_data(s, other.user))["driver"]["documents_on_server"] is True
+
+
+# ---- decision 63: a rejected copy is kept 7 days, then purged ----------------------------------------------------
+
+T0 = datetime(2026, 11, 11, 12, 0)
+
+
+async def test_rejected_copy_is_kept_seven_days_then_purged(s, keyed):
+    d = await make_driver(s, keyed)
+    await documents.store(s, d, "license", JPEG, "image/jpeg", keyed)
+    await documents.store(s, d, "techpass", PNG, "image/png", keyed)
+    assert await documents.mark_rejected(s, d, keyed, now=T0) == 2
+    assert {r.delete_after for r in await rows(s)} == {T0 + timedelta(days=7)}
+    # negative: one minute before the end nothing goes, and the copy can still be read for a second look
+    assert await documents.purge_rejected(s, now=T0 + timedelta(days=7, minutes=-1)) == 0
+    assert await documents.load(s, d, "license", keyed) == (JPEG, "image/jpeg")
+    assert await documents.purge_rejected(s, now=T0 + timedelta(days=7)) == 2
+    assert await rows(s) == []
+
+
+async def test_keep_days_comes_from_the_settings(s, keyed):
+    d = await make_driver(s, keyed)
+    await documents.store(s, d, "license", JPEG, "image/jpeg", keyed)
+    await documents.mark_rejected(s, d, keyed.model_copy(update={"rejected_documents_keep_days": 2}), now=T0)
+    assert (await rows(s))[0].delete_after == T0 + timedelta(days=2)
+
+
+async def test_a_new_upload_clears_the_rejection(s, keyed):
+    d = await make_driver(s, keyed)
+    await documents.store(s, d, "license", JPEG, "image/jpeg", keyed)
+    await documents.store(s, d, "techpass", PNG, "image/png", keyed)
+    await documents.mark_rejected(s, d, keyed, now=T0)
+    await documents.store(s, d, "license", JPEG, "image/jpeg", keyed)       # the driver sends a clearer licence
+    assert await documents.purge_rejected(s, now=T0 + timedelta(days=30)) == 1   # only the old tech passport goes
+    assert [r.kind for r in await rows(s)] == ["license"]
+
+
+async def test_purge_never_touches_documents_that_were_not_rejected(s, keyed):
+    d, other = await make_driver(s, keyed), await make_driver(s, keyed)
+    for dr in (d, other):
+        await documents.store(s, dr, "license", JPEG, "image/jpeg", keyed)
+    await documents.mark_rejected(s, d, keyed, now=T0)
+    assert await documents.purge_rejected(s, now=T0 + timedelta(days=365)) == 1
+    assert [r.driver_id for r in await rows(s)] == [other.id]                 # the unmarked driver's copy stays
