@@ -4,6 +4,8 @@ from tulporgo_core.db import utcnow
 from tulporgo_core.events import OfferAccepted, OfferCountered, RequestClosed, RequestCreated
 from tulporgo_core.models import RideRequest
 
+pytest_plugins = ["api_fixtures"]  # shared fixtures; a file named conftest.py would shadow the core one
+
 
 def test_create_request_from_place_ids(env, H):
     res = env.client.post("/api/requests", json={"from_place_id": 3, "to_place_id": 4, "seats": 2, "note": "2 ta sumka"},

@@ -3,6 +3,8 @@ import json
 import pytest
 from tulporgo_core.events import RequestClosed, RequestCreated, TripCompleted
 
+pytest_plugins = ["api_fixtures"]  # shared fixtures; a file named conftest.py would shadow the core one
+
 SHARE_KEYS = {"status", "finished", "from", "to", "depart_at", "driver_first_name", "car"}
 
 

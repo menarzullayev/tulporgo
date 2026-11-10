@@ -4,6 +4,8 @@ from tulporgo_api.telegram_api import TelegramUploader, UploadFailed
 from tulporgo_core.events import DriverRegistered
 from tulporgo_core.models import Driver
 
+pytest_plugins = ["api_fixtures"]  # shared fixtures; a file named conftest.py would shadow the core one
+
 JPEG = b"\xff\xd8\xff\xe0" + b"\x00" * 64
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
 PDF = b"%PDF-1.7\n" + b"\x00" * 64

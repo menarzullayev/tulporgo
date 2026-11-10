@@ -1,5 +1,7 @@
 import pytest
 
+pytest_plugins = ["api_fixtures"]  # shared fixtures; a file named conftest.py would shadow the core one
+
 
 def test_me_creates_profile_without_phone_or_driver(env, H):
     res = env.client.get("/api/me", headers=H(10, first_name="Ali", username="ali_u", lang="ru"))
