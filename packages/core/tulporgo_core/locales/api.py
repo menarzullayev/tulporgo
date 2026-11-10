@@ -10,6 +10,8 @@ _ROWS: list[tuple[str, str, str, str]] = [
     ("err.generic", "Xatolik yuz berdi. Qayta urinib ko'ring.", "Произошла ошибка. Попробуйте ещё раз.", "Something went wrong. Please try again."),
     ("err.network", "Aloqa yo'q. Internetni tekshiring.", "Нет связи. Проверьте интернет.", "No connection. Check your internet."),
     ("err.unauthorized", "Ilovani Telegram ichida oching.", "Откройте приложение внутри Telegram.", "Open the app inside Telegram."),
+    ("err.active_trip", "Avval joriy qatnovni yakunlang yoki bekor qiling.", "Сначала завершите или отмените текущую поездку.", "Finish or cancel your current trip first."),
+    ("err.driver_not_found", "Haydovchi topilmadi.", "Водитель не найден.", "Driver not found."),
     ("err.blocked", "Hisobingiz bloklangan.", "Ваш аккаунт заблокирован.", "Your account is blocked."),
     ("err.already_driver", "Siz allaqachon haydovchisiz.", "Вы уже водитель.", "You are already a driver."),
     ("err.already_matched", "Bu buyurtma uchun safar allaqachon tuzilgan.", "Для этого заказа поездка уже создана.", "A trip for this request already exists."),
