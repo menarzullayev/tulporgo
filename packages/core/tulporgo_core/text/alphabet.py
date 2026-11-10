@@ -54,13 +54,13 @@ def _cyr(s):
             out.append(cyr)
             i += step
 
-        if lo in "og" and nxt in APOS:                     # o' g'
+        if lo in "og" and nxt and nxt in APOS:                  # o' g'
             put("ў" if lo == "o" else "ғ", 2); continue
         if lo == "s" and nxt.lower() == "h":
             put("ш", 2); continue
         if lo == "c" and nxt.lower() == "h":
             put("ч", 2); continue
-        if lo == "y" and nxt.lower() in "aoue" and not (i + 2 < n and s[i + 2] in APOS and nxt.lower() == "o"):
+        if lo == "y" and nxt and nxt.lower() in "aoue" and not (i + 2 < n and s[i + 2] in APOS and nxt.lower() == "o"):
             put({"a": "я", "o": "ё", "u": "ю", "e": "е"}[nxt.lower()], 2); continue
         if lo == "e":                                      # э at word start or after a vowel
             put("э" if (not prev.isalpha() or prev in VOWELS) else "е", 1); continue
