@@ -105,12 +105,12 @@ Asos: Qovunchi va O'razmat guruhlarida yiliga ~4 500 yo'lovchi so'rovi, Qo'shrab
 ## Ochiq vazifalar
 
 1. (44-qaror bilan yo'l belgilandi; live Click/Payme uchun maqom hali kerak) Obuna to'lovini qabul qilish yo'li: o'zini o'zi band qilgan shaxs maqomi va 3-tomon servislarni solishtirish (11-qaror).
-2. ~~Brend nomi~~ — TulporGo tanlandi (21-qaror). **tulporgo.uz — 2026-11-09 Eskiz orqali buyurtma qilindi (№ 118840, 1 yil, 29 000 so'm), tekshiruvda; 2026-11-10 da faollashishi kutilmoqda.** Qolgan: domenlar va @tulporgo, @tulporgobot ni darhol band qilish; Instagram/Facebook'ni qo'lda tekshirish.
+2. ~~Brend nomi~~ — TulporGo tanlandi (21-qaror). tulporgo.uz faol (09.11.2026–09.11.2027), DNS zonasi Eskiz'da sozlangan (2026-11-11); @tulporgo va @tulporgobot band. Qolgan: VPS olingach apex A yozuvi; pochta xizmati (64-qaror); Instagram/Facebook'ni qo'lda tekshirish.
 3. Foydalanish shartlari va maxfiylik siyosati — 51-qaror: Claude qoralama, yurist tekshiradi.
 4. Yangi o'zbek alifbosining imlo qoidalari chiqqach, tarjimalarni yangilash (16-qaror).
 5. Butun O'zbekiston joylar bazasi: Samarqand (16 tuman, 1 063 mahalla) tayyor, qolgan viloyatlar (2-qaror).
 6. ~~KPI'ni tasdiqlash~~ — 53-qaror.
-7. Telegram: 3-bosqich bajarildi 2026-11-10 (bot profili). Qolgan: «tez orada» javobi uchun doim ishlaydigan jarayon; 4-bosqich (2026-11-10): kanal @tulporgo OCHIQ, savol-javob va haydovchilar guruhi, Welcome Message ×3, Hamjamiyat — bajarildi. @tulporgo_chat ham ochiq (limit uchun @rankwant_chat hozircha yopiq qilindi — Saidakbar aka qarori, tiklash ma'lumoti `brand/telegram/released_usernames.json`). «Tez orada» javobi 2026-11-10 dan ishlayapti (`bot/coming_soon.py`, kompyuterda doim yoniq). Keyingi: bot kodi (aiogram, 17-qaror).
+7. Telegram: 3-bosqich bajarildi 2026-11-10 (bot profili). Qolgan: «tez orada» javobi uchun doim ishlaydigan jarayon; 4-bosqich (2026-11-10): kanal @tulporgo OCHIQ, savol-javob va haydovchilar guruhi, Welcome Message ×3, Hamjamiyat — bajarildi. @tulporgo_chat ham ochiq (limit uchun @rankwant_chat hozircha yopiq qilindi — Saidakbar aka qarori, tiklash ma'lumoti `brand/telegram/released_usernames.json`). «Tez orada» javobi 2026-11-10 dan ishlayapti (`bot/coming_soon.py`, kompyuterda doim yoniq). Bot kodi qurildi (2026-11-10, `/goal` yopildi); qolgani — VPS'ga deploy (`docs/DEPLOY.md`).
 
 ## Qarorlar orasidagi taranglik (e'tibor uchun)
 
