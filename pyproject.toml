@@ -24,7 +24,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-mysql = ["aiomysql>=0.2"]
+mysql = ["aiomysql>=0.2", "pymysql<1.2"]  # PyMySQL 1.2 removed escape_bytes_prefixed, which aiomysql 0.3 still calls
 
 [dependency-groups]
 dev = [
