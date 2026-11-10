@@ -64,9 +64,18 @@ in **`QARORLAR.md`** (source of truth, Uzbek). Telegram features worth using: `T
 | `tulporgo_by_tulporgobot` | static stickers | 51 × 512 WEBP | https://t.me/addstickers/tulporgo_by_tulporgobot |
 | `tulporgo_anim_by_tulporgobot` | video stickers | 51 × WEBM (2 s hop) | https://t.me/addstickers/tulporgo_anim_by_tulporgobot |
 | `tulporgo_emoji_by_tulporgobot` | custom emoji | 51 × **vector TGS** (replaced in place from blurry 100 px PNG) | https://t.me/addemoji/tulporgo_emoji_by_tulporgobot |
-| `tulporgo_reactions_by_tulporgobot` | custom emoji, head close-ups | 24 TGS ready, **NOT CREATED** | — |
+| `tulporgo_reactions` | custom emoji, head close-ups | 24 × vector TGS — **created 2026-11-11 via @Stickers from Saidakbar aka's account** | https://t.me/addemoji/tulporgo_reactions |
 
-### ⚠ Blocker: "TulporGo Reactions" pack
+### ✅ "TulporGo Reactions" pack — RESOLVED 2026-11-11
+
+- The bot kept getting `429` (7 attempts, the last 2026-11-11 00:30), so on Saidakbar aka's request ("@Stickers da
+  yarataqol accountim orqali") Claude drove @Stickers from his account: `/newemojipack` → Animated → "TulporGo
+  Reactions" → 24 TGS + emoji (mapping of `create_sticker_sets.py`) → `/publish` → `/skip` → short name
+  `tulporgo_reactions`. Verified with Bot API `getStickerSet`: 24, all animated, `custom_emoji`, emoji order as planned.
+- **Do NOT run `create_sticker_sets.py reactions`** any more — it would try to create a second, bot-owned copy
+  (`tulporgo_reactions_by_tulporgobot`). The history below is kept for reference.
+
+### (history) Blocker: "TulporGo Reactions" pack
 
 - `createNewStickerSet` returns `429 {"retry_after":301}` on **every** attempt — 6 attempts
   2026-11-09 22:20 … 2026-11-10 04:08 (hourly gaps didn't help). Likely a per-bot daily
@@ -157,7 +166,9 @@ Gotchas (all in MUAMMOLAR.md):
    `brand/icons/test_ids.json`. While they are there, `create_sticker_sets.py replace` refuses (order check) — by design.
    Head emoji (Reactions, 24 TGS) stay **static** — animation offered 2026-11-10, Saidakbar aka: "hozircha kerak emas".
    Do not change `telegram/emoji_head_tgs/` before the 2026-11-11 10:00 attempt.
-   Next: after Reactions is created, wait ≥ 24 h, create `tulporgo_icons_by_tulporgobot` (one attempt, guard),
+   Reactions now exists (`tulporgo_reactions`, via @Stickers 2026-11-11). Next: the icons pack — the bot is
+   rate-limited on set creation (429), so @Stickers from his account is the realistic route (his go-ahead first);
+   then
    point `emoji_system.py` at the new packs, then `python brand/icons/test_in_pack.py remove`.
 4. Bot avatar (02 on yellow), description; channel @tulporgo, groups @tulporgo_chat + hidden drivers
    group, Community (decisions 26–31). Full staged plan: `TELEGRAM-REJA.md`. Stage 1 texts (5 languages, `content/i18n/`) **APPROVED 2026-11-10 (decision 40)**.
@@ -216,7 +227,7 @@ Gotchas (all in MUAMMOLAR.md):
 ## 6. First 5 minutes for a new agent
 
 1. Read `C:\Users\nsn\.claude\CLAUDE.md`, this file, `QARORLAR.md`, `poses/vector/MUAMMOLAR.md`.
-2. Check whether the scheduled Reactions attempt ran (scheduled-tasks list / `getStickerSet tulporgo_reactions_by_tulporgobot`).
+2. Reactions pack exists (`tulporgo_reactions`, 2026-11-11). Next brand step: the icons pack + removing the 15 test emoji (§5 item 3b).
 3. `uv run pytest -q` at the repo root → ≈1 290 passed; `python -m pytest -q` in `brand/mascot/poses/vector` → 33 passed.
 4. Greet "Saidakbar aka" in Uzbek with a 3-line status and ask which open item to take.
 
