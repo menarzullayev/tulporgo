@@ -21,7 +21,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | Workstream | Status | Branch | Notes |
 |---|---|---|---|
 | W1 bot — passenger, driver, admin, KPI report | 🔄 | worktree agent | started 2026-11-10 |
-| W2 userbot — consent, encrypted sessions, safe scheduler | 🔄 | worktree agent | started 2026-11-10; consent wording aligned with `docs/legal/userbot-consent.uz.md` |
+| W2 userbot — consent, encrypted sessions, safe scheduler | ✅ | merged (4a47717) | consent screen = `docs/legal/userbot-consent.uz.md`; Mini App login API (code + 2FA, 5 attempts, never stored/logged); Fernet sessions; groups by plan; scheduler 45 min + jitter, daily cap, FloodWait/PeerFlood/ban handling without retries; `/elon`; worker `python -m tulporgo_userbot`; 167 tests. Assumption: 5-minute absolute floor even after risk acknowledgement. Gaps: pending login lives in API memory (1 API process); real Telethon client only stub-tested |
 | W3 Mini App + API | 🔄 | worktree agent | started 2026-11-10 |
 | W4 payments + referral | ✅ | merged (7dad311) | P2P (admin review), Stars (invoice, pre-checkout, recurring link, refund), Click SHOP API, Payme Merchant API (6 methods), other-gateway base class, `/obuna`, `/terms`, `/paysupport`, terms confirmation, 3-day reminders, API checkout + webhooks; 566 payment tests. Gaps: sandbox consoles of Click/Payme not run yet; reminder de-dup in memory; Payme fiscal `detail` not sent |
 
@@ -42,6 +42,7 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 | Item | Status | Notes |
 |---|---|---|
 | ToS + privacy drafts (uz/ru), userbot consent text | ✅ | `docs/legal/` (6 texts + questions for the lawyer); lawyer review ⛔ owner |
+| TulporGo app at my.telegram.org (`TULPORGO_TELEGRAM_API_ID` / `_HASH`) for drivers' logins | ⛔ | owner registers the app (needs his phone + code) |
 | Click / Payme live keys | ⛔ | merchant contract needs YATT/MChJ; sandbox integration is in scope |
 | Bot "Ma'lumotlarim": export + delete own data (privacy policy §8) | 🔄 | core service `services/privacy.py` ✅ (6 tests); bot button after W1 merge |
 | Public pages for the final legal texts (`tulporgo.uz/legal/...`) | ⏳ | after lawyer review |
@@ -63,3 +64,4 @@ work lands. Legend: ✅ done · 🔄 in progress · ⏳ pending · ⛔ blocked o
 - 2026-11-10 — `deploy/` stack + `tulporgo_core.manage` (migrate / seed-places / check); restore test proven locally.
 - 2026-11-10 — legal drafts uz/ru in `docs/legal/`; Telegram Stars rules (`/terms`, `/paysupport`) sent to W4.
 - 2026-11-10 — W4 merged; full suite 646 passed, ruff clean, secret scan 0. Core fix from W4: Cyrillic converter broke words ending in o/g/y (`"" in APOS` is always true).
+- 2026-11-10 — W2 merged; full suite 815 passed, ruff clean, secret scan 0.

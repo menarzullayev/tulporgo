@@ -52,6 +52,7 @@ services:
 
   api:
     <<: *app
+    # one process on purpose: a pending userbot phone login lives in this process's memory (W2)
     depends_on:
       migrate: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
