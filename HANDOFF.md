@@ -216,6 +216,10 @@ Gotchas (all in MUAMMOLAR.md):
      Instagram/Facebook names are free (owner checked), to be reserved later.
    - **W5 reading taxi groups (decisions 72–73) is built** — status table in `docs/goals/W5-group-reading.md`; places and the
      Basic plan are settled (decision 74); a deleted request marks and then removes its cards (decision 75).
+   - **After the closed test (decisions 76–80, wide discussion 2026-11-12):** `docs/goals/W6-after-closed-test.md` —
+     "Ketayotgan mashinalar" board + regular route subscription, reaching passengers, "N drivers contacted", demand map,
+     smart post timing, Stars + card/P2P (Telegram terms 6.2 risk accepted by the owner), accuracy button, local AI.
+     First constraint: driver accounts must not get blocked.
      Dry run: driver1 connected, 6 taxi groups picked; daytime observation on 2026-11-12 with
      `uv run python tools/feed_dryrun.py run --minutes 240` (latency, memory, request lifetime). Order: W5 →
      PC deploy → 1–2 weeks closed test → wide launch. Free period 1 month at launch (then decide by KPI); no
