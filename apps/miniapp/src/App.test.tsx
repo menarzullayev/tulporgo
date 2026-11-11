@@ -53,6 +53,33 @@ describe('App', () => {
     expect(screen.getByRole('link', { name: 'Trips' })).toHaveAttribute('aria-current', 'page')
   })
 
+  it('opens the filter screen from the bot link ?page=feed (no hash) under the Profile tab', async () => {
+    window.history.replaceState(null, '', '/?page=feed')
+    try {
+      vi.spyOn(api, 'me').mockResolvedValue(baseMe)
+      vi.spyOn(api, 'feed').mockResolvedValue({ paused: false, delivery_linked: false, connected: true, consent_ok: true, groups: [], filters: [], kinds: [], max_filters: 20 })
+      render(<App />)
+      expect(await screen.findByRole('heading', { name: 'Requests from groups' })).toBeInTheDocument()
+      expect(screen.getByRole('link', { name: 'Profile' })).toHaveAttribute('aria-current', 'page')
+    } finally {
+      window.history.replaceState(null, '', '/')
+    }
+  })
+
+  it('keeps an unknown ?page= on the home screen (negative)', async () => {
+    window.history.replaceState(null, '', '/?page=nothing')
+    try {
+      vi.spyOn(api, 'me').mockResolvedValue(baseMe)
+      vi.spyOn(api, 'myRequests').mockResolvedValue({ items: [] })
+      const feed = vi.spyOn(api, 'feed')
+      render(<App />)
+      expect(await screen.findByRole('heading', { name: 'Where to?' })).toBeInTheDocument()
+      expect(feed).not.toHaveBeenCalled()
+    } finally {
+      window.history.replaceState(null, '', '/')
+    }
+  })
+
   it('shows an unknown route as an error page, not a blank screen', async () => {
     window.location.hash = '#/definitely/not/a/page'
     vi.spyOn(api, 'me').mockResolvedValue(baseMe)

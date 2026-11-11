@@ -61,6 +61,19 @@ describe('parseLocation', () => {
     expect(parseLocation('', '?page=userbot').name).toBe('userbot')
     expect(parseLocation('#', '?page=userbot').name).toBe('userbot')
   })
+  it('routes the bot link ?page=feed to the filter screen, and #/feed too', () => {
+    expect(parseLocation('', '?page=feed').name).toBe('feed')
+    expect(parseLocation('#', '?page=feed').name).toBe('feed')
+    expect(parseLocation('#/feed', '').name).toBe('feed')
+    expect(parseLocation('#/trips', '?page=feed').name).toBe('trips') // an in-app route wins
+  })
+  it('does not route look-alike or unknown pages to the feed (negative)', () => {
+    for (const q of ['?page=feed2', '?page=Feed', '?page=feeds', '?page=constructor', '?page=__proto__', '?feed=1', '?page=']) {
+      expect(parseLocation('', q).name, q).toBe('home')
+    }
+    expect(parseHash('#/feed/1').name).toBe('notfound')
+    expect(parseHash('#/feeds').name).toBe('notfound')
+  })
   it('lets an in-app route win and ignores other pages', () => {
     expect(parseLocation('#/trips', '?page=userbot').name).toBe('trips')
     expect(parseLocation('', '?page=admin').name).toBe('home')

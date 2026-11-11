@@ -6,6 +6,7 @@ import { useAsync } from './hooks'
 import { I18nProvider, useI18n } from './i18n'
 import { goBack, href, useRoute, type Route } from './router'
 import Driver from './screens/Driver'
+import Feed from './screens/Feed'
 import Home from './screens/Home'
 import Offers from './screens/Offers'
 import Profile from './screens/Profile'
@@ -21,7 +22,7 @@ import type { Me } from './types'
 const TABS = [
   { path: '/', icon: 'taxi', label: 'nav.home', names: ['home', 'offers'] },
   { path: '/trips', icon: 'clock', label: 'nav.trips', names: ['trips', 'trip'] },
-  { path: '/profile', icon: 'driver', label: 'nav.profile', names: ['profile', 'driver', 'subscription', 'userbot'] },
+  { path: '/profile', icon: 'driver', label: 'nav.profile', names: ['profile', 'driver', 'subscription', 'userbot', 'feed'] },
 ]
 const TOP_LEVEL = new Set(['home', 'trips', 'profile'])
 
@@ -44,6 +45,8 @@ function Screen({ route }: { route: Route }) {
       return <Subscription />
     case 'userbot':
       return <UserbotLogin />
+    case 'feed':
+      return <Feed />
     default:
       return (
         <div className="empty">

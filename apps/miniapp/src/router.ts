@@ -11,6 +11,7 @@ export type RouteName =
   | 'driver'
   | 'subscription'
   | 'userbot'
+  | 'feed'
   | 'share'
   | 'notfound'
 
@@ -28,13 +29,18 @@ const TABLE: [RegExp, RouteName, string[]][] = [
   [/^\/driver$/, 'driver', []],
   [/^\/subscription$/, 'subscription', []],
   [/^\/userbot\/login$/, 'userbot', []],
+  [/^\/feed$/, 'feed', []],
   [/^\/share\/([A-Za-z0-9_-]{8,64})$/, 'share', ['token']],
 ]
 
-/** The bot opens the login page as `<miniapp_url>?page=userbot` (no hash); an in-app hash route wins over it. */
+/** Pages the bot opens as `<miniapp_url>?page=<name>` (no hash). */
+const BOT_PAGES: Record<string, RouteName> = { userbot: 'userbot', feed: 'feed' }
+
+/** An in-app hash route wins over the bot's `?page=` link. */
 export function parseLocation(hash: string, search = ''): Route {
   const path = hash.replace(/^#/, '').split('?')[0]
-  if (!path && new URLSearchParams(search).get('page') === 'userbot') return { name: 'userbot', params: {} }
+  const page = new URLSearchParams(search).get('page')
+  if (!path && page && Object.hasOwn(BOT_PAGES, page)) return { name: BOT_PAGES[page], params: {} }
   return parseHash(hash)
 }
 
