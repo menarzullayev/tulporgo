@@ -209,7 +209,7 @@ Gotchas (all in MUAMMOLAR.md):
    `0 issue "letsencrypt.org"`; Eskiz defaults (apex/ftp/mail/webmail A, Eskiz MX) removed; WHOIS contacts hidden.
    Mail on Zoho (decision 64): MX `mx/mx2/mx3.zoho.com`, TXT `v=spf1 include:zohomail.com -all` + Zoho verification,
    DKIM `zmail._domainkey`. **No apex A record yet** — add it (→ VPS IP) after the VPS is bought.
-5. Brand guide; post templates finalisation (decisions 32–37).
+5. Brand guide. Post templates are settled (decisions 32–37, format: decision 69 — Rich post, Rich + table for tabular content).
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
      legal texts: the owner answered the 9 lawyer questions (decision 67, texts filled) — his full name and postal address

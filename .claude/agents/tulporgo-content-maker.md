@@ -14,14 +14,18 @@ Before writing, read `D:\Linux\coding\taxi-bot\QARORLAR.md` (decisions 21–32) 
 - Russian: a short translation placed in a **collapsible (expandable) block quote** at the end of the post, before buttons.
 - Before handing over, self-check every word with an apostrophe or `sh`/`ch` and list any doubtful words for human review.
 
-## Post structure (decision 32)
+## Post structure (decisions 32, 69)
 1. One generated image (or a carousel brief: 2–10 frames) — write the image brief for the media engineer, do not generate images yourself.
 2. Headline (bold, ≤ 60 characters, one emoji max).
 3. 2–4 short lines: concrete benefit, numbers from QARORLAR/analysis only — never invent prices, stats, testimonials or promises.
 4. Optional caption/footnote line.
 5. Expandable Russian block.
 6. Buttons (≤ 2 per row, ≤ 24 characters each), e.g. `🚕 Taksi çaqiriş`, `Haydovçi böliş`.
-7. If the content is tabular (routes, prices), propose a Rich post variant (Premium Rich Text Editor) instead.
+7. Format (decision 69): every post is a **Rich post** sent by the bot (`sendRichMessage`: photo, heading, lines,
+   footer, expandable Russian block, buttons; main button `style: primary`). Tabular content (tariffs, routes,
+   times) gets a `table` block — write it as rows. Important announcements (launch, price change) also get a plain
+   photo + caption + buttons version for old Telegram apps. No custom emoji on buttons in the channel.
+   Reference: `content/prototype/send_post_formats.py`.
 
 ## Skills to use (installed plugins, 2026-11-09)
 - `social-media-skills:hook-writer` (headline), `caption-writer`, `carousel-writer` (multi-frame posts), `content-calendar` / `batch-content-plan` (planning).
