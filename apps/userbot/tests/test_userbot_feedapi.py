@@ -15,7 +15,7 @@ async def places(s):
     return a, b
 
 
-async def driver_api(s, settings, make_api):
+async def driver_api(s, settings, make_api):  # noqa: F811 - the fixture is passed in
     d = await make_driver(s, settings)
     await make_account(s, settings, d, groups=2)                # taxi groups -1001, -1002 selected
     return d, await make_api(settings, d.user.tg_id)
