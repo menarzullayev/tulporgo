@@ -15,8 +15,8 @@ Owner = Saidakbar aka (money, accounts, registrar, passwords). Claude = everythi
 | Disk free | C: 48 GB, D: 26 GB | enough for the database and one local dump (decision 58) |
 | Ports 80 / 443 on the host | free | not needed anyway: the tunnel publishes nothing |
 | Public IP | one address seen from outside | may change; the tunnel does not depend on it |
-| Power | no battery/UPS; sleep on AC is off | a power cut stops everything (2 cuts on 2026-11-10) |
-| After a reboot | Docker Desktop starts **only after a user logs in** (Run key; Windows auto-logon is off) | the service stays down until someone logs in |
+| Power | no UPS; sleep on AC is off; BIOS powers on when power returns (owner, decision 71) | office cuts are rare and short (≤ ~10 min); the PC comes back by itself |
+| After a reboot | Docker Desktop starts **only after a user logs in** (Run key) | fixed by auto-logon + lock (decision 71, below) |
 | Coming-soon stub | Task Scheduler `TulporGo coming-soon bot`, running | must stop before the real bot starts (one `getUpdates` consumer per token) |
 | DNS | NS `ns1/ns2.eskiz.uz`; no apex A; MX ×3 Zoho, SPF, Zoho verification TXT, DKIM `zmail._domainkey`, DMARC `p=reject`, CAA `letsencrypt.org`, `www` CNAME | all of these must exist at Cloudflare **before** the nameservers change, or mail breaks |
 
@@ -49,7 +49,7 @@ Nothing listens on the PC's network ports. The database, backups and encrypted s
 | 7 | **Start**: stop the coming-soon task, then `./scripts/deploy.sh` in Git Bash from `D:\tulporgo-prod\deploy` (backup → start → health → `https://tulporgo.uz/api/health`) | Claude (stopping the stub is announced first) | `deployed.log` has the commit; health 200 through Cloudflare |
 | 8 | **Live checks**: `/legal/terms` and `/legal/privacy` (uz/ru, operator filled in), Mini App `/app/`, bot `/start`, Login with Telegram end to end, one manual backup + the encrypted R2 copy | Claude; **owner** does the Telegram login and taps through the bot | all pass |
 | 9 | **BotFather**: Mini App URL `https://tulporgo.uz/app/` and the menu button | Claude via Bot API where possible; **owner** in BotFather for the rest | `getMe.has_main_web_app=true` |
-| 10 | **Keep it running** (see below) | **owner** decides | — |
+| 10 | **Auto-logon**: Sysinternals Autologon (official, keeps the password encrypted) → Enable; then one test reboot | **owner** (password); Claude checks the lock task and that the stack came back | `lock-after-autologon.ps1 -DryRun` says `autologon=True`; containers up after reboot |
 
 Rollback at any step: `docker compose down` in `D:\tulporgo-prod\deploy` (volumes are kept), start the coming-soon task
 again. Before step 5 nothing public changes; DNS can be pointed back to Eskiz at the registrar.
@@ -58,8 +58,8 @@ again. Before step 5 nothing public changes; DNS can be pointed back to Eskiz at
 
 | Risk | What helps | Cost |
 |---|---|---|
-| Power cut | UPS (the PC draws little at idle); BIOS "Restore on AC power loss = Power On" | UPS: money, owner's call |
-| Reboot (Windows Update, power) leaves everything down until login | Windows auto-logon for this user **or** Docker Engine as a service without login; set Windows Update active hours | auto-logon weakens local security — owner's call |
+| Power cut | BIOS powers on when power returns (on); no UPS — office cuts are short (decision 71) | accepted |
+| Reboot (Windows Update, power) leaves everything down until login | Windows auto-logon + `deploy/windows/lock-after-autologon.ps1` (Task Scheduler "TulporGo lock after auto-logon") locks the screen at once; it locks only when AutoAdminLogon=1 and uptime < 5 min | Windows Update settings unchanged: a daytime update reboot means a few minutes down, then everything returns |
 | Internet cut | nothing on the PC side; the tunnel reconnects by itself | — |
 | Docker VM memory (10 GB shared) | measure TulporGo's real use after step 7; raise `memory=` in `.wslconfig` only if needed (needs `wsl --shutdown`, which restarts every project's containers) | a short stop for all projects |
 | Disk | one local dump + R2 copy (decision 58); check free space monthly | — |
