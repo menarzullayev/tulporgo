@@ -44,3 +44,29 @@ async def test_mahallas_attach_to_samarqand_region_only(s, idx):
     districts = {p.id: p for p in (await s.execute(select(Place).where(Place.kind.in_(["district", "city"])))).scalars()}
     parents = {p.parent_id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
     assert parents and all(regions[districts[pid].parent_id] == "Samarqand viloyati" for pid in parents if pid)
+
+
+async def test_approved_landmarks_resolve_to_their_district(idx):
+    qosh = idx.exact("Qo'shrabot")
+    for typed in ("Jo'sh", "Joshdan", "O'razmat", "Chinor", "Sebiston", "Mayiz bozor", "Mol bozor", "bozorga"):
+        ref = idx.exact(typed)
+        assert ref is not None and ref.area == qosh.id, typed               # all in Qo'shrabot (owner, decision 74)
+    assert idx.exact("Dagbit").area != qosh.id                              # negative: Dagbit is on the way, not here
+
+
+async def test_real_corridor_makes_dagbit_on_the_way(idx):
+    from tulporgo_core.enums import RequestKind
+    from tulporgo_core.groupscan import Detection
+    from tulporgo_core.models import DriverFilter
+    from tulporgo_core.places import corridors
+    from tulporgo_core.services.groupfeed import filter_matches
+    roads = corridors(idx)
+    qosh, sam, dagbit = idx.exact("Qo'shrabot"), idx.exact("Samarqand"), idx.exact("Dagbit")
+    area = {r.id: r.area for r in idx.refs}.get
+    det = Detection(RequestKind.PASSENGER, False, qosh, dagbit, None, 1, 0.9)
+    f = DriverFilter(name="x", enabled=True, routes=[{"from": qosh.id, "to": sam.id, "on_way": True}], kinds=[],
+                     weekdays=[], group_chat_ids=[], include_asap=True, include_tomorrow=True)
+    from datetime import datetime
+    assert filter_matches(f, det, -1, datetime(2026, 11, 10, 6, 0), area, roads)
+    f.routes = [{"from": sam.id, "to": qosh.id, "on_way": True}]           # negative: the other direction
+    assert not filter_matches(f, det, -1, datetime(2026, 11, 10, 6, 0), area, roads)

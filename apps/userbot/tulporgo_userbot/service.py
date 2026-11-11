@@ -51,9 +51,22 @@ def plan_allows_autopost(driver: Driver, settings: Settings) -> bool:
     return bool(plan and plan.autopost)
 
 
+READ_ONLY_MAX_GROUPS = 15    # decision 74: Basic connects only to receive group cards; same cap as Pro
+
+
 def require_plan(driver: Driver, settings: Settings) -> None:
-    if not plan_allows_autopost(driver, settings):
+    """Connecting / resuming needs an active plan. Basic is enough since decision 74 (reading only, no posting)."""
+    if billing.effective_plan(driver, settings) is None:
         raise Forbidden("plan_required")
+
+
+def selection_limit(driver: Driver, settings: Settings, now: datetime | None = None) -> int | None:
+    """How many taxi groups the driver may select: 0 without a plan, the posting limit on Pro / Business, and
+    READ_ONLY_MAX_GROUPS on Basic (cards only — the scheduler never posts without `autopost`)."""
+    plan = billing.effective_plan(driver, settings, now)
+    if plan is None:
+        return 0
+    return plan.max_groups if plan.autopost else READ_ONLY_MAX_GROUPS
 
 
 def group_limit(driver: Driver, settings: Settings, now: datetime | None = None) -> int | None:
@@ -196,7 +209,7 @@ async def sync_groups(s: AsyncSession, account: UserbotAccount, found: list[Grou
 
 
 def _check_can_enable(account: UserbotAccount, driver: Driver, settings: Settings, already_enabled: int) -> None:
-    limit = group_limit(driver, settings)
+    limit = selection_limit(driver, settings)
     if limit == 0:
         raise Forbidden("plan_required")
     if limit is not None and already_enabled >= limit:
@@ -308,10 +321,11 @@ async def disconnect_account(s: AsyncSession, account: UserbotAccount, settings:
 
 def status_view(account: UserbotAccount | None, driver: Driver, settings: Settings) -> dict:
     """JSON-friendly snapshot for the Mini App. Never contains the session (encrypted or not)."""
-    limit = group_limit(driver, settings)
+    limit = selection_limit(driver, settings)
+    autopost = plan_allows_autopost(driver, settings)
     if account is None:
         return {"status": UserbotStatus.NEEDS_LOGIN, "consent": False, "connected": False, "groups": [],
-                "group_limit": limit, "autopost": limit != 0}
+                "group_limit": limit, "autopost": autopost}
     return {
         "status": account.status,
         "consent": account.consent_at is not None,
@@ -324,7 +338,7 @@ def status_view(account: UserbotAccount | None, driver: Driver, settings: Settin
         "risk_acknowledged": account.risk_acknowledged,
         "daily_max_posts": account.daily_max_posts,
         "group_limit": limit,
-        "autopost": limit != 0,
+        "autopost": autopost,
         "has_template": bool(account.post_template),
         "groups": [{"id": g.id, "chat_id": g.chat_id, "title": g.title, "enabled": g.enabled}
                    for g in sorted(account.groups, key=lambda g: g.id)],

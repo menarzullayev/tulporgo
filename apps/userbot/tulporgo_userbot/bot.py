@@ -178,7 +178,7 @@ async def cb_consent(cq: CallbackQuery, session, settings, user, lang, t, **_):
 
 def _groups_view(account: UserbotAccount, driver: Driver, settings, t, page: int):
     groups = sorted(account.groups, key=lambda g: g.id)
-    limit = service.group_limit(driver, settings)
+    limit = service.selection_limit(driver, settings)
     pages = max(1, -(-len(groups) // PAGE))
     page = min(max(page, 0), pages - 1)
     text = (t("userbot.groups.title", enabled=len(service.enabled_groups(account)),

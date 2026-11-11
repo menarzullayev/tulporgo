@@ -62,7 +62,7 @@ group x1 ── new message ──> reader account (one per group, live Telethon
 | 1–2 membership, one reader per wanted group, failover | done | `tulporgo_core/services/groupfeed.py` (`assign_readers`) |
 | 3 live reading on the shared client | done; memory per reader **not measured yet** (needs real accounts) | `apps/userbot/tulporgo_userbot/reader.py`, `client.py` |
 | 4 detection (kinds, driver ads, single place) | done, rule-based; local-AI slot = `Classifier` | `tulporgo_core/groupscan.py` |
-| 5 landmarks | mechanism done; **draft list waits for the owner** (`approved` column) | `data/landmarks.csv`, `data/corridors.csv` |
+| 5 landmarks | done: owner-approved villages, bazaars, station, airport; corridor Qo'shrabot→Dagbit→Samarqand (decision 74); M39 still a draft | `data/landmarks.csv`, `data/corridors.csv` |
 | 6 filters | done | `DriverFilter`, migration 0005 |
 | 7 delivery chat | done: making @tulporgobot an admin links it | `feedbot.py` |
 | 8 card | plain HTML + buttons (works on old apps; decision 69 is for channel posts), Biznes first, 2 h cleanup | `cards.py`, `reader.py` |
@@ -70,7 +70,7 @@ group x1 ── new message ──> reader account (one per group, live Telethon
 | 10 consent + privacy | done: consent version 2, privacy "group messages" | `locales/userbot.py`, `docs/legal/` |
 | 11 tests | done, each rule with a negative | core, userbot, api, miniapp tests |
 | Dry run on the PC with real accounts and groups | **open** — needs the owner's accounts | — |
-| Basic plan cannot connect the userbot today, so it gets no cards after the free month | **owner decision** | `service.require_plan` |
+| Basic plan | done (decision 74): connects to read only, up to 15 groups, no posting | `service.selection_limit` |
 
 ## Done when
 

@@ -121,8 +121,18 @@ async def test_bad_phone_is_rejected_before_telegram(api, factory):
     assert factory.code_requests == []
 
 
-async def test_basic_plan_cannot_start_login(s, paid_settings, make_api, factory):
+async def test_basic_plan_can_connect_to_read(s, paid_settings, make_api, factory):
+    # decision 74: Basic connects the account to receive group cards (no auto-posting)
     d = await make_driver(s, paid_settings, plan=Plan.BASIC)
+    a = await make_api(paid_settings, d.user.tg_id)
+    await a("POST", "/consent")
+    r = await a("POST", "/login/start", {"phone": "+998901234567"})
+    assert r.status_code == 200 and factory.code_requests == ["+998901234567"]
+    assert (await a("GET", "/status")).json()["autopost"] is False
+
+
+async def test_no_active_plan_cannot_start_login(s, paid_settings, make_api, factory):
+    d = await make_driver(s, paid_settings, plan=Plan.PRO, subscribed=False)       # subscription ran out
     a = await make_api(paid_settings, d.user.tg_id)
     await a("POST", "/consent")
     r = await a("POST", "/login/start", {"phone": "+998901234567"})
@@ -333,7 +343,9 @@ async def test_business_has_unlimited_groups_and_free_period_counts_as_business(
     assert r.status_code == 200 and sum(g["enabled"] for g in r.json()["groups"]) == 30
 
 
-async def test_basic_plan_cannot_enable_any_group(s, paid_settings, make_api, factory, maker):
+async def test_basic_plan_selects_groups_for_reading_only(s, paid_settings, make_api, factory, maker, monkeypatch):
+    from tulporgo_userbot import service as ub_service
+    monkeypatch.setattr(ub_service, "READ_ONLY_MAX_GROUPS", 2)
     d = await make_driver(s, paid_settings, plan=Plan.PRO)
     a = await make_api(paid_settings, d.user.tg_id)
     await connected_api(a, maker)
@@ -342,7 +354,15 @@ async def test_basic_plan_cannot_enable_any_group(s, paid_settings, make_api, fa
         drv = await s2.get(type(d), d.id)
         drv.plan = Plan.BASIC                                              # downgraded afterwards
         await s2.commit()
-    r = await a("PUT", "/groups", {"chat_ids": [-1001]})
+    r = await a("PUT", "/groups", {"chat_ids": [-1001, -1002]})
+    assert r.status_code == 200 and r.json()["autopost"] is False and r.json()["group_limit"] == 2
+    r = await a("PUT", "/groups", {"chat_ids": [-1001, -1002, -1003]})       # negative: over the read-only cap
+    assert r.status_code == 403 and r.json()["error"] == "group_limit"
+    async with maker() as s2:
+        drv = await s2.get(type(d), d.id)
+        drv.subscription_until = drv.subscription_until.replace(year=2000)   # no active plan at all
+        await s2.commit()
+    r = await a("PUT", "/groups", {"chat_ids": [-1001]})                    # negative
     assert r.status_code == 403 and r.json()["error"] == "plan_required"
 
 

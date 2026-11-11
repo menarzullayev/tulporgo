@@ -1,12 +1,12 @@
 region_uz,district_uz,kind,name_uz,aliases,approved,note
-Samarqand viloyati,Qo'shrabot,mahalla,Jo'sh,Josh|Jush|Жуш|Жўш,no,Top route end (Samarqand-Jo'sh 1848 requests in 2026 analysis); confirm the district
-Samarqand viloyati,Qo'shrabot,mahalla,O'razmat,Urazmat|Orazmat|Ўразмат,no,Taxi group name in the analysis; confirm the district
-Samarqand viloyati,Qo'shrabot,mahalla,Chinor,Chinar|Чинор,no,408 passenger mentions; confirm the district
-Samarqand viloyati,Qo'shrabot,mahalla,Dagbit,Dag'bit|Dagbid|Дагбит,no,In the analysis place list; confirm the district
-Samarqand viloyati,Qo'shrabot,mahalla,Sebiston,Себистон,no,82 passenger mentions; confirm the district
-Samarqand viloyati,Qo'shrabot,poi,Qo'shrabot bozori,Bozor|Qoshrabot bozor|Кошрабад базар,no,"Bozor" 917 passenger mentions - is it this one?
-Samarqand viloyati,,poi,Mayiz bozor,Mayiz bozori|Mayizbozor|Майиз бозор,no,116 passenger / 2591 driver mentions; which district?
-Samarqand viloyati,,poi,Mol bozor,Mol bozori|Молбозор,no,Owner named it; which district?
-Samarqand viloyati,Samarqand shahri,poi,Siyob bozori,Siyob|Сиёб,no,Main bazaar of Samarqand city
-Samarqand viloyati,Samarqand shahri,poi,Samarqand vokzali,Vokzal|Вокзал,no,Railway station
-Samarqand viloyati,Samarqand shahri,poi,Samarqand aeroporti,Aeroport|Аэропорт,no,Airport
+Samarqand viloyati,Qo'shrabot,mahalla,Jo'sh,Josh|Jush|Жуш|Жўш,yes,Village of Qovunchi mahalla (owner 2026-11-11)
+Samarqand viloyati,Qo'shrabot,mahalla,O'razmat,Urazmat|Orazmat|Ўразмат,yes,Village of Qovunchi mahalla (owner)
+Samarqand viloyati,Qo'shrabot,mahalla,Chinor,Chinar|Чинор,yes,Village of Qovunchi mahalla (owner)
+Samarqand viloyati,Qo'shrabot,mahalla,Sebiston,Себистон,yes,Village of Qovunchi mahalla (owner)
+Samarqand viloyati,Samarqand,mahalla,Dagbit,Dag'bit|Dagbid|Дагбит,yes,Town on the Qo'shrabot-Samarqand road just before Samarqand (owner); Samarqand tumani assumed
+Samarqand viloyati,Qo'shrabot,poi,Qo'shrabot bozori,Bozor|Qoshrabot bozor|Кошрабад базар,yes,A plain 'bozor' means this one (owner)
+Samarqand viloyati,Qo'shrabot,poi,Mayiz bozor,Mayiz bozori|Mayizbozor|Майиз бозор,yes,In Qo'shrabot (owner)
+Samarqand viloyati,Qo'shrabot,poi,Mol bozor,Mol bozori|Молбозор,yes,In Qo'shrabot (owner)
+Samarqand viloyati,Samarqand shahri,poi,Siyob bozori,Siyob|Сиёб,yes,Main bazaar of Samarqand city
+Samarqand viloyati,Samarqand shahri,poi,Samarqand vokzali,Vokzal|Вокзал,yes,Railway station
+Samarqand viloyati,Samarqand shahri,poi,Samarqand aeroporti,Aeroport|Аэропорт,yes,Airport
