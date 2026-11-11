@@ -70,6 +70,10 @@ async def test_destination_only(idx):
     ("2 kishi bor yuk bilan Samarqandga, taksi kerak", RequestKind.PASSENGER, True),
     ("Samarqanddan dori olib kelib bering, taksi kerak", RequestKind.DELIVERY, False),
     ("Mayiz bozorga 2 kishi bor, kim ketadi?", RequestKind.BAZAAR, False),
+    ("Samarqandga labo kerak soat 11 larga", RequestKind.CARGO, True),        # goods vehicle = cargo (survey)
+    ("Samarqandga gazel kerak", RequestKind.CARGO, True),
+    ("Samarqandga labo kerak 2 kishi bor", RequestKind.PASSENGER, True),      # negative: people ride along
+    ("Samarqandga damas kerak", RequestKind.PASSENGER, False),                # negative: Damas carries people
 ])
 async def test_kinds(idx, text, kind, cargo):
     d = detect(text, idx, now=NOW)

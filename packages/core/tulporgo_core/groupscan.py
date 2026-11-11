@@ -10,8 +10,8 @@ from datetime import datetime
 from typing import Protocol
 
 from .enums import MessageClass, PlaceKind, RequestKind
-from .parser import parse, when_and_seats
-from .places import PlaceIndex, PlaceRef, strip_suffix, to_latin
+from .parser import GENERIC_PLACES, parse, suffix_role, when_and_seats
+from .places import PlaceIndex, PlaceRef, key, strip_suffix, to_latin
 
 MIN_CONFIDENCE = 0.6           # below this a message is not delivered (the local AI slot will look at these later)
 
@@ -21,7 +21,7 @@ def _rx(*parts: str) -> re.Pattern[str]:
 
 
 CAR = r"taks\w*|taxi|moshin\w*|mashina\w*|labo|damas|nexia|neksiya|cobalt|kobalt|kobilt|gentra|jentra|spark|malibu|" \
-      r"lacetti|lasetti|kaptiva|captiva|onix"
+      r"lacetti|lasetti|kaptiva|captiva|onix|gazel\w*|isuzu|kamaz|porter"
 NUM = r"\d|bir|ikki|uch|tort|besh"
 
 # (pattern, weight). Text is current Latin, lowercase, without apostrophes (see `_norm`).
@@ -48,7 +48,9 @@ DRIVER = [
 
 DELIVERY = _rx(r"\bdostavka\b", r"\bolib kel\w*", r"\bsotib olib\b", r"\byetkazib ber\w*", r"\bkupit\b")
 PARCEL = _rx(r"\bpochta\w*", r"\bposilka\w*", r"\bjonat\w*", r"\bperedat\w*")
-CARGO = _rx(r"\byuk\w*", r"\bbagaj\w*", r"\bchemodan\w*", r"\bgruz\w*", r"\bbagaj\w*")
+CARGO = _rx(r"\byuk\w*", r"\bbagaj\w*", r"\bchemodan\w*", r"\bgruz\w*",
+            # goods vehicles: "labo kerak" is a cargo request (2026-11-11 group survey). Damas also carries people.
+            r"\blabo\w*", r"\bgazel\w*", r"\bisuzu\w*", r"\bkamaz\w*", r"\bporter\w*")
 PEOPLE = _rx(rf"\b(?:{NUM})\s?(?:kishi|odam|nafar)", r"\bkishi\b", r"\bodam\b")
 BAZAAR = _rx(r"\bbozor\w*", r"\bbazar\w*")
 
@@ -91,14 +93,17 @@ class Detection:
 
 
 def _single_place(text: str, index: PlaceIndex) -> tuple[PlaceRef | None, PlaceRef | None]:
-    """One named place: '-dan' marks the origin, anything else the destination. Two-word names first (Mayiz bozor)."""
+    """One named place: '-dan' / '-da' mark the origin ("Sebistonda bir kishi bor"), anything else the destination.
+    Two-word names first (Mayiz bozor)."""
     words = re.findall(r"[\w']+", to_latin(text))
     for n in (2, 1):
         for i in range(len(words) - n + 1):
             chunk = " ".join(words[i:i + n])
+            if key(strip_suffix(chunk)) in GENERIC_PLACES:
+                continue
             ref = index.exact(chunk)
             if ref and len(strip_suffix(chunk)) >= 3:
-                return (ref, None) if re.search(r"(?:dan|tan)$", chunk) else (None, ref)
+                return (ref, None) if suffix_role(chunk, index) == "from" else (None, ref)
     return None, None
 
 

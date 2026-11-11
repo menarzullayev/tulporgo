@@ -1,6 +1,6 @@
 name_uz,kind,aliases,popularity
 Samarqand shahri,city,Samarqand|Samarkand|Самарканд|Shahar|Город,100
-Qo'shrabot,district,Koshrabad|Кошрабад|Qushrabot|Kushrabad,90
+Qo'shrabot,district,Koshrabad|Кошрабад|Qushrabot|Kushrabad|Qo'shrobot|Qoshrobot|Qushrobot,90
 Kattaqo'rg'on shahri,city,Kattaqo'rg'on|Kattakurgan|Каттакурган,40
 Urgut,district,Ургут,30
 Pastdarg'om,district,Pastdargom|Пастдаргом|Juma|Джума,30
@@ -13,3 +13,15 @@ Oqdaryo,district,Akdarya|Акдарья,15
 Payariq,district,Payarik|Пайарык,15
 Paxtachi,district,Pakhtachi|Пахтачи,15
 Toyloq,district,Tayloq|Taylak|Тайлак,15
+Toshkent shahri,region,Toshkent|Tashkent|Тошкент|Ташкент,80
+Buxoro shahri,city,Buxara|Bukhara|Бухара,0
+Navoiy shahri,city,Navoi|Navoyi|Навои|Навойи|Навоий,0
+Nurota,district,Nurata|Нурата,0
+Jizzax shahri,city,Djizak|Jizak|Dzhizak|Джизак,0
+Guliston shahri,city,Gulistan|Гулистан,0
+Urganch shahri,city,Urgench|Ургенч,0
+Termiz shahri,city,Termez|Термез,0
+Farg'ona shahri,city,Fergana|Фергана,0
+Qo'qon shahri,city,Kokand|Коканд,0
+Zarafshon shahri,city,Zarafshan|Зарафшан,0
+Nurobod,district,Nurabod|Нурабод,0

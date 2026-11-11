@@ -59,6 +59,8 @@ async def idx_of(s):
     ("Qoshrabotdan Samarqandga ertaga 8 da 2 kishi", "Qo'shrabot", "Samarqand"),
     ("Самарканд Кошрабад завтра 18:00", "Samarqand", "Qo'shrabot"),
     ("taksi kerak Samarqanddan Qovunchiga", "Samarqand", "Qovunchi"),
+    ("Samarqandga Qoshrabotdan 1 kishi bor", "Qo'shrabot", "Samarqand"),       # destination named first
+    ("Ертага Кошрабаддан Самаркандга", "Qo'shrabot", "Samarqand"),            # negative: 'ertaga' is not a place
 ])
 async def test_parse_routes(s, places, text, frm, to):
     r = parse(text, await idx_of(s), now=NOW)

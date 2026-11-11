@@ -71,7 +71,10 @@ class PlaceIndex:
         return (-r.popularity, order.index(r.kind) if r.kind in order else 9, r.name)
 
     def exact(self, text: str) -> PlaceRef | None:
-        cands = self.by_key.get(key(strip_suffix(text)), []) or self.by_key.get(key(text), [])
+        base = strip_suffix(text)
+        cands = self.by_key.get(key(base), []) or self.by_key.get(key(text), [])
+        if not cands and base != to_latin(text.strip()) and base.endswith("i") and len(base) > 4:
+            cands = self.by_key.get(key(base[:-1]), [])        # colloquial linking -i-: 'Urganchidan' -> Urganch
         return sorted(cands, key=self._rank)[0] if cands else None
 
     def search(self, text: str, limit: int = 8) -> list[PlaceRef]:
