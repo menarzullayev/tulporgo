@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     # "Login with Telegram" for the site opened outside Telegram (OpenID Connect). OFF while the secret is empty;
     # the secret comes from BotFather -> Bot Settings -> Login Widget. The client id is the bot's numeric id.
     login_client_secret: str = ""
+    login_bot_access: bool = True                  # decision 65: ask to let @tulporgobot message the user (telegram:bot_access)
     web_session_hours: int = 72
 
     # product rules

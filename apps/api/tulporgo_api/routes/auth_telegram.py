@@ -140,7 +140,8 @@ async def login_start(return_to: Annotated[str | None, Query(max_length=512)] = 
     target = safe_return_to(return_to, settings)
     state, nonce, verifier = oidc.new_secret(), oidc.new_secret(), oidc.new_secret()
     store.put(state, LoginAttempt(verifier, nonce, target, time.monotonic() + STATE_TTL))
-    url = oidc.authorization_url(client_id(settings), redirect_uri(settings), state, nonce, verifier)
+    url = oidc.authorization_url(client_id(settings), redirect_uri(settings), state, nonce, verifier,
+                                 oidc.scope(settings.login_bot_access))
     return RedirectResponse(url, status_code=302, headers={"Cache-Control": "no-store"})
 
 

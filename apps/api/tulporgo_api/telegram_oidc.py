@@ -19,6 +19,9 @@ TOKEN_URL = f"{ISSUER}/token"
 JWKS_URL = f"{ISSUER}/.well-known/jwks.json"
 ALGORITHMS = ("RS256", "ES256", "EdDSA", "ES256K")        # never "none" and never HMAC (the key would be public)
 SCOPE = "openid profile"
+# decision 65: the user may let the bot write to them after a site login, so trip notices reach people who never
+# opened @tulporgobot. Telegram adds no claim for it; a refused message is still just a 403 in delivery.
+BOT_ACCESS = "telegram:bot_access"
 JWKS_TTL = 3600
 JWKS_MIN_REFETCH = 60
 
@@ -39,8 +42,13 @@ def pkce_challenge(verifier: str) -> str:
     return base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
 
 
-def authorization_url(client_id: str, redirect_uri: str, state: str, nonce: str, verifier: str) -> str:
-    q = {"client_id": client_id, "redirect_uri": redirect_uri, "response_type": "code", "scope": SCOPE,
+def scope(bot_access: bool) -> str:
+    return f"{SCOPE} {BOT_ACCESS}" if bot_access else SCOPE
+
+
+def authorization_url(client_id: str, redirect_uri: str, state: str, nonce: str, verifier: str,
+                      scopes: str = SCOPE) -> str:
+    q = {"client_id": client_id, "redirect_uri": redirect_uri, "response_type": "code", "scope": scopes,
          "state": state, "nonce": nonce, "code_challenge": pkce_challenge(verifier), "code_challenge_method": "S256"}
     return f"{AUTH_URL}?{urlencode(q)}"
 

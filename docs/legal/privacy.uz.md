@@ -18,6 +18,7 @@ o'tkazish talabi]`.
 |---|---|---|
 | Hammadan | Telegram ID, ism, username, interfeys tili | Telegram avtomatik yuboradi |
 | Hammadan | Telefon raqami | siz «Kontaktni yuborish» tugmasini bossangiz |
+| Saytdan Telegram orqali kirganlardan | Telegram ID, ism, username (profil rasmi saqlanmaydi); @tulporgobot sizga qatnov xabarlarini yuborishiga ruxsat — agar Telegram oynasida rozi bo'lsangiz (65-qaror). Ruxsatni botni bloklab bekor qilasiz | Telegram'ning kirish oynasi, siz tasdiqlaganda |
 | Yo'lovchidan | Ayol yo'lovchi belgisi | ixtiyoriy, o'zingiz belgilaysiz |
 | Yo'lovchidan | So'rov: qayerdan, qayerga (tuman, mahalla yoki xaritada o'zingiz tanlagan nuqta), vaqt, odam soni, izoh | siz kiritasiz |
 | Hammadan | Takliflar, narxlar, qatnovlar holati, baholar, izohlar, shikoyatlar | Servisdagi harakatlaringiz |

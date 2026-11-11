@@ -142,6 +142,19 @@ def test_start_redirects_to_telegram_with_pkce_state_and_nonce(login):
     assert q["code_challenge_method"] == "S256" and q["state"] and q["nonce"] and q["code_challenge"]
 
 
+def test_start_asks_to_let_the_bot_write_by_default(login):
+    # decision 65: people who log in on the site can be sent trip notices by @tulporgobot
+    _, q = login.start()
+    assert q["scope"].split() == ["openid", "profile", "telegram:bot_access"]
+
+
+def test_bot_access_can_be_switched_off(login, env):
+    # negative: with the switch off the request asks for name and photo only
+    env.settings.login_bot_access = False
+    _, q = login.start()
+    assert q["scope"].split() == ["openid", "profile"]
+
+
 def test_happy_path_logs_in_and_the_token_authenticates(login, tg, env):
     res, q = login.start(return_to="/app/#/profile")
     tg.id_token = sign_id_token(q["nonce"])

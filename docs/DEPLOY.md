@@ -66,6 +66,7 @@ Approved by Saidakbar aka on 2026-11-10. Each is a switch in `deploy/.env` (`fal
 | `TULPORGO_EPHEMERAL_GROUP` | `/taksi`, `/yordam` in groups answered only to the asking user | — |
 | `TULPORGO_WIDGETS` | trip-status HTML widget in private chats | — |
 | `TULPORGO_LOGIN_CLIENT_SECRET=<secret>` | "Login with Telegram" on tulporgo.uz outside Telegram (OpenID Connect) | BotFather **mini app** → @tulporgobot → Login Widget (not in the chat menu): Redirect URI `https://tulporgo.uz/api/auth/telegram/callback` (exact match); Trusted Origins and Native Login empty (the code exchange is server-side); Signing Algorithm RS256. Client ID = bot id. Owner's copy: `.secrets/telegram_login.env` |
+| `TULPORGO_LOGIN_BOT_ACCESS=true` | Decision 65: the login also asks to let @tulporgobot message the user (scope `telegram:bot_access`) | `false` = name and photo only |
 
 ## Every later deploy
 
