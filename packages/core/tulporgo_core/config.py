@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     login_phone: bool = True                       # decision 66: ask for the Telegram-verified phone (scope phone)
     web_session_hours: int = 72
 
+    # operator on the public legal pages (decision 67) — from the server's environment, never from the public repo
+    operator_name: str = ""
+    operator_address: str = ""
+
     # product rules
     free_period_until: date | None = None          # decision 44: everyone free until this date (inclusive)
     trial_days: int = 7                            # decision 10

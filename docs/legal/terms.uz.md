@@ -1,17 +1,17 @@
 # TulporGo — Foydalanish shartlari
 
 > **QORALAMA, 2026-11-10.** Yurist tekshiruvidan o'tmagan va kuchga kirmagan (51-qaror).
-> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror). `[ega: …]` belgili joylarni
-> Operator to'ldiradi.
+> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror).
 
 ## 1. Umumiy qoidalar
 
 1.1. TulporGo — Telegram'dagi [@tulporgobot](https://t.me/tulporgobot) boti, uning Mini App ilovasi
 (`tulporgo.uz/app`) va haydovchilar uchun avto-e'lon xizmatidan iborat axborot servisi (bundan keyin — «Servis»).
 
-1.2. Servis egasi va operatori — Servis asoschisi, jismoniy shaxs `[ega: F.I.Sh., JShShIR, manzil]` (bundan
-keyin — «Operator»). MChJ yoki YATT tashkil etilgach, Operator sifatida o'sha yuridik shaxs ko'rsatiladi. To'lovlar
-uchinchi tomon to'lov provayderlari (Telegram Stars, Click, Payme) orqali qabul qilinadi.
+1.2. Servis egasi va operatori — Servis asoschisi, jismoniy shaxs `[ega: F.I.Sh.]` (pochta manzili:
+`[ega: pochta manzili]`; bundan keyin — «Operator»). MChJ yoki YATT tashkil etilgach, Operator sifatida o'sha
+yuridik shaxs ko'rsatiladi. To'lovlar uchinchi tomon to'lov provayderlari (Telegram Stars, Click, Payme) orqali
+qabul qilinadi.
 
 1.3. Servisdan foydalanishni boshlash orqali siz ushbu shartlarga va [Maxfiylik siyosati](privacy.uz.md)ga
 rozilik bildirasiz. Rozi bo'lmasangiz, Servisdan foydalanmang.
@@ -166,4 +166,4 @@ O'zbekiston Respublikasi qonunchiligida belgilangan tartibda, vakolatli sudda.
 - Bot: [@tulporgobot](https://t.me/tulporgobot) (to'lov savollari — `/paysupport`)
 - Kanal: [@tulporgo](https://t.me/tulporgo)
 - Email: info@tulporgo.uz
-- `[ega: rasmiy pochta manzili]`
+- Pochta manzili: `[ega: pochta manzili]`

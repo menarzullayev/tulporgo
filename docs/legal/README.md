@@ -9,8 +9,11 @@ Claude drafts, a lawyer reviews before the public launch. **Nothing here is in f
 | Userbot consent screen (decisions 8, 48) | [userbot-consent.uz.md](userbot-consent.uz.md) | [userbot-consent.ru.md](userbot-consent.ru.md) |
 
 Every product fact comes from `QARORLAR.md`. The owner answered the questions below on 2026-11-11 (decision 67)
-and the answers are in the texts. Places marked `[ega: …]` / `[владелец: …]` are the owner's personal details
-(full name, PINFL, postal address) — filled in only when he provides them. The texts stay drafts until a
+and the answers are in the texts. The owner's full name and postal address are not in this public
+repository: the texts keep `[ega: F.I.Sh.]` / `[ega: pochta manzili]` (ru: `[владелец: ФИО]` /
+`[владелец: почтовый адрес]`) and the page fills them in from `TULPORGO_OPERATOR_NAME` / `_ADDRESS` on the
+server (owner's copy: `.secrets/operator.env`; `tools/secret_scan.py` refuses a commit that contains them). PINFL
+is not published. The texts stay drafts until a
 licensed lawyer has read them.
 
 ## Questions for the lawyer (answered by the owner, see below)

@@ -1,12 +1,11 @@
 # TulporGo — Maxfiylik siyosati
 
 > **QORALAMA, 2026-11-10.** Yurist tekshiruvidan o'tmagan va kuchga kirmagan (51-qaror).
-> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror). `[ega: …]` belgili joylarni
-> Operator to'ldiradi.
+> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror).
 
 ## 1. Kim va qaysi qonun asosida
 
-1.1. Shaxsga doir ma'lumotlaringizni Servis asoschisi `[ega: F.I.Sh., JShShIR, manzil]` («Operator»)
+1.1. Shaxsga doir ma'lumotlaringizni Servis asoschisi `[ega: F.I.Sh.]` («Operator»)
 TulporGo servisi (@tulporgobot, Mini App, avto-e'lon) orqali qayta ishlaydi.
 
 1.2. Asos: O'zbekiston Respublikasining «Shaxsga doir ma'lumotlar to'g'risida»gi Qonuni (O'RQ-547, 2019-yil
@@ -88,7 +87,7 @@ nusxasi — Telegram serverlarida, zaxira nusxa — faqat shifrlangan holda R2'd
 - sayt va API faqat HTTPS orqali;
 - avto-e'lon sessiyalari shifrlangan holda saqlanadi, kalit alohida turadi;
 - serverga kirish cheklangan, xavfsizlik yangilanishlari avtomatik o'rnatiladi;
-- kunlik zaxira nusxa olinadi va tiklanishi muntazam tekshiriladi.
+- zaxira nusxa oyiga bir marta va har yangilanishdan oldin olinadi, tiklanishi muntazam tekshiriladi.
 
 ## 8. Sizning huquqlaringiz
 
@@ -115,4 +114,4 @@ Siyosat o'zgarsa, yangi matn bot va @tulporgo kanalida e'lon qilinadi.
 
 - Bot: [@tulporgobot](https://t.me/tulporgobot)
 - Email: info@tulporgo.uz
-- `[ega: Operator manzili]`
+- Pochta manzili: `[ega: pochta manzili]`

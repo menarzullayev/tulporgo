@@ -1,4 +1,5 @@
 """Public legal pages at /legal/<doc>?lang=uz|ru (the bot's /terms link points here)."""
+import html
 import re
 from urllib.parse import urlsplit
 
@@ -82,3 +83,34 @@ def test_placeholder_check_catches_a_leftover(client, tmp_path, monkeypatch):
 def test_owner_answers_are_in_the_pages(client, doc, lang, facts):
     page = client.get(f"/legal/{doc}", params={"lang": lang}).text
     assert [f for f in facts if f not in page] == []                     # decision 67 values, as published
+
+
+OWNER_PLACEHOLDER = re.compile(r"\[(ega|владелец):")
+
+
+def _client(**settings):
+    return TestClient(create_app(Settings.model_validate(settings), None, InMemoryBus()))
+
+
+@pytest.mark.parametrize("lang", legal.LANGS)
+def test_operator_details_come_from_the_settings(lang):
+    with _client(operator_name="Testov Test Testovich", operator_address="Samarqand viloyati, Qo'shrabot tumani") as c:
+        for doc in ("terms", "privacy"):
+            page = html.unescape(c.get(f"/legal/{doc}", params={"lang": lang}).text)
+            assert "Testov Test Testovich" in page and "Samarqand viloyati, Qo'shrabot tumani" in page
+            assert not OWNER_PLACEHOLDER.search(page)                    # decision 67: nothing left to fill
+
+
+def test_without_the_settings_the_placeholders_stay_visible(client):
+    page = client.get("/legal/terms").text                              # negative: a missing setting is not hidden
+    assert "[ega: F.I.Sh.]" in page and "[ega: pochta manzili]" in page
+
+
+def test_operator_details_are_plain_text():
+    with _client(operator_name="<script>alert(1)</script> *bold* [x](https://evil.example)",
+                 operator_address="`code`\n\n# heading") as c:
+        page = c.get("/legal/terms").text
+    assert "<script>alert(1)</script>" not in page and "&lt;script&gt;" in page
+    assert "<em>bold</em>" not in page and 'href="https://evil.example"' not in page
+    assert "<code>code</code>" not in page and "<h1>heading" not in page
+    assert "*bold* [x](https://evil.example)" in html.unescape(page)

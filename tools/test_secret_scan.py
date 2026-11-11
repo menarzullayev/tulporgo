@@ -1,6 +1,6 @@
 import base64
 
-from secret_scan import findings
+from secret_scan import findings, private_values
 
 FAKE_TOKEN = "1234567890:" + "A" * 35                       # shape of a bot token, not a real one
 
@@ -37,3 +37,20 @@ def test_placeholder_numbers_allowed_real_looking_flagged():
 
 def test_clean_text_passes():
     assert findings("TulporGo — taksini Telegram'dan chaqirish. chat id -1004318662356, user 1808327630") == []
+
+
+def test_owner_values_from_secrets_are_caught(tmp_path):
+    (tmp_path / "operator.env").write_text(
+        "# Full name\nTULPORGO_OPERATOR_NAME=Testov Test Testovich\nTULPORGO_OPERATOR_ADDRESS=\n", encoding="utf-8")
+    (tmp_path / "r2.env").write_text(
+        "TULPORGO_R2_BUCKET=tulporgo-backup\nTULPORGO_R2_SECRET_ACCESS_KEY=abcdef0123456789\n", encoding="utf-8")
+    private = private_values(tmp_path)
+    assert set(private) == {"testov test testovich", "abcdef0123456789"}   # bucket name is not secret, empty is skipped
+    found = findings("ok\nOperator: TESTOV Test Testovich\nkey abcdef0123456789\n", private)
+    assert found == [("value of TULPORGO_OPERATOR_NAME from .secrets/operator.env", 2),
+                     ("value of TULPORGO_R2_SECRET_ACCESS_KEY from .secrets/r2.env", 3)]
+    assert findings("Operator: `[ega: F.I.Sh.]`", private) == []           # negative: the placeholder is fine
+
+
+def test_no_secrets_dir_means_no_private_values(tmp_path):
+    assert private_values(tmp_path / "missing") == {}

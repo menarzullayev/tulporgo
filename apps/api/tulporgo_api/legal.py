@@ -1,14 +1,17 @@
 """Public legal pages (privacy policy §8/§11, `/terms` in the bot): `https://tulporgo.uz/legal/<doc>?lang=uz|ru`,
 rendered from `docs/legal/<doc>.<lang>.md` so the repository stays the single source. Raw HTML in the Markdown is
 escaped, only the three known documents are served, and the "QORALAMA / ЧЕРНОВИК" banner stays until the lawyer-approved
-text replaces the draft (decision 51)."""
+text replaces the draft (decision 51). The operator's name and postal address come from the server's environment
+(`TULPORGO_OPERATOR_NAME` / `_ADDRESS`, decision 67), so they never enter the public repository: the Markdown keeps
+`[ega: F.I.Sh.]` / `[ega: pochta manzili]` (ru: `[владелец: ФИО]` / `[владелец: почтовый адрес]`) and the page fills
+them in."""
 import html
 import os
 import re
 from functools import lru_cache
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from markdown_it import MarkdownIt
 
@@ -21,6 +24,22 @@ TITLES = {"terms": ("Foydalanish shartlari", "Условия использов�
 router = APIRouter()
 _md = MarkdownIt("commonmark", {"html": False, "linkify": False}).enable("table")
 _LINK = re.compile(r'href="(terms|privacy|userbot-consent)\.(uz|ru)\.md"')
+_OWNER_NAME = re.compile(r"`\[(?:ega: F\.I\.Sh\.|владелец: ФИО)\]`")
+_OWNER_ADDRESS = re.compile(r"`\[(?:ega: pochta manzili|владелец: почтовый адрес)\]`")
+_MD_PUNCT = re.compile(r"([!-/:-@\[-`{-~])")                # CommonMark: any ASCII punctuation may be backslash-escaped
+
+
+def _plain(value: str) -> str:
+    """A setting as literal Markdown text: one line, every ASCII punctuation escaped (no links, emphasis or code)."""
+    return _MD_PUNCT.sub(r"\\\1", " ".join(value.split()))
+
+
+def fill_owner(text: str, name: str, address: str) -> str:
+    """Put the operator's details into the Markdown; an empty setting leaves its placeholder visible."""
+    for pattern, value in ((_OWNER_NAME, name), (_OWNER_ADDRESS, address)):
+        if value.strip():
+            text = pattern.sub(_plain(value).replace("\\", "\\\\"), text)   # template: backslashes doubled
+    return text
 
 
 def legal_dir() -> Path:
@@ -29,8 +48,9 @@ def legal_dir() -> Path:
 
 
 @lru_cache(maxsize=32)
-def _render(path: Path, mtime: float, doc: str, lang: str) -> str:
-    body = _LINK.sub(lambda m: f'href="/legal/{m.group(1)}?lang={m.group(2)}"', _md.render(path.read_text("utf-8")))
+def _render(path: Path, mtime: float, doc: str, lang: str, owner_name: str = "", owner_address: str = "") -> str:
+    source = fill_owner(path.read_text("utf-8"), owner_name, owner_address)
+    body = _LINK.sub(lambda m: f'href="/legal/{m.group(1)}?lang={m.group(2)}"', _md.render(source))
     other = "ru" if lang == "uz" else "uz"
     nav = " · ".join(f'<a href="/legal/{d}?lang={lang}">{html.escape(TITLES[d][LANGS.index(lang)])}</a>' for d in DOCS)
     return f"""<!doctype html>
@@ -57,12 +77,14 @@ main{{overflow-wrap:anywhere}} table{{table-layout:fixed}} h1{{font-size:clamp(2
 
 
 @router.get("/legal/{doc}", response_class=HTMLResponse, include_in_schema=False)
-async def legal_page(doc: str, lang: str = "uz") -> HTMLResponse:
+async def legal_page(request: Request, doc: str, lang: str = "uz") -> HTMLResponse:
     if doc not in DOCS:
         raise HTTPException(status_code=404)
     lang = lang if lang in LANGS else "uz"
     path = legal_dir() / f"{doc}.{lang}.md"
     if not path.is_file():
         raise HTTPException(status_code=404)
-    page = _render(path, path.stat().st_mtime, doc, lang)
+    settings = getattr(request.app.state, "settings", None)
+    page = _render(path, path.stat().st_mtime, doc, lang,
+                   getattr(settings, "operator_name", ""), getattr(settings, "operator_address", ""))
     return HTMLResponse(page, headers={"Cache-Control": "public, max-age=300"})

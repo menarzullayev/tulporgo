@@ -1,7 +1,9 @@
 """Fail if a secret or personal identifier is about to be published (decisions 46, 54).
 
 Scans the files git would commit (`git ls-files -co --exclude-standard`), or the paths given. Base64 inside
-`data:` URIs (embedded images) is ignored. Exit 1 with the file and the kind of finding — the value is never printed.
+`data:` URIs (embedded images) is ignored. Also fails when a value from the owner's git-ignored `.secrets/*.env` shows
+up: every value of `operator.env` (his name and address, decision 67) and of any key named like a secret. Exit 1 with
+the file and the kind of finding — the value is never printed.
 Usage: python tools/secret_scan.py [paths...]
 """
 import re, subprocess, sys
@@ -16,6 +18,9 @@ PATTERNS = {
     "access hash": re.compile(r"(?i)\"access_hash\"\s*:\s*-?\d{6,}"),
 }
 DATA_URI = re.compile(r"data:[\w.+-]+/[\w.+-]+;base64,[A-Za-z0-9+/=]+")
+SECRETS_DIR = Path(__file__).resolve().parents[1] / ".secrets"
+PERSONAL_FILES = ("operator.env",)                    # every value in these is personal data
+SECRET_NAME = re.compile(r"SECRET|TOKEN|HASH|PASSWORD|KEY", re.I)
 BINARY = (".png", ".jpg", ".jpeg", ".webp", ".webm", ".tgs", ".gif", ".pdf", ".zip", ".ico", ".woff", ".woff2", ".ttf")
 
 
@@ -25,9 +30,28 @@ def placeholder_phone(s: str) -> bool:
     return d == "1234567" or len(set(d)) == 1
 
 
-def findings(text):
+def private_values(root=SECRETS_DIR):
+    """{lower-cased value: label} for the values that must never be committed. Short values (< 8 chars) are skipped."""
+    out = {}
+    for f in sorted(root.glob("*.env")) if root.is_dir() else []:
+        for line in f.read_text(encoding="utf-8", errors="ignore").splitlines():
+            key, sep, value = line.partition("=")
+            key, value = key.strip(), value.strip().strip("\"'").strip()
+            if not sep or key.startswith("#") or len(value) < 8:
+                continue
+            if f.name in PERSONAL_FILES or SECRET_NAME.search(key):
+                out[value.lower()] = f"value of {key} from .secrets/{f.name}"
+    return out
+
+
+def findings(text, private=None):
     spans = [m.span() for m in DATA_URI.finditer(text)]
     out = []
+    low = text.lower()
+    for value, label in (private or {}).items():
+        at = low.find(value)
+        if at >= 0:
+            out.append((label, text.count("\n", 0, at) + 1))
     for kind, rx in PATTERNS.items():
         for m in rx.finditer(text):
             if any(a <= m.start() and m.end() <= b for a, b in spans):
@@ -47,10 +71,11 @@ def files(args):
 
 def main(args):
     bad = 0
+    private = private_values()
     for p in files(args):
         if p.suffix.lower() in BINARY or not p.is_file():
             continue
-        for kind, line in findings(p.read_text(encoding="utf-8", errors="ignore")):
+        for kind, line in findings(p.read_text(encoding="utf-8", errors="ignore"), private):
             print(f"{p}:{line}: {kind}")
             bad += 1
     print(f"secret scan: {bad} finding(s)")
