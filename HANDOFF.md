@@ -214,7 +214,9 @@ Gotchas (all in MUAMMOLAR.md):
    - **Decision 70 (2026-11-11):** no VPS until TulporGo makes a profit — it runs on the owner's PC; a strong university
      server is the later candidate (to be measured first). YATT/MChJ + Click/Payme not before ~6 months in production.
      Instagram/Facebook names are free (owner checked), to be reserved later.
-   - **Next build (decisions 72–73): reading taxi groups for drivers — `docs/goals/W5-group-reading.md`.** Order: W5 →
+   - **W5 reading taxi groups (decisions 72–73) is built** — status table in `docs/goals/W5-group-reading.md`; open: owner
+     approves `data/landmarks.csv` / `corridors.csv` (Jo'sh etc. are missing from places today), a dry run with real
+     accounts, the Basic-plan question. Order: W5 →
      PC deploy → 1–2 weeks closed test → wide launch. Free period 1 month at launch (then decide by KPI); no
      monitoring for now (accepted risk). Documents storage chat: private channel "TulporGo hujjatlar" on the owner's
      account, @tulporgobot admin (post + delete only), id in `.secrets/telegram_storage.env` (done 2026-11-11).

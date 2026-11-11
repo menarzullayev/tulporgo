@@ -55,6 +55,23 @@ group x1 ── new message ──> reader account (one per group, live Telethon
     across groups → one card; reader failover; nothing about the message is written to the database; cards deleted
     after 2 h; a reader never sends to a group.
 
+## Status (2026-11-11)
+
+| Item | State | Where |
+|---|---|---|
+| 1–2 membership, one reader per wanted group, failover | done | `tulporgo_core/services/groupfeed.py` (`assign_readers`) |
+| 3 live reading on the shared client | done; memory per reader **not measured yet** (needs real accounts) | `apps/userbot/tulporgo_userbot/reader.py`, `client.py` |
+| 4 detection (kinds, driver ads, single place) | done, rule-based; local-AI slot = `Classifier` | `tulporgo_core/groupscan.py` |
+| 5 landmarks | mechanism done; **draft list waits for the owner** (`approved` column) | `data/landmarks.csv`, `data/corridors.csv` |
+| 6 filters | done | `DriverFilter`, migration 0005 |
+| 7 delivery chat | done: making @tulporgobot an admin links it | `feedbot.py` |
+| 8 card | plain HTML + buttons (works on old apps; decision 69 is for channel posts), Biznes first, 2 h cleanup | `cards.py`, `reader.py` |
+| 9 Mini App + bot | done: `#/feed` / `?page=feed`, /elon → "Yo'lovchi qidirish" | `apps/miniapp/src/screens/Feed.tsx`, `feedapi.py` |
+| 10 consent + privacy | done: consent version 2, privacy "group messages" | `locales/userbot.py`, `docs/legal/` |
+| 11 tests | done, each rule with a negative | core, userbot, api, miniapp tests |
+| Dry run on the PC with real accounts and groups | **open** — needs the owner's accounts | — |
+| Basic plan cannot connect the userbot today, so it gets no cards after the free month | **owner decision** | `service.require_plan` |
+
 ## Done when
 
 - all checklist items merged with tests; CI green;
