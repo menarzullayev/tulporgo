@@ -211,7 +211,10 @@ Gotchas (all in MUAMMOLAR.md):
    DKIM `zmail._domainkey`. **No apex A record yet** — add it (→ VPS IP) after the VPS is bought.
 5. Brand guide. Post templates are settled (decisions 32–37, format: decision 69 — Rich post, Rich + table for tabular content).
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
-   - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
+   - **Decision 70 (2026-11-11):** no VPS until TulporGo makes a profit — it runs on the owner's PC; a strong university
+     server is the later candidate (to be measured first). YATT/MChJ + Click/Payme not before ~6 months in production.
+     Instagram/Facebook names are free (owner checked), to be reserved later.
+   - **Owner-only, when hosting is chosen:** deploy (`docs/DEPLOY.md`, same compose on PC or server) and the DNS A record;
      legal texts: the owner answered the 9 lawyer questions (decision 67, texts filled) — his full name and postal address
      are in `.secrets/operator.env` (filled 2026-11-11, checked: both pages render them, `secret_scan` catches them);
      copy the two `TULPORGO_OPERATOR_*` lines into `deploy/.env` at deploy (never committed); a licensed lawyer reviewed the texts and the draft banner is gone (decision 68);
