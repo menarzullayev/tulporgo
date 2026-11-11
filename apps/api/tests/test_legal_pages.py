@@ -10,6 +10,8 @@ from tulporgo_api.main import create_app
 from tulporgo_core.config import Settings
 from tulporgo_core.events import InMemoryBus
 
+DRAFT_BANNER = re.compile(r"QORALAMA|ЧЕРНОВИК")
+
 
 @pytest.fixture
 def client():
@@ -23,7 +25,8 @@ def test_every_document_in_both_languages(client, doc, lang):
     r = client.get(f"/legal/{doc}", params={"lang": lang})
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
     assert f'<html lang="{lang}">' in r.text
-    assert ("QORALAMA" if lang == "uz" else "ЧЕРНОВИК") in r.text          # draft banner until the lawyer approves
+    assert not DRAFT_BANNER.search(r.text)                               # decision 68: lawyer-reviewed, no draft banner
+    assert ("Tahrir: 2026-11-11" if lang == "uz" else "Редакция от 11.11.2026") in r.text
 
 
 def test_uzbek_is_the_default_and_unknown_language_falls_back(client):
@@ -114,3 +117,9 @@ def test_operator_details_are_plain_text():
     assert "<em>bold</em>" not in page and 'href="https://evil.example"' not in page
     assert "<code>code</code>" not in page and "<h1>heading" not in page
     assert "*bold* [x](https://evil.example)" in html.unescape(page)
+
+
+def test_draft_banner_check_catches_a_draft(client, tmp_path, monkeypatch):
+    (tmp_path / "terms.uz.md").write_text("# T\n\n> **QORALAMA, 2026-11-10.**\n", encoding="utf-8")
+    monkeypatch.setenv("TULPORGO_LEGAL_DIR", str(tmp_path))
+    assert DRAFT_BANNER.search(client.get("/legal/terms").text)          # negative: a draft would be noticed

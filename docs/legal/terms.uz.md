@@ -1,7 +1,6 @@
 # TulporGo — Foydalanish shartlari
 
-> **QORALAMA, 2026-11-10.** Yurist tekshiruvidan o'tmagan va kuchga kirmagan (51-qaror).
-> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror).
+> **Tahrir: 2026-11-11.**
 
 ## 1. Umumiy qoidalar
 

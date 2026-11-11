@@ -1,7 +1,7 @@
 """Public legal pages (privacy policy §8/§11, `/terms` in the bot): `https://tulporgo.uz/legal/<doc>?lang=uz|ru`,
 rendered from `docs/legal/<doc>.<lang>.md` so the repository stays the single source. Raw HTML in the Markdown is
-escaped, only the three known documents are served, and the "QORALAMA / ЧЕРНОВИК" banner stays until the lawyer-approved
-text replaces the draft (decision 51). The operator's name and postal address come from the server's environment
+escaped and only the three known documents are served. The texts were reviewed by a licensed lawyer and the draft
+banner was removed on 2026-11-11 (decisions 51, 68). The operator's name and postal address come from the server's environment
 (`TULPORGO_OPERATOR_NAME` / `_ADDRESS`, decision 67), so they never enter the public repository: the Markdown keeps
 `[ega: F.I.Sh.]` / `[ega: pochta manzili]` (ru: `[владелец: ФИО]` / `[владелец: почтовый адрес]`) and the page fills
 them in."""

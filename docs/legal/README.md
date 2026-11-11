@@ -1,6 +1,7 @@
-# Legal drafts (decision 51)
+# Legal texts (decisions 51, 67, 68)
 
-Claude drafts, a lawyer reviews before the public launch. **Nothing here is in force yet.**
+Claude drafted them, the owner answered the lawyer questions (decision 67) and a licensed lawyer reviewed
+them; the draft banner was removed on 2026-11-11 (decision 68). Revision: 2026-11-11.
 
 | File | Uzbek | Russian |
 |---|---|---|
@@ -13,8 +14,7 @@ and the answers are in the texts. The owner's full name and postal address are n
 repository: the texts keep `[ega: F.I.Sh.]` / `[ega: pochta manzili]` (ru: `[владелец: ФИО]` /
 `[владелец: почтовый адрес]`) and the page fills them in from `TULPORGO_OPERATOR_NAME` / `_ADDRESS` on the
 server (owner's copy: `.secrets/operator.env`; `tools/secret_scan.py` refuses a commit that contains them). PINFL
-is not published. The texts stay drafts until a
-licensed lawyer has read them.
+is not published. Any later change gets a new revision date in the first line of the text.
 
 ## Questions for the lawyer (answered by the owner, see below)
 
@@ -57,5 +57,5 @@ licensed lawyer has read them.
 
 - ~~Bot: "Ma'lumotlarim" — export and delete own data (privacy §8).~~ Done: `/malumotlarim`.
 - ~~`/terms` and `/paysupport` commands, terms acceptance before payment (W4).~~ Done (`tulporgo_payments/bot.py`).
-- ~~Public pages~~ Done: `https://tulporgo.uz/legal/<terms|privacy|userbot-consent>?lang=uz|ru` render these files; replace the drafts after review.
+- ~~Public pages~~ Done: `https://tulporgo.uz/legal/<terms|privacy|userbot-consent>?lang=uz|ru` render these files.
 - ~~Compare §4 of the privacy policy ("who sees what") with the merged bot behaviour.~~ Done (trip card: name, phone, username).

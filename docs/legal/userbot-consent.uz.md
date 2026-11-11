@@ -1,6 +1,6 @@
 # Avto-e'lon: hisobingizni ulashdan oldin o'qing
 
-> **QORALAMA, 2026-11-10** — yurist tekshiradi (8, 48, 51-qarorlar). Botdagi rozilik ekrani shu matnga mos bo'lishi kerak.
+> **Tahrir: 2026-11-11.**
 
 **Nima bo'ladi.** Siz o'z Telegram hisobingizni TulporGo'ga ulaysiz. TulporGo siz tanlagan guruhlarga sizning
 nomingizdan qatnov e'loningizni yuboradi. TulporGo — Telegram API orqali ishlaydigan mustaqil xizmat, Telegramning
