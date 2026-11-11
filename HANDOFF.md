@@ -212,9 +212,9 @@ Gotchas (all in MUAMMOLAR.md):
 5. Brand guide; post templates finalisation (decisions 32–37).
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
-     legal texts: the owner answered the 9 lawyer questions (decision 67, texts filled) — left: his full name and postal
-     address in `.secrets/operator.env` → `deploy/.env` (`TULPORGO_OPERATOR_*`, filled in on the page, never
-     committed), and a licensed lawyer's read before the QORALAMA banner goes;
+     legal texts: the owner answered the 9 lawyer questions (decision 67, texts filled) — his full name and postal address
+     are in `.secrets/operator.env` (filled 2026-11-11, checked: both pages render them, `secret_scan` catches them);
+     copy the two `TULPORGO_OPERATOR_*` lines into `deploy/.env` at deploy (never committed), and a licensed lawyer's read before the QORALAMA banner goes;
      legal status (YATT/MChJ) + Click/Payme merchant contracts;
      after deploy: `TULPORGO_LOGIN_CLIENT_SECRET` from `.secrets/telegram_login.env` into `deploy/.env` (Login Widget is
      set up and was tested end to end on 2026-11-11), R2 values from `.secrets/r2.env` into `deploy/.env` and the
