@@ -165,6 +165,18 @@ async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:
             p = await upsert(PlaceKind.CITY if city else PlaceKind.DISTRICT, name, reg.id, row.get("district_code"),
                              aliases=[short] if city and short != name else ())
             districts[(key(row["region_uz"]), key(name))] = p
+    f = data_dir / "renames.csv"         # owner-confirmed renames no key can link (Yu.Saroy -> Yuqori Saroy)
+    if f.exists():
+        reg_key = key("Samarqand viloyati")
+        for row in csv.DictReader(f.open(encoding="utf-8")):
+            parent = districts.get((reg_key, key(row["district_uz"])))
+            pid = parent.id if parent else None
+            old, new = (row["kind"], key(row["old"]), pid), (row["kind"], key(row["new"]), pid)
+            if old in existing and new not in existing:
+                p = existing.pop(old)
+                p.name_uz = row["new"]
+                existing[new] = p
+                loose_keys.setdefault((new[0], loose(new[1]), pid), []).append(new)
     f = data_dir / "samarqand_mahallas.csv"
     if f.exists():
         reg_key = key("Samarqand viloyati")

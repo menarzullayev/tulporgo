@@ -135,3 +135,16 @@ async def test_kenjebaev_names_have_their_letters_back(idx):
     in_qosh = {r.name for r in idx.refs if r.kind == "mahalla" and r.area == qosh}
     assert "Do'stlik" in in_qosh and "Dustlik" not in in_qosh   # negative: egov's lossy 'Dustlik' never replaced ours
     assert {"Hazarbobo", "Q.Qarshiev"} <= names and not {"Xazar bobo", "K. Qarshiev"} & names
+    owner = {"Buloq", "Chinoq", "Qo'shtamg'ali", "Oqchopsoy", "O'rtasoy", "Yuqori Jo'sh", "Yuqori Saroy", "Qo'rolos"}
+    assert owner <= in_qosh and {"Novkat", "Shovo", "Boypurushli"} <= in_qosh     # owner 2026-11-11: Novkat stays
+
+
+def test_renames_match_the_mahalla_list():
+    import csv
+
+    from tulporgo_core.places import DATA
+    names = {(r["district_uz"], r["mahalla_uz"]) for r in csv.DictReader((DATA / "samarqand_mahallas.csv").open(encoding="utf-8"))}
+    rows = list(csv.DictReader((DATA / "renames.csv").open(encoding="utf-8")))
+    assert rows
+    for r in rows:                     # the new name is listed, the old one is gone (else seed would make both)
+        assert (r["district_uz"], r["new"]) in names and (r["district_uz"], r["old"]) not in names, r

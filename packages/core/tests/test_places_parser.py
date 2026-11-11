@@ -148,3 +148,21 @@ async def test_loose_match_is_only_a_fallback(s, tmp_path):
     assert idx.exact("Kurgonga").name == "Qo'rg'on"             # o' written as u
     assert idx.exact("Turon").name == "Turon" and idx.exact("To'ron").name == "To'ron"   # negative: exact wins
     assert idx.exact("Uy") is None                              # negative: too short for the fallback
+
+
+async def test_explicit_rename_keeps_the_place(s, tmp_path):
+    (tmp_path / "regions_districts.csv").write_text(
+        "region_code,region_uz,district_code,district_uz,kind\n,Samarqand viloyati,,Qo'shrabot,tuman\n", encoding="utf-8")
+    mahallas = tmp_path / "samarqand_mahallas.csv"
+    mahallas.write_text("district_uz,mahalla_uz,source\nQo'shrabot,Yu.Saroy,test\nQo'shrabot,Ozod,test\n"
+                        "Qo'shrabot,Bozor,test\n", encoding="utf-8")
+    await seed(s, tmp_path)
+    before = {p.name_uz: p.id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
+    (tmp_path / "renames.csv").write_text(
+        "kind,district_uz,old,new,note\nmahalla,Qo'shrabot,Yu.Saroy,Yuqori Saroy,test\n"
+        "mahalla,Qo'shrabot,Ozod,Bozor,test\n", encoding="utf-8")       # negative: Bozor exists -> never merged
+    mahallas.write_text("district_uz,mahalla_uz,source\nQo'shrabot,Yuqori Saroy,test\nQo'shrabot,Ozod,test\n"
+                        "Qo'shrabot,Bozor,test\n", encoding="utf-8")
+    assert await seed(s, tmp_path) == 0
+    after = {p.name_uz: p.id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
+    assert after == {"Yuqori Saroy": before["Yu.Saroy"], "Ozod": before["Ozod"], "Bozor": before["Bozor"]}

@@ -34,7 +34,9 @@ Spelling (2026-11-11): the kenjebaev rows often drop Uzbek letters (Kurgon, Kush
 were restored from the official egov list above (Cyrillic, all 787 rows, district labels ignored): a name is replaced
 only when the official one is the same word with letters restored (o'/g', q, h) and loses none, so egov's own lossy
 forms (Dustlik, Urikzor) never replace a correct name. 262 kenjebaev names are not in the egov list and stay as they
-are; Qovunchi was confirmed by the owner. Seed renames such places in place (same id), and matching folds o/u, so
+are; Qovunchi and 8 more Qo'shrabot names (Buloq, Chinoq, Qo'shtamg'ali, Oqchopsoy, O'rtasoy, Yuqori Jo'sh, Yuqori
+Saroy, Qo'rolos; Novkat stays) were confirmed by the owner. `renames.csv` lists the owner's renames that no key can
+link (Yu.Saroy -> Yuqori Saroy), so an existing database renames the place instead of adding a second one. Seed renames such places in place (same id), and matching folds o/u, so
 "Kurgon" still finds Qo'rg'on.
 
 ## Not retrievable
