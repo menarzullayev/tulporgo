@@ -205,9 +205,10 @@ Gotchas (all in MUAMMOLAR.md):
    TERMINATES that pid (logs show nothing was killed that time). Now an OS file lock (msvcrt/fcntl, released by the OS
    on any death) and in-process network retries instead of re-exec; tests incl. crash/stale-lock + no-os.kill guard. Domain tulporgo.uz: whois (whois.cctld.uz, 2026-11-10)
    `Status: ACTIVE`, created 09-Nov-2026, expires 09-Nov-2027, NS ns1–ns4.eskiz.uz. DNS zone at Eskiz (2026-11-11,
-   verified via ns1.eskiz.uz and 1.1.1.1): `www` CNAME tulporgo.uz, TXT `v=spf1 -all`, `_dmarc` TXT `v=DMARC1; p=reject`
-   (the domain sends no mail), CAA `0 issue "letsencrypt.org"`; Eskiz defaults (apex/ftp/mail/webmail A, MX) removed;
-   WHOIS contacts hidden. **No apex A record yet** — add it (→ VPS IP) after the VPS is bought.
+   verified via ns1.eskiz.uz and 1.1.1.1): `www` CNAME tulporgo.uz, `_dmarc` TXT `v=DMARC1; p=reject`, CAA
+   `0 issue "letsencrypt.org"`; Eskiz defaults (apex/ftp/mail/webmail A, Eskiz MX) removed; WHOIS contacts hidden.
+   Mail on Zoho (decision 64): MX `mx/mx2/mx3.zoho.com`, TXT `v=spf1 include:zohomail.com -all` + Zoho verification,
+   DKIM `zmail._domainkey`. **No apex A record yet** — add it (→ VPS IP) after the VPS is bought.
 5. Brand guide; post templates finalisation (decisions 32–37).
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
@@ -217,9 +218,9 @@ Gotchas (all in MUAMMOLAR.md):
      "Configure Mini App" + menu button (`getMe.has_main_web_app=false`).
    - ~~Owner to confirm (rules the agents chose)~~ — **confirmed 2026-11-11, decision 63**; one change: a rejected
      document's server copy is purged after 7 days (`rejected_documents_keep_days`, hourly bot job), not at once.
-   - **Email (decision 64):** `info@tulporgo.uz` on Zoho Mail Forever Free. Saidakbar aka signs up (his account); then
-     at Eskiz: Zoho's verification TXT, MX, SPF (`include:zohomail…`, replaces `v=spf1 -all`), DKIM, DMARC; test mail
-     both ways; then the address goes into the `[yurist: … email]` places of `docs/legal/privacy.*` and `terms.*`.
+   - **Email (decision 64) — set up 2026-11-11:** Zoho Mail Forever Free, its own Zoho account (not RankWant's),
+     login `admin@tulporgo.uz`, `info@tulporgo.uz` an alias of it; MX/SPF/DKIM verified by Zoho; the address is in
+     `docs/legal/privacy.*` and `terms.*`. Left: Saidakbar aka turns on 2FA in Zoho; a two-way test mail.
      Lawyer question 9: the mailbox is abroad.
    - **Later:** other regions' mahallas (+22 missing in Samarqand); new-alphabet spelling rules (decision 16); the
      userbot *reading* groups to pick up passenger requests (decision 8 — not built, it only posts); Click/Payme sandbox

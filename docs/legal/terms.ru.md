@@ -156,4 +156,5 @@ Telegram или интернета.
 
 - Бот: [@tulporgobot](https://t.me/tulporgobot) (вопросы оплаты — `/paysupport`)
 - Канал: [@tulporgo](https://t.me/tulporgo)
-- `[юрист: официальный почтовый адрес и email]`
+- Email: info@tulporgo.uz
+- `[юрист: официальный почтовый адрес]`

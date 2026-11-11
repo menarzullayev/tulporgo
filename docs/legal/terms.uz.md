@@ -160,4 +160,5 @@ O'zbekiston Respublikasi qonunchiligi qo'llaniladi. Nizolar avval muzokara yo'li
 
 - Bot: [@tulporgobot](https://t.me/tulporgobot) (to'lov savollari — `/paysupport`)
 - Kanal: [@tulporgo](https://t.me/tulporgo)
-- `[yurist: rasmiy pochta manzili va email]`
+- Email: info@tulporgo.uz
+- `[yurist: rasmiy pochta manzili]`

@@ -95,7 +95,7 @@ Siz quyidagilarni so'rashingiz mumkin:
 - avto-e'lonni istalgan vaqtda «Hisobni uzish» orqali to'xtatish.
 
 So'rovni bot orqali yuboring: botdagi `/malumotlarim` buyrug'i (yuklab olish va o'chirish) yoki
-`[yurist: email / pochta manzili]`. Javob muddati — `[yurist: N]` kun.
+info@tulporgo.uz (pochta manzili: `[yurist: pochta manzili]`). Javob muddati — `[yurist: N]` kun.
 
 ## 9. Bolalar
 
@@ -108,4 +108,5 @@ Siyosat o'zgarsa, yangi matn bot va @tulporgo kanalida e'lon qilinadi.
 ## 11. Aloqa
 
 - Bot: [@tulporgobot](https://t.me/tulporgobot)
-- `[yurist: Operator manzili va email]`
+- Email: info@tulporgo.uz
+- `[yurist: Operator manzili]`
