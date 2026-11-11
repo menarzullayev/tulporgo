@@ -109,7 +109,7 @@ async def test_real_corridor_makes_dagbit_on_the_way(idx):
     ("Ertalabga urganchidan zarofshonga taksi kerak", "Urganch shahri", "Zarafshon shahri"),
     ("Qoʻshrobotga taksi bormi sebistonda bir kishi bor", "Sebiston", "Qo'shrabot"),
     ("Sebistonda bir kishi bor", "Sebiston", None),                     # -da: where the passenger is
-    ("Qovunchidan Qoshrabotga taksi kk 1 kishi bor", "Kovunchi", "Qo'shrabot"),
+    ("Qovunchidan Qoshrabotga taksi kk 1 kishi bor", "Qovunchi", "Qo'shrabot"),
     ("Nurota 2 kishi bor taksi kerak", None, "Nurota"),                 # negative: -ta here is part of the name
 ])
 async def test_survey_routes(idx, text, frm, to):

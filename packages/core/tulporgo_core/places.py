@@ -116,7 +116,10 @@ async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:
         nonlocal created
         k = (kind, key(name), parent_id)
         if k in existing:
-            return existing[k]
+            p = existing[k]
+            if p.name_uz != name:                         # same key, corrected spelling in the data (Kovunchi -> Qovunchi)
+                p.name_uz = name
+            return p
         p = Place(kind=kind, name_uz=name, parent_id=parent_id, code=code or None, aliases=list(aliases),
                   popularity=popularity)
         session.add(p)

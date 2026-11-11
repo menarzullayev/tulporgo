@@ -1,6 +1,8 @@
 from datetime import datetime
 
 import pytest
+from sqlalchemy import select
+from tulporgo_core.models import Place
 from tulporgo_core.parser import parse
 from tulporgo_core.places import PlaceIndex, key, seed, strip_suffix, to_latin
 
@@ -104,3 +106,17 @@ async def test_only_approved_corridors_with_known_stops(s, tmp_path, places):
         "C,Qo'shrabot|Atlantida,yes,\n", encoding="utf-8")
     idx = await PlaceIndex.load(s)
     assert corridors(idx, tmp_path) == [[places[0].id, places[1].id]]    # B not approved, C has an unknown stop
+
+
+async def test_seed_corrects_spelling_in_place(s, tmp_path):
+    (tmp_path / "regions_districts.csv").write_text(
+        "region_code,region_uz,district_code,district_uz,kind\n,Samarqand viloyati,,Qo'shrabot,tuman\n", encoding="utf-8")
+    mahallas = tmp_path / "samarqand_mahallas.csv"
+    mahallas.write_text("district_uz,mahalla_uz,source\nQo'shrabot,Kovunchi,test\n", encoding="utf-8")
+    await seed(s, tmp_path)
+    old = (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalar_one()
+    mahallas.write_text("district_uz,mahalla_uz,source\nQo'shrabot,Qovunchi,test\nQo'shrabot,Toz,test\n",
+                        encoding="utf-8")
+    assert await seed(s, tmp_path) == 1                    # only Toz is new
+    rows = {p.name_uz: p.id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
+    assert rows == {"Qovunchi": old.id, "Toz": rows["Toz"]}  # same row renamed, links stay; negative: Toz not merged
