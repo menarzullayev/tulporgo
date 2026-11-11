@@ -240,4 +240,23 @@ TEXTS = {
     "userbot.post.price": {"uz": "💰 {price} so'm", "ru": "💰 {price} сум", "en": "💰 {price} UZS"},
     "userbot.post.contact": {"uz": "📲 @{bot} orqali bog'laning", "ru": "📲 Свяжитесь через @{bot}",
                              "en": "📲 Contact via @{bot}"},
+
+    # --- group feed cards (decision 73): sent by @tulporgobot to the driver's channel or chat ---
+    "feed.kind.passenger": {"uz": "🚕 Yo'lovchi", "ru": "🚕 Пассажир", "en": "🚕 Passenger"},
+    "feed.kind.parcel": {"uz": "📦 Pochta", "ru": "📦 Посылка", "en": "📦 Parcel"},
+    "feed.kind.cargo": {"uz": "🚚 Yuk", "ru": "🚚 Груз", "en": "🚚 Cargo"},
+    "feed.kind.delivery": {"uz": "🛍 Dostavka", "ru": "🛍 Доставка", "en": "🛍 Delivery"},
+    "feed.kind.bazaar": {"uz": "🧺 Bozor", "ru": "🧺 Базар", "en": "🧺 Bazaar"},
+    "feed.when.now": {"uz": "hozir", "ru": "сейчас", "en": "now"},
+    "feed.when.today": {"uz": "bugun {hm}", "ru": "сегодня {hm}", "en": "today {hm}"},
+    "feed.when.tomorrow": {"uz": "ertaga {hm}", "ru": "завтра {hm}", "en": "tomorrow {hm}"},
+    "feed.when.date": {"uz": "{date} {hm}", "ru": "{date} {hm}", "en": "{date} {hm}"},
+    "feed.seats": {"uz": "{n} kishi", "ru": "{n} чел.", "en": "{n} people"},
+    "feed.cargo": {"uz": "yuk bilan", "ru": "с грузом", "en": "with luggage"},
+    "feed.unknown_place": {"uz": "?", "ru": "?", "en": "?"},
+    "feed.groups": {"uz": "Guruh: {titles}", "ru": "Группа: {titles}", "en": "Group: {titles}"},
+    "feed.filter": {"uz": "Filtr: {name}", "ru": "Фильтр: {name}", "en": "Filter: {name}"},
+    "feed.open": {"uz": "💬 {title}", "ru": "💬 {title}", "en": "💬 {title}"},
+    "feed.taken": {"uz": "✅ Olindi", "ru": "✅ Взял", "en": "✅ Taken"},
+    "feed.pause": {"uz": "⏸ Pauza", "ru": "⏸ Пауза", "en": "⏸ Pause"},
 }

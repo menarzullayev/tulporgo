@@ -73,6 +73,13 @@ class Scheduler:
             self._clients[account.id] = client
         return client
 
+    async def client_for(self, account: UserbotAccount) -> UserbotClient:
+        """The one live client of an account, shared with the group reader (never two connections per session)."""
+        return await self._client_for(account)
+
+    def live_client(self, account_id: int) -> UserbotClient | None:
+        return self._clients.get(account_id)
+
     async def forget(self, account_id: int) -> None:
         """Drop the live client (paused / stopped / disconnected account, or a UserbotStopped event)."""
         client = self._clients.pop(account_id, None)

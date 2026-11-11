@@ -19,14 +19,16 @@ from tulporgo_core.events import InMemoryBus, PaymentConfirmed, RedisBus, Userbo
 from .client import ClientFactory, make_telethon_factory
 from .config import TICK_SECONDS
 from .notifier import BotNotifier, Notifier
+from .reader import BotCardSender, CardSender, Reader
 from .scheduler import Scheduler
 
 log = logging.getLogger(__name__)
 
 
 class Worker:
-    def __init__(self, scheduler: Scheduler, bus, tick_seconds: float = TICK_SECONDS) -> None:
+    def __init__(self, scheduler: Scheduler, bus, tick_seconds: float = TICK_SECONDS, reader: Reader | None = None) -> None:
         self.scheduler = scheduler
+        self.reader = reader
         self.bus = bus
         self.tick_seconds = tick_seconds
         self.stop = asyncio.Event()
@@ -48,6 +50,11 @@ class Worker:
                     await self.scheduler.tick()
                 except Exception:                                  # noqa: BLE001 - the loop must survive
                     log.exception("tick failed")
+                if self.reader is not None:
+                    try:
+                        await self.reader.refresh()                # decision 73: who reads which group, old cards
+                    except Exception:                              # noqa: BLE001
+                        log.exception("reader refresh failed")
                 self.wake.clear()
                 waiters = [asyncio.ensure_future(self.stop.wait()), asyncio.ensure_future(self.wake.wait())]
                 try:
@@ -56,11 +63,16 @@ class Worker:
                     for w in waiters:
                         w.cancel()
         finally:
+            if self.reader is not None:
+                await self.reader.close()
             await self.scheduler.close()
 
 
-def build_worker(settings: Settings, maker, bus, factory: ClientFactory, notifier: Notifier) -> Worker:
-    return Worker(Scheduler(maker, settings, bus, factory, notifier), bus)
+def build_worker(settings: Settings, maker, bus, factory: ClientFactory, notifier: Notifier,
+                 sender: CardSender | None = None) -> Worker:
+    scheduler = Scheduler(maker, settings, bus, factory, notifier)
+    reader = Reader(maker, settings, scheduler.client_for, scheduler.live_client, sender) if sender else None
+    return Worker(scheduler, bus, reader=reader)
 
 
 async def run() -> None:
@@ -74,7 +86,7 @@ async def run() -> None:
     else:
         bus = InMemoryBus()
     bot = Bot(settings.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    worker = build_worker(settings, maker, bus, make_telethon_factory(), BotNotifier(bot))
+    worker = build_worker(settings, maker, bus, make_telethon_factory(), BotNotifier(bot), BotCardSender(bot))
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
         with contextlib.suppress(NotImplementedError):             # Windows: Ctrl+C raises KeyboardInterrupt instead

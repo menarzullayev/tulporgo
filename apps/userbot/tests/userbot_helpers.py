@@ -21,6 +21,7 @@ class FakeClient:
         self.connected = False
         self.disconnected = False
         self.logged_out = False
+        self.handlers: list = []                     # group-message hooks (decision 73 reader)
 
     async def connect(self):
         self.connected = True
@@ -71,6 +72,13 @@ class FakeClient:
             raise err
         self.f.sent.append((chat_id, text))
         return len(self.f.sent)
+
+    def on_group_message(self, handler) -> None:
+        self.handlers.append(handler)
+
+    async def push(self, msg) -> None:
+        for h in self.handlers:
+            await h(msg)
 
     async def log_out(self):
         if self.f.logout_error:

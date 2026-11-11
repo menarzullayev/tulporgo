@@ -5,7 +5,7 @@ Safety: the real client is built with `flood_sleep_threshold=0`. By default Tele
 short FloodWaits (<= 60 s) — that would hide Telegram's limit from us. With 0 every FloodWaitError is raised, so the
 scheduler records it and stops (decision 8: FloodWait is never bypassed).
 """
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -19,6 +19,20 @@ class GroupInfo:
     title: str
 
 
+@dataclass(frozen=True)
+class GroupMessage:
+    """A new text message in a group the account is in (decision 73). Handed over in memory only, never stored."""
+    chat_id: int                        # marked id (-100…) as in UserbotGroup.chat_id
+    message_id: int
+    sender_id: int | None
+    sender_username: str | None
+    chat_username: str | None           # public groups: t.me/<username>/<id> links
+    text: str
+
+
+GroupMessageHandler = Callable[[GroupMessage], Awaitable[None]]
+
+
 class UserbotClient(Protocol):
     async def connect(self) -> None: ...
     async def disconnect(self) -> None: ...
@@ -30,6 +44,7 @@ class UserbotClient(Protocol):
     async def list_groups(self) -> list[GroupInfo]: ...
     async def send_message(self, chat_id: int, text: str) -> int: ...  # returns message id
     async def log_out(self) -> None: ...
+    def on_group_message(self, handler: GroupMessageHandler) -> None: ...    # live reading; never sends anything
 
 
 # session string (None = brand new, unauthorised session) -> client
@@ -99,6 +114,20 @@ class TelethonClient:
 
     async def log_out(self) -> None:
         await self._client.log_out()                         # terminates the session on Telegram's side
+
+    def on_group_message(self, handler: GroupMessageHandler) -> None:
+        """New group messages from Telethon's update stream. Uses only the entities that come with the update (no
+        extra requests), does not mark anything as read and never answers."""
+        from telethon import events
+
+        async def _on(event) -> None:
+            if event.is_private or not event.raw_text or event.out:
+                return
+            sender, chat = event.sender, event.chat
+            await handler(GroupMessage(event.chat_id, event.id, event.sender_id, getattr(sender, "username", None),
+                                       getattr(chat, "username", None), event.raw_text))
+
+        self._client.add_event_handler(_on, events.NewMessage(incoming=True))
 
 
 def make_telethon_factory(api: TelegramApiSettings | None = None) -> ClientFactory:
