@@ -213,7 +213,8 @@ Gotchas (all in MUAMMOLAR.md):
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
      lawyer review (`docs/legal/README.md`, 8 questions); legal status (YATT/MChJ) + Click/Payme merchant contracts;
-     BotFather Login Widget client secret; after deploy: R2 values from `.secrets/r2.env` into `deploy/.env` and the
+     after deploy: `TULPORGO_LOGIN_CLIENT_SECRET` from `.secrets/telegram_login.env` into `deploy/.env` (Login Widget is
+     set up and was tested end to end on 2026-11-11), R2 values from `.secrets/r2.env` into `deploy/.env` and the
      VPS IP on the R2 token (decision 62; account, bucket and token are ready and verified); BotFather
      "Configure Mini App" + menu button (`getMe.has_main_web_app=false`).
    - ~~Owner to confirm (rules the agents chose)~~ — **confirmed 2026-11-11, decision 63**; one change: a rejected

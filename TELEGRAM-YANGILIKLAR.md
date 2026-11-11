@@ -1,12 +1,12 @@
 # Telegram va Bot API: oxirgi 1 yil (2025-11 … 2026-11) va TulporGo uchun foydasi
 
-**Tekshirilgan: 2026-11-10.** Eng yangi versiya: **Bot API 10.4 (2026-11-09)**.
+**Tekshirilgan: 2026-11-11.** Eng yangi versiya: **Bot API 10.4 (2026-11-09)** (2026-11-11 da ham shu; blogda yangi post yo'q).
 Manbalar (hammasi rasmiy):
 - https://core.telegram.org/bots/api-changelog — Bot API 9.3 … 10.4
 - https://core.telegram.org/bots/api — maydon va metod nomlari shu yerdan tekshirildi
 - https://telegram.org/blog — 10 ta post (2025-11-19 … 2026-08-25); 2026-11-10 holatida undan keyingi post yo'q
 
-Kutubxonalar (PyPI, 2026-11-10): `aiogram` 3.31.0 (2026-08-26) — **Bot API 10.3 gacha**, 10.4 (Widgets, TON) hali yo'q;
+Kutubxonalar (PyPI, 2026-11-11): `aiogram` 3.31.0 (2026-08-26) — **Bot API 10.3 gacha**, 10.4 (Widgets, TON) hali yo'q;
 `telethon` 1.45.0 (2026-09-10).
 
 Yangilash tartibi va doimiy qoida: `CLAUDE.md` → "Telegram ishlari".
@@ -54,7 +54,7 @@ Yangilash tartibi va doimiy qoida: `CLAUDE.md` → "Telegram ishlari".
 | **Guest Mode** (`supports_guest_queries`, `answerGuestQuery`) | 10.0 | Bot faqat o'zi belgilangan xabarni ko'radi | Istalgan guruhda `@tulporgobot Qovunchi → Samarqand` |
 | **HTML Widgets** (`sendWidget`) | 10.4 | **Faqat shaxsiy chat**, forward qilinmaydi, HTML ≤ 32 768 bayt (zlib ≤ 4 096); aiogram hali qo'llamaydi | Narx kalkulyatori yoki jonli qatnov holati — keyingi bosqich |
 | Ikkinchi username (`…app`, `…ai`, `…agent`, `…game`) | 10.4 | Premium egasi, 2 tagacha bot | Masalan `@tulporgoapp` — band qilishni ko'rib chiqish |
-| **Login with Telegram** | 2026-03 | Sayt uchun | tulporgo.uz'da parolsiz kirish |
+| **Login with Telegram** | 2026-03 | Sayt uchun. OIDC (code + PKCE), `oauth.telegram.org`; UserInfo yo'q — hammasi `id_token` da. Sozlash faqat **BotFather mini-ilovasida** (chat menyusida yo'q): Login Widget → Redirect URIs (aniq moslik), Trusted Origins (faqat brauzer JS token so'rasa), Native Login (ilovalar), Advanced → imzo RS256 (EdDSA/ES256K `profile` ni o'chiradi). Scope'lar: `openid`, `profile`, **`phone`** (tasdiqlangan raqam), **`telegram:bot_access`** (login'dan keyin bot yoza oladi), `ton:wallet` | tulporgo.uz'da parolsiz kirish — **sozlandi va sinaldi 2026-11-11** (to'liq oqim, haqiqiy secret). Token endpoint noto'g'ri kodga secret'dan qat'i nazar `invalid_grant` beradi — secret'ni faqat haqiqiy kod bilan tekshirish mumkin |
 | Chat Automation (business bot Premium'siz) | 10.0 | Faqat shaxsiy chatlar | Haydovchi profiliga ulanib, yo'lovchilarga avtomatik javob |
 
 ### 2.2 Kanal (@tulporgo)
