@@ -79,3 +79,26 @@ async def test_parse_time_and_seats(s, places):
 async def test_parse_returns_none_without_route(s, places, text):
     # negative: never guess a route that is not there (unknown places on both sides → buttons instead)
     assert parse(text, await idx_of(s), now=NOW) is None
+
+
+async def test_only_approved_landmarks_are_seeded(s, tmp_path):
+    (tmp_path / "regions_districts.csv").write_text(
+        "region_code,region_uz,district_code,district_uz,kind\n,Samarqand viloyati,,Qo'shrabot,tuman\n", encoding="utf-8")
+    (tmp_path / "landmarks.csv").write_text(
+        "region_uz,district_uz,kind,name_uz,aliases,approved,note\n"
+        "Samarqand viloyati,Qo'shrabot,mahalla,Jo'sh,Josh|Jush,yes,\n"
+        "Samarqand viloyati,Qo'shrabot,poi,Mayiz bozor,Mayiz bozori,no,draft\n", encoding="utf-8")
+    await seed(s, tmp_path)
+    idx = await PlaceIndex.load(s)
+    josh = idx.exact("Jushdan")
+    assert josh and josh.name == "Jo'sh" and josh.area == idx.exact("Qo'shrabot").id    # belongs to its district
+    assert idx.exact("Mayiz bozor") is None                                             # negative: not approved
+
+
+async def test_only_approved_corridors_with_known_stops(s, tmp_path, places):
+    from tulporgo_core.places import corridors
+    (tmp_path / "corridors.csv").write_text(
+        "name,stops,approved,note\nA,Qo'shrabot|Samarqand,yes,\nB,Samarqand|Qo'shrabot,no,\n"
+        "C,Qo'shrabot|Atlantida,yes,\n", encoding="utf-8")
+    idx = await PlaceIndex.load(s)
+    assert corridors(idx, tmp_path) == [[places[0].id, places[1].id]]    # B not approved, C has an unknown stop

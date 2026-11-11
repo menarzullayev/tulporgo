@@ -123,3 +123,14 @@ def test_draft_banner_check_catches_a_draft(client, tmp_path, monkeypatch):
     (tmp_path / "terms.uz.md").write_text("# T\n\n> **QORALAMA, 2026-11-10.**\n", encoding="utf-8")
     monkeypatch.setenv("TULPORGO_LEGAL_DIR", str(tmp_path))
     assert DRAFT_BANNER.search(client.get("/legal/terms").text)          # negative: a draft would be noticed
+
+
+@pytest.mark.parametrize(("doc", "lang", "facts"), [
+    ("privacy", "uz", ["Guruh xabarlari (73-qaror)", "o'sha guruh a'zosi bo'lgan", "2 soatdan keyin o'chiriladi"]),
+    ("privacy", "ru", ["Сообщения в группах (решение 73)", "которые состоят в этой же группе", "удаляется через 2 часа"]),
+    ("userbot-consent", "uz", ["TulporGo haydovchilari", "faqat o'qiydi"]),
+    ("userbot-consent", "ru", ["для водителей TulporGo", "только читает"]),
+])
+def test_group_reading_is_disclosed(client, doc, lang, facts):
+    page = html.unescape(client.get(f"/legal/{doc}", params={"lang": lang}).text)
+    assert [f for f in facts if f not in page] == []                     # decision 73, as published

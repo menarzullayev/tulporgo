@@ -142,6 +142,15 @@ async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:
         for row in csv.DictReader(f.open(encoding="utf-8")):
             parent = districts.get((reg_key, key(row["district_uz"])))
             await upsert(PlaceKind.MAHALLA, row["mahalla_uz"], parent.id if parent else None)
+    f = data_dir / "landmarks.csv"       # decision 73: bazaars, stations, missing villages — only owner-approved rows
+    if f.exists():
+        for row in csv.DictReader(f.open(encoding="utf-8")):
+            if (row.get("approved") or "").strip().lower() != "yes":
+                continue
+            parent = districts.get((key(row.get("region_uz") or "Samarqand viloyati"), key(row.get("district_uz") or "")))
+            lm_kind = PlaceKind.POI if (row.get("kind") or "").strip() == "poi" else PlaceKind.MAHALLA
+            extra = [x.strip() for x in (row.get("aliases") or "").split("|") if x.strip()]
+            await upsert(lm_kind, row["name_uz"], parent.id if parent else None, aliases=extra)
     f = data_dir / "aliases.csv"                             # Russian/other spellings + popularity from the analysis
     if f.exists():
         for row in csv.DictReader(f.open(encoding="utf-8")):
@@ -151,3 +160,19 @@ async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:
                     p.aliases = sorted(set(p.aliases or []) | set(extra))
                     p.popularity = max(p.popularity or 0, int(row.get("popularity") or 0))
     return created
+
+
+def corridors(index: PlaceIndex, data_dir: Path = DATA) -> list[list[int]]:
+    """Owner-approved road corridors as ordered area ids, for "on the way" matching (decision 73). A corridor with a
+    stop that is not in the places index is skipped as a whole — a wrong order is worse than none."""
+    f = data_dir / "corridors.csv"
+    out: list[list[int]] = []
+    if not f.exists():
+        return out
+    for row in csv.DictReader(f.open(encoding="utf-8")):
+        if (row.get("approved") or "").strip().lower() != "yes":
+            continue
+        refs = [index.exact(s.strip()) for s in row["stops"].split("|") if s.strip()]
+        if refs and all(refs):
+            out.append([r.area for r in refs if r])
+    return out

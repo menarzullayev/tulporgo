@@ -22,7 +22,7 @@ from tulporgo_core.db import session_scope, utcnow
 from tulporgo_core.groupscan import MIN_CONFIDENCE, detect
 from tulporgo_core.i18n import lang_of
 from tulporgo_core.models import Driver, FeedCard, User, UserbotAccount, UserbotGroup
-from tulporgo_core.places import PlaceIndex
+from tulporgo_core.places import PlaceIndex, corridors
 from tulporgo_core.services import groupfeed
 
 from . import cards
@@ -76,7 +76,9 @@ class Reader:
                  sleep: Callable[[float], Awaitable[None]] = asyncio.sleep) -> None:
         self.maker, self.settings, self.sender = maker, settings, sender
         self.client_for, self.live_client = client_for, live_client
-        self.clock, self.corridors, self.sleep = clock, corridors, sleep
+        self.clock, self.sleep = clock, sleep
+        self.corridors: Sequence[Sequence[int]] = corridors
+        self._fixed_corridors = bool(corridors)
         self.deduper = groupfeed.Deduper()
         self._assigned: dict[int, set[int]] = {}               # account id -> chats it reads
         self._hooked: dict[int, UserbotClient] = {}            # account id -> client that carries our hook
@@ -120,6 +122,8 @@ class Reader:
         if self._index is None or self._index_at is None or now - self._index_at > INDEX_TTL:
             self._index = await PlaceIndex.load(s)
             self._areas = {r.id: r.area for r in self._index.refs}
+            if not self._fixed_corridors:
+                self.corridors = corridors(self._index)                # owner-approved roads (data/corridors.csv)
             self._index_at = now
         return self._index
 

@@ -25,12 +25,15 @@ o'tgach, davlat reyestrida ro'yxatdan o'tkaziladi (67-qaror).
 | Haydovchidan | Haydovchilik guvohnomasi va texnik pasport rasmlari | «Tasdiqlangan» belgisi uchun yuborsangiz |
 | Haydovchidan | Obuna, to'lovlar: summa, usul, holat, to'lov tizimidagi tranzaksiya raqami; P2P chek rasmi | to'lov paytida |
 | Haydovchidan (avto-e'lon) | Telegram sessiyasi (shifrlangan), Telegram hisob ID, tanlangan guruhlar, yuborilgan e'lonlar jurnali, cheklov holati | hisobingizni ulasangiz |
+| Taksi guruhlaridagi odamlardan (Servisdan foydalanmasa ham) | Guruhdagi yangi xabar matni, yuboruvchining Telegram ID va username'i — faqat avtomatik tekshiruv vaqtida, saqlanmaydi | TulporGo haydovchisi a'zo bo'lgan va o'zi tanlagan taksi guruhidan (73-qaror) |
 
 **Yig'ilmaydi:** karta raqami va CVV (ular Click, Payme yoki Telegram tomonida kiritiladi), Telegram login kodi va
 ikki bosqichli parol (faqat kirish paytida ishlatiladi, saqlanmaydi va loglarga yozilmaydi), joriy joylashuvingiz
 (faqat o'zingiz tanlagan nuqtalar), shaxsiy yozishmalaringiz.
 
 Server loglarida texnik ma'lumotlar (so'rov vaqti, IP manzil) qisqa muddat — log fayllari almashguncha saqlanadi.
+
+**Guruh xabarlari (73-qaror).** TulporGo haydovchisi avto-e'lon uchun ulagan hisobi a'zo bo'lgan va haydovchi o'zi tanlagan taksi guruhlaridagi yangi xabarlar O'zbekistondagi serverda avtomatik tekshiriladi: bu qatnov, pochta yoki yuk so'rovimi. So'rov bo'lsa, faqat **o'sha guruh a'zosi bo'lgan** va filtri mos kelgan TulporGo haydovchilariga kartochka yuboriladi: yo'nalish, vaqt, odam soni, xabardan qisqa parcha, guruhdagi xabarga havola va username (bo'lsa). Xabar matni saqlanmaydi, kartochka 2 soatdan keyin o'chiriladi. Shaxsiy yozishmalar hech qachon o'qilmaydi. Haydovchi e'lonlari va boshqa suhbatlar kartochkaga aylanmaydi.
 
 ## 3. Nima uchun
 
@@ -54,6 +57,7 @@ Server loglarida texnik ma'lumotlar (so'rov vaqti, IP manzil) qisqa muddat — l
 - **To'lov tizimlari** (Click, Payme, Telegram Stars) — faqat to'lovni bajarish uchun zarur ma'lumot.
 - **Telegram** — Servis Telegram ichida ishlaydi; xabarlar Telegram serverlari orqali o'tadi va Telegram'ning
   maxfiylik siyosatiga bo'ysunadi.
+- **Taksi guruhidagi so'rovingiz** — o'sha guruh a'zosi bo'lgan TulporGo haydovchilari kartochka sifatida (2 soatgacha).
 - **Davlat organlari** — faqat qonunda belgilangan hollarda va tartibda.
 
 Ma'lumotlaringiz sotilmaydi va reklama uchun uchinchi shaxslarga berilmaydi.
@@ -77,6 +81,7 @@ nusxasi — Telegram serverlarida, zaxira nusxa — faqat shifrlangan holda R2'd
   10 kun ichida o'chiriladi.
 - Zaxira nusxa — oyiga bitta, faqat oxirgisi saqlanadi (serverda va shifrlangan holda R2'da).
 - Avto-e'lon sessiyasi — «Hisobni uzish» bosilganda darhol o'chiriladi.
+- Guruh xabarlari — saqlanmaydi; ular asosidagi kartochka 2 soatdan keyin o'chiriladi.
 - To'lov yozuvlari — buxgalteriya va soliq qonunchiligida belgilangan muddat davomida.
 - Shikoyat yozuvlari — qonunchilik va nizoning xususiyatiga qarab; bloklash yozuvlari — qonuniy zarurat
   mavjud bo'lgan muddat davomida (qayta ro'yxatdan o'tib qoidani chetlab o'tishning oldini olish uchun).

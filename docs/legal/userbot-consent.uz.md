@@ -15,8 +15,9 @@ qarori — TulporGo uni bekor qila olmaydi va buning uchun javobgar emas.
   to'xtaydi va sizga xabar beradi.
 - Standart: har guruhga 30–60 daqiqada ko'pi bilan 1 e'lon, tasodifiy pauza bilan. Tezroq yuborishni tanlasangiz,
   xavf oshadi — buni alohida tasdiqlaysiz.
-- Faqat siz tanlagan guruhlar bilan ishlaydi. Guruhlar ro'yxatini ko'rsatish uchun faqat guruh nomlari olinadi;
-  shaxsiy yozishmalaringiz o'qilmaydi va saqlanmaydi.
+- Faqat siz tanlagan guruhlar bilan ishlaydi. Hisobingiz shu guruhlardagi yangi xabarlarni TulporGo haydovchilari
+  uchun kuzatishi mumkin (yo'lovchi so'rovlarini topish uchun, 73-qaror): faqat o'qiydi, hech kim nomidan hech
+  narsa yozmaydi, xabarlar saqlanmaydi. Shaxsiy yozishmalaringiz o'qilmaydi va saqlanmaydi.
 - Sessiya shifrlangan holda O'zbekistondagi serverda saqlanadi. Login kodi va ikki bosqichli parolingiz saqlanmaydi.
 
 **Siz nima qilasiz:** faqat a'zo bo'lgan va e'lon berish mumkin bo'lgan guruhlarni tanlaysiz va ularning qoidalariga
