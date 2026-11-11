@@ -69,7 +69,8 @@ group x1 ── new message ──> reader account (one per group, live Telethon
 | 9 Mini App + bot | done: `#/feed` / `?page=feed`, /elon → "Yo'lovchi qidirish" | `apps/miniapp/src/screens/Feed.tsx`, `feedapi.py` |
 | 10 consent + privacy | done: consent version 2, privacy "group messages" | `locales/userbot.py`, `docs/legal/` |
 | 11 tests | done, each rule with a negative | core, userbot, api, miniapp tests |
-| Dry run on the PC with real accounts and groups | **open** — needs the owner's accounts | — |
+| Deleted request (decision 75) | done: when every copy of a request is deleted, its cards are struck through, lose their buttons and go after 10 min; a card still waiting 60 s is never sent | `reader.handle_delete`, `cards.render_gone` |
+| Dry run on the PC with real accounts and groups | **in progress** — driver1 connected, 6 taxi groups picked (2026-11-11); 2-min smoke run OK; daytime observation next (latency, memory, request lifetime) | `tools/feed_dryrun.py` |
 | Basic plan | done (decision 74): connects to read only, up to 15 groups, no posting | `service.selection_limit` |
 
 ## Done when

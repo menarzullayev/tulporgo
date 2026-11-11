@@ -40,12 +40,24 @@ def when_text(det: Detection, lang: str, now: datetime) -> str:
     return t("feed.when.date", lang, date=local.strftime("%d.%m"), hm=hm)
 
 
-def render(det: Detection, groups: list[CardGroup], lang: str, now: datetime, *, excerpt: str = "",
-           author: str | None = None, filter_name: str | None = None) -> tuple[str, list[list[dict]]]:
+def _route(det: Detection, lang: str) -> tuple[str, str]:
+    """(kind label, "from → to") with place names HTML-escaped."""
     unknown = t("feed.unknown_place", lang)
     frm = det.from_place.name if det.from_place else unknown
     to = det.to_place.name if det.to_place else unknown
-    head = f"<b>{t(f'feed.kind.{det.kind}', lang)}</b> · {html.escape(frm, quote=False)} → {html.escape(to, quote=False)}"
+    return t(f"feed.kind.{det.kind}", lang), f"{html.escape(frm, quote=False)} → {html.escape(to, quote=False)}"
+
+
+def render_gone(det: Detection, lang: str) -> tuple[str, list[list[dict]]]:
+    """Decision 75: the passenger deleted the request. Route struck through, no excerpt or links, no buttons."""
+    kind, route = _route(det, lang)
+    return f"<s>{kind} · {route}</s>\n{t('feed.gone', lang)}", []
+
+
+def render(det: Detection, groups: list[CardGroup], lang: str, now: datetime, *, excerpt: str = "",
+           author: str | None = None, filter_name: str | None = None) -> tuple[str, list[list[dict]]]:
+    kind, route = _route(det, lang)
+    head = f"<b>{kind}</b> · {route}"
     facts = [when_text(det, lang, now), t("feed.seats", lang, n=det.seats)]
     if det.cargo:
         facts.append(t("feed.cargo", lang))

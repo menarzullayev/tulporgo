@@ -7,7 +7,7 @@ from sqlalchemy import select
 from tulporgo_core.enums import Plan
 from tulporgo_core.models import DriverFilter, FeedCard, Place
 from tulporgo_userbot import cards
-from tulporgo_userbot.client import GroupMessage
+from tulporgo_userbot.client import GroupDeletion, GroupMessage
 from tulporgo_userbot.reader import Reader
 from tulporgo_userbot.scheduler import Scheduler
 from userbot_fixtures import *  # noqa: F403
@@ -22,6 +22,7 @@ class FakeSender:
     def __init__(self) -> None:
         self.sent: list[tuple[int, str]] = []
         self.edited: list[tuple[int, int, str]] = []
+        self.edited_buttons: list[list] = []
         self.deleted: list[tuple[int, int]] = []
 
     async def send(self, chat_id, text, buttons):
@@ -30,6 +31,7 @@ class FakeSender:
 
     async def edit(self, chat_id, message_id, text, buttons):
         self.edited.append((chat_id, message_id, text))
+        self.edited_buttons.append(buttons)
 
     async def delete(self, chat_id, message_id):
         self.deleted.append((chat_id, message_id))
@@ -73,6 +75,11 @@ def build(maker, settings, bus, factory, notifier, clock, sender):
 async def push(factory, chat, text=REQUEST, msg_id=10, sender_id=42):
     for c in factory.clients:
         await c.push(GroupMessage(chat, msg_id, sender_id, "yolovchi42", None, text))
+
+
+async def push_delete(factory, chat, *ids):
+    for c in factory.clients:
+        await c.push_delete(GroupDeletion(chat, tuple(ids)))
 
 
 async def test_cards_go_to_matching_members_only(s, maker, settings, bus, factory, notifier, places):
@@ -168,3 +175,105 @@ def test_card_escapes_user_text():
                               excerpt="<script>x</script>", author="a_b")
     assert "<script>" not in text and "&lt;script&gt;" in text and "A&lt;b&gt;" in text and "yuk bilan" in text
     assert rows[0][0]["url"] == "https://t.me/c/1234567890/7"
+
+
+# ---------------------------------------------------------------- decision 75: passenger deleted the request
+
+async def test_deleted_request_marks_cards_then_deletes_after_10_min(s, maker, settings, bus, factory, notifier,
+                                                                     places):
+    await member(s, settings, places)
+    await member(s, settings, places)
+    clock, sender = Clock(), FakeSender()
+    reader, _ = build(maker, settings, bus, factory, notifier, clock, sender)
+    await reader.refresh()
+    await push(factory, G1, msg_id=10)
+    assert len(sender.sent) == 2
+    await push_delete(factory, G1, 99)                               # negative: another message
+    assert sender.edited == []
+    await push_delete(factory, G1, 10)
+    assert len(sender.edited) == 2 and all(e[2].startswith("<s>") and "10" in e[2] for e in sender.edited)
+    assert sender.edited_buttons == [[], []]                           # no "Taken" / group links left
+    assert "«" not in sender.edited[0][2]                              # the excerpt is gone too
+    clock.now = NOW + timedelta(minutes=9)
+    assert await reader.purge() == 0                                   # negative: not yet
+    clock.now = NOW + timedelta(minutes=11)
+    assert await reader.purge() == 2
+
+
+async def test_basic_group_deletion_has_no_chat_id(s, maker, settings, bus, factory, notifier, places):
+    await member(s, settings, places)
+    clock, sender = Clock(), FakeSender()
+    reader, _ = build(maker, settings, bus, factory, notifier, clock, sender)
+    await reader.refresh()
+    await push(factory, G1, msg_id=10)
+    await push_delete(factory, None, 11)                               # negative: a different id
+    assert sender.edited == []
+    await push_delete(factory, None, 10)
+    assert len(sender.edited) == 1
+
+
+async def test_supergroup_id_is_not_matched_without_chat_id(s, maker, settings, bus, factory, notifier, places):
+    _, acc = await member(s, settings, places)
+    acc.groups[0].chat_id = -1001234567890                              # a real supergroup id (-100…)
+    await s.commit()
+    clock, sender = Clock(), FakeSender()
+    reader, _ = build(maker, settings, bus, factory, notifier, clock, sender)
+    await reader.refresh()
+    await push(factory, -1001234567890, msg_id=10)
+    assert len(sender.sent) == 1
+    await push_delete(factory, None, 10)                               # negative: a basic-group deletion, same id
+    assert sender.edited == []
+    await push_delete(factory, -1001234567890, 10)
+    assert len(sender.edited) == 1
+
+
+async def test_duplicate_is_gone_only_when_every_copy_is_deleted(s, maker, settings, bus, factory, notifier, places):
+    await member(s, settings, places)
+    clock, sender = Clock(), FakeSender()
+    reader, _ = build(maker, settings, bus, factory, notifier, clock, sender)
+    await reader.refresh()
+    await push(factory, G1, msg_id=10)
+    await push(factory, G2, msg_id=20)
+    assert len(sender.edited) == 1                                      # the second group link
+    await push_delete(factory, G1, 10)
+    assert len(sender.edited) == 1                                      # negative: still posted in G2
+    await push_delete(factory, G2, 20)
+    assert len(sender.edited) == 2 and sender.edited[-1][2].startswith("<s>")
+
+
+async def test_delayed_card_is_not_sent_after_deletion(s, maker, paid_settings, bus, factory, notifier, places):
+    biz, _ = await member(s, paid_settings, places, plan=Plan.BUSINESS)
+    pro, _ = await member(s, paid_settings, places, plan=Plan.PRO)
+    clock, sender = Clock(), FakeSender()
+    reader, _ = build(maker, paid_settings, bus, factory, notifier, clock, sender)
+    await reader.refresh()
+    await push(factory, G1)
+    await push_delete(factory, G1, 10)                                  # within Pro's 60 s
+    for task in list(reader._tasks):
+        await task
+    assert [c for c, _ in sender.sent] == [biz.user.tg_id]             # Pro never gets the dead request
+    assert [e[0] for e in sender.edited] == [biz.user.tg_id]
+
+
+async def test_request_posted_again_after_deletion_gets_a_fresh_card(s, maker, settings, bus, factory, notifier,
+                                                                      places):
+    await member(s, settings, places)
+    clock, sender = Clock(), FakeSender()
+    reader, _ = build(maker, settings, bus, factory, notifier, clock, sender)
+    await reader.refresh()
+    await push(factory, G1, msg_id=10)
+    await push_delete(factory, G1, 10)
+    clock.now = NOW + timedelta(minutes=5)
+    await push(factory, G1, msg_id=11)                                  # same text, posted again
+    assert len(sender.sent) == 2 and not sender.sent[1][1].startswith("<s>")
+    await push_delete(factory, G1, 11)
+    assert len(sender.edited) == 2                                      # the fresh card is marked as well
+
+
+def test_gone_card_escapes_and_has_no_buttons():
+    from tulporgo_core.enums import RequestKind
+    from tulporgo_core.groupscan import Detection
+    from tulporgo_core.places import PlaceRef
+    det = Detection(RequestKind.PASSENGER, False, PlaceRef(1, "A<b>", "city"), None, None, 1, 0.9)
+    text, rows = cards.render_gone(det, "ru")
+    assert rows == [] and text.startswith("<s>") and "A&lt;b&gt;" in text and "10 минут" in text

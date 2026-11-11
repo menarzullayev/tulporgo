@@ -22,6 +22,7 @@ class FakeClient:
         self.disconnected = False
         self.logged_out = False
         self.handlers: list = []                     # group-message hooks (decision 73 reader)
+        self.delete_handlers: list = []              # deletion hooks (decision 75)
 
     async def connect(self):
         self.connected = True
@@ -79,6 +80,13 @@ class FakeClient:
     async def push(self, msg) -> None:
         for h in self.handlers:
             await h(msg)
+
+    def on_group_delete(self, handler) -> None:
+        self.delete_handlers.append(handler)
+
+    async def push_delete(self, deletion) -> None:
+        for h in self.delete_handlers:
+            await h(deletion)
 
     async def log_out(self):
         if self.f.logout_error:

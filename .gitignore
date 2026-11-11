@@ -1,5 +1,7 @@
 # --- secrets and private state (never in the public repo) ---
 .secrets/
+# feed dry run: local DB with encrypted test sessions (tools/feed_dryrun.py)
+.dryrun/
 *.env
 .env*
 *.session

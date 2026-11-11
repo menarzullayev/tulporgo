@@ -215,7 +215,9 @@ Gotchas (all in MUAMMOLAR.md):
      server is the later candidate (to be measured first). YATT/MChJ + Click/Payme not before ~6 months in production.
      Instagram/Facebook names are free (owner checked), to be reserved later.
    - **W5 reading taxi groups (decisions 72–73) is built** — status table in `docs/goals/W5-group-reading.md`; places and the
-     Basic plan are settled (decision 74); open: a dry run with real accounts. Order: W5 →
+     Basic plan are settled (decision 74); a deleted request marks and then removes its cards (decision 75).
+     Dry run: driver1 connected, 6 taxi groups picked; daytime observation on 2026-11-12 with
+     `uv run python tools/feed_dryrun.py run --minutes 240` (latency, memory, request lifetime). Order: W5 →
      PC deploy → 1–2 weeks closed test → wide launch. Free period 1 month at launch (then decide by KPI); no
      monitoring for now (accepted risk). Documents storage chat: private channel "TulporGo hujjatlar" on the owner's
      account, @tulporgobot admin (post + delete only), id in `.secrets/telegram_storage.env` (done 2026-11-11).

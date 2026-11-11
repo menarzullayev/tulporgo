@@ -28,6 +28,7 @@ READ_CONSENT_VERSION = 2
 OTHERS_DELAY = timedelta(seconds=60)          # decision 73: Biznes first, everybody else 60 s later
 DEDUPE_WINDOW = timedelta(minutes=30)
 CARD_TTL = timedelta(hours=2)
+GONE_TTL = timedelta(minutes=10)               # decision 75: the passenger deleted the request -> marked, then deleted
 MEMBER_STATUSES = (UserbotStatus.CONNECTED, UserbotStatus.PAUSED, UserbotStatus.FLOOD_WAIT)
 
 AreaOf = Callable[[int], int | None]           # place id -> district/city id (PlaceRef.area)

@@ -262,6 +262,11 @@ TEXTS = {
     "feed.open": {"uz": "💬 {title}", "ru": "💬 {title}", "en": "💬 {title}"},
     "feed.taken": {"uz": "✅ Olindi", "ru": "✅ Взял", "en": "✅ Taken"},
     "feed.pause": {"uz": "⏸ Pauza", "ru": "⏸ Пауза", "en": "⏸ Pause"},
+    "feed.gone": {
+        "uz": "🚫 Yo'lovchi e'lonni o'chirdi — taksi topgan bo'lishi mumkin. Kartochka 10 daqiqadan keyin o'chadi.",
+        "ru": "🚫 Пассажир удалил объявление — возможно, уже нашёл такси. Карточка исчезнет через 10 минут.",
+        "en": "🚫 The passenger deleted the post — they have probably found a taxi. This card disappears in 10 minutes.",
+    },
     "feed.menu": {
         "uz": "<b>🔎 Yo'lovchi qidirish</b>\n\nGuruhlaringizdagi so'rovlar filtrlaringiz bo'yicha sizga keladi.\n"
               "Holat: {state}\nKartochkalar: {channel}\nFiltrlar: {count}",

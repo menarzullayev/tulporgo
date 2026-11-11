@@ -6,30 +6,46 @@ a group assigned to THAT account is detected locally, merged with duplicates, an
 card from @tulporgobot — Biznes at once, others 60 s later. A duplicate in another group adds its link to cards already
 sent and reaches members of that group who had no card yet. The text is dropped after detection; only the card's own
 message id is kept (FeedCard) so the bot can delete it after 2 hours.
+
+Decision 75: passengers delete their post once they have a taxi. While its cards live, the reader keeps (in memory only)
+which group messages a request came from; when all of them are deleted, every card says so, loses its buttons and is
+deleted 10 minutes later, and a delayed card that was not sent yet is not sent at all.
 """
 import asyncio
 import contextlib
 import functools
 import logging
 from collections.abc import Awaitable, Callable, Sequence
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Protocol
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from tulporgo_core.config import Settings
 from tulporgo_core.db import session_scope, utcnow
-from tulporgo_core.groupscan import MIN_CONFIDENCE, detect
+from tulporgo_core.groupscan import MIN_CONFIDENCE, Detection, detect
 from tulporgo_core.i18n import lang_of
 from tulporgo_core.models import Driver, FeedCard, User, UserbotAccount, UserbotGroup
 from tulporgo_core.places import PlaceIndex, corridors
 from tulporgo_core.services import groupfeed
 
 from . import cards
-from .client import GroupMessage, UserbotClient
+from .client import GroupDeletion, GroupMessage, UserbotClient
 
 log = logging.getLogger(__name__)
 INDEX_TTL = timedelta(minutes=10)
+CHANNEL_ID_LIMIT = -1_000_000_000_000                         # marked ids below this are supergroups / channels
+
+
+@dataclass
+class _Request:
+    """One request (all its duplicates) while its cards live. Ids and the detection only — never the text."""
+    det: Detection
+    first_seen: datetime
+    sources: set[tuple[int, int]] = field(default_factory=set)          # (group chat id, message id) still posted
+    cards: dict[int, tuple[int, int, str]] = field(default_factory=dict)  # driver id -> (chat, card message id, lang)
+    gone: bool = False
 
 
 class CardSender(Protocol):
@@ -88,6 +104,8 @@ class Reader:
         # event key -> driver id -> (chat, message id, groups on the card, filter name); dropped with the event
         self._sent: dict[str, dict[int, tuple[int, int, list[cards.CardGroup], str]]] = {}
         self._sent_at: dict[str, datetime] = {}
+        self._requests: dict[str, _Request] = {}               # event key -> request (dedupe window)
+        self._by_source: dict[tuple[int, int], _Request] = {}  # group message -> request (card lifetime)
         self._tasks: set[asyncio.Task] = set()
 
     # ------------------------------------------------------------ assignment
@@ -111,11 +129,15 @@ class Reader:
                 log.warning("reader %s not connected: %s", acc_id, type(e).__name__)
                 continue
             client.on_group_message(functools.partial(self.handle, acc_id))
+            client.on_group_delete(functools.partial(self.handle_delete, acc_id))
             self._hooked[acc_id] = client
         await self.purge(now)
         for key in [k for k, at in self._sent_at.items() if now - at > groupfeed.DEDUPE_WINDOW]:
             self._sent.pop(key, None)
             self._sent_at.pop(key, None)
+            self._requests.pop(key, None)
+        for src in [k for k, r in self._by_source.items() if now - r.first_seen > groupfeed.CARD_TTL]:
+            del self._by_source[src]
         return assignment
 
     async def _places(self, s: AsyncSession, now: datetime) -> PlaceIndex:
@@ -146,15 +168,22 @@ class Reader:
         except Exception:                                       # noqa: BLE001 - one bad message must not stop reading
             log.exception("feed message failed")
             return
+        req = self._requests.get(event.key)
+        if req is not None and req.gone:                        # deleted and posted again: a new live request
+            self._sent[event.key] = {}
+        if req is None or req.gone:
+            req = self._requests[event.key] = _Request(det, now)
         sent = self._sent.setdefault(event.key, {})
         self._sent_at.setdefault(event.key, event.first_seen)
+        req.sources.add((msg.chat_id, msg.message_id))
+        self._by_source[(msg.chat_id, msg.message_id)] = req
         group = cards.CardGroup(msg.chat_id, msg.message_id, titles.get(msg.chat_id, "?"), msg.chat_username)
         for r, user in plan:
             if r.driver.id in sent:
                 await self._add_link(r.driver.id, sent, group, det, user, now, msg)
                 continue
             sent[r.driver.id] = (0, 0, [group], r.filter_name)          # reserved: no second card for this event
-            job = self._deliver(r.driver, user, sent, det, msg, r.filter_name, r.delay)
+            job = self._deliver(r.driver, user, sent, det, msg, r.filter_name, r.delay, req)
             if r.delay:
                 task = asyncio.ensure_future(job)
                 self._tasks.add(task)
@@ -167,9 +196,11 @@ class Reader:
         return {c: title for c, title in rows}
 
     async def _deliver(self, driver: Driver, user: User, sent: dict, det, msg: GroupMessage, filter_name: str,
-                       delay: timedelta) -> None:
+                       delay: timedelta, req: _Request) -> None:
         if delay:
             await self.sleep(delay.total_seconds())
+        if req.gone:
+            return                                              # the passenger deleted the request meanwhile
         now = self.clock()
         _, _, groups, _ = sent[driver.id]
         lang = str(lang_of(user.lang))
@@ -180,6 +211,7 @@ class Reader:
         if message_id is None:
             return
         sent[driver.id] = (target, message_id, groups, filter_name)
+        req.cards[driver.id] = (target, message_id, lang)
         async with session_scope(self.maker) as s:
             s.add(FeedCard(driver_id=driver.id, chat_id=target, message_id=message_id,
                            delete_at=now + groupfeed.CARD_TTL))
@@ -194,6 +226,40 @@ class Reader:
             text, buttons = cards.render(det, groups, str(lang_of(user.lang)), now, excerpt=msg.text,
                                          author=msg.sender_username, filter_name=filter_name)
             await self.sender.edit(target, message_id, text, buttons)
+
+    # ------------------------------------------------------------ deletions (decision 75)
+
+    async def handle_delete(self, account_id: int, deletion: GroupDeletion) -> None:
+        mine = self._assigned.get(account_id, set())
+        for mid in deletion.message_ids:
+            if deletion.chat_id is not None:
+                keys = [(deletion.chat_id, mid)]
+            else:                                               # basic group: no chat id, ids unique per account
+                keys = [k for k in self._by_source if k[1] == mid and k[0] in mine and k[0] > CHANNEL_ID_LIMIT]
+            for key in keys:
+                req = self._by_source.pop(key, None)
+                if req is None:
+                    continue
+                req.sources.discard(key)
+                if not req.sources and not req.gone:
+                    try:
+                        await self._mark_gone(req)
+                    except Exception:                           # noqa: BLE001 - one bad card must not stop reading
+                        log.exception("marking a deleted request failed")
+
+    async def _mark_gone(self, req: _Request) -> None:
+        req.gone = True
+        now = self.clock()
+        for chat, message_id, lang in req.cards.values():
+            text, buttons = cards.render_gone(req.det, lang)
+            await self.sender.edit(chat, message_id, text, buttons)
+        if req.cards:
+            async with session_scope(self.maker) as s:
+                for chat, message_id, _ in req.cards.values():
+                    await s.execute(update(FeedCard)
+                                    .where(FeedCard.chat_id == chat, FeedCard.message_id == message_id,
+                                           FeedCard.delete_at > now + groupfeed.GONE_TTL)
+                                    .values(delete_at=now + groupfeed.GONE_TTL))
 
     # ------------------------------------------------------------ housekeeping
 
