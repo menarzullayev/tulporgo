@@ -16,6 +16,7 @@ Login runs ONLY here, never in chat (Telegram blocks login codes sent as message
                                         acknowledge_risk}
     GET/PUT /api/userbot/template      {from, to, time, seats, price?}  (+ preview text)
     POST /api/userbot/pause | /resume | /logout      ("Hisobni uzish": log out + delete the session)
+    /api/userbot/feed...                            group feed filters (decision 73, see feedapi.py)
 
 Errors are DomainErrors: JSON {error: <stable code>, detail}.
 """
@@ -27,7 +28,7 @@ from tulporgo_core.config import Settings
 from tulporgo_core.i18n import lang_of
 from tulporgo_core.models import Driver, User, UserbotAccount
 
-from . import runtime, service, template
+from . import feedapi, runtime, service, template
 from .errors import Invalid, NotConfigured, NotFound
 from .sync import refresh_groups
 
@@ -233,3 +234,5 @@ async def logout(driver: Driver = Depends(_driver), s: AsyncSession = Depends(ge
     await service.disconnect_account(s, account, settings, factory)
     return await _view(s, driver, settings)
 
+
+router.include_router(feedapi.router)                      # decision 73: /api/userbot/feed
