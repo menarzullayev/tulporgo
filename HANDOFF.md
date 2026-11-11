@@ -217,8 +217,10 @@ Gotchas (all in MUAMMOLAR.md):
      "Configure Mini App" + menu button (`getMe.has_main_web_app=false`).
    - ~~Owner to confirm (rules the agents chose)~~ — **confirmed 2026-11-11, decision 63**; one change: a rejected
      document's server copy is purged after 7 days (`rejected_documents_keep_days`, hourly bot job), not at once.
-   - **Email (decision 64):** `info@tulporgo.uz` — pick a mail service, then MX + SPF/DMARC at Eskiz (today they say
-     "no mail"), then put the address into the `[yurist: … email]` places of `docs/legal/privacy.*` and `terms.*`.
+   - **Email (decision 64):** `info@tulporgo.uz` on Zoho Mail Forever Free. Saidakbar aka signs up (his account); then
+     at Eskiz: Zoho's verification TXT, MX, SPF (`include:zohomail…`, replaces `v=spf1 -all`), DKIM, DMARC; test mail
+     both ways; then the address goes into the `[yurist: … email]` places of `docs/legal/privacy.*` and `terms.*`.
+     Lawyer question 9: the mailbox is abroad.
    - **Later:** other regions' mahallas (+22 missing in Samarqand); new-alphabet spelling rules (decision 16); the
      userbot *reading* groups to pick up passenger requests (decision 8 — not built, it only posts); Click/Payme sandbox
      consoles; watch blocked driver accounts in the first weeks of auto-posting.
