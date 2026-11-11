@@ -78,13 +78,7 @@ def downgrade() -> None:
     with op.batch_alter_table('drivers', schema=None) as batch_op:
         batch_op.drop_column('feed_paused')
         batch_op.drop_column('delivery_chat_id')
-    with op.batch_alter_table('feed_cards', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_feed_cards_driver_id'))
-        batch_op.drop_index(batch_op.f('ix_feed_cards_delete_at'))
+    # indexes go with their tables; MySQL refuses to drop an index a foreign key needs before the table itself
     op.drop_table('feed_cards')
-    with op.batch_alter_table('group_readers', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_group_readers_account_id'))
     op.drop_table('group_readers')
-    with op.batch_alter_table('driver_filters', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_driver_filters_driver_id'))
     op.drop_table('driver_filters')
