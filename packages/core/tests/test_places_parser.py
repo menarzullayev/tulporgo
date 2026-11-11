@@ -120,3 +120,31 @@ async def test_seed_corrects_spelling_in_place(s, tmp_path):
     assert await seed(s, tmp_path) == 1                    # only Toz is new
     rows = {p.name_uz: p.id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
     assert rows == {"Qovunchi": old.id, "Toz": rows["Toz"]}  # same row renamed, links stay; negative: Toz not merged
+
+
+async def test_seed_renames_when_o_is_restored(s, tmp_path):
+    (tmp_path / "regions_districts.csv").write_text(
+        "region_code,region_uz,district_code,district_uz,kind\n,Samarqand viloyati,,Qo'shrabot,tuman\n", encoding="utf-8")
+    mahallas = tmp_path / "samarqand_mahallas.csv"
+    mahallas.write_text("district_uz,mahalla_uz,source\nQo'shrabot,Kurgon,test\nQo'shrabot,Ozod,test\n", encoding="utf-8")
+    await seed(s, tmp_path)
+    before = {p.name_uz: p.id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
+    mahallas.write_text("district_uz,mahalla_uz,source\nQo'shrabot,Qo'rg'on,test\nQo'shrabot,Ozod,test\n"
+                        "Qo'shrabot,Bozor,test\n", encoding="utf-8")
+    assert await seed(s, tmp_path) == 1                          # only Bozor is new
+    after = {p.name_uz: p.id for p in (await s.execute(select(Place).where(Place.kind == "mahalla"))).scalars()}
+    assert after["Qo'rg'on"] == before["Kurgon"] and "Kurgon" not in after   # renamed in place, no duplicate
+    assert after["Ozod"] == before["Ozod"] and after["Bozor"] not in before.values()   # negative: Bozor not merged
+
+
+async def test_loose_match_is_only_a_fallback(s, tmp_path):
+    (tmp_path / "regions_districts.csv").write_text(
+        "region_code,region_uz,district_code,district_uz,kind\n,Samarqand viloyati,,Qo'shrabot,tuman\n", encoding="utf-8")
+    (tmp_path / "samarqand_mahallas.csv").write_text(
+        "district_uz,mahalla_uz,source\nQo'shrabot,Qo'rg'on,test\nQo'shrabot,Turon,test\nQo'shrabot,To'ron,test\n",
+        encoding="utf-8")
+    await seed(s, tmp_path)
+    idx = await PlaceIndex.load(s)
+    assert idx.exact("Kurgonga").name == "Qo'rg'on"             # o' written as u
+    assert idx.exact("Turon").name == "Turon" and idx.exact("To'ron").name == "To'ron"   # negative: exact wins
+    assert idx.exact("Uy") is None                              # negative: too short for the fallback

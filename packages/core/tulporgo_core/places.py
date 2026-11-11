@@ -37,6 +37,12 @@ def key(text: str) -> str:
     return re.sub(r"\s+", " ", t).strip()
 
 
+def loose(k: str) -> str:
+    """A `key` with o and u folded and no spaces: lists and people often write o' as u ('Kurgon' for Qo'rg'on, 'Jush'
+    for Jo'sh) and split names differently ('Xazar bobo' = Hazarbobo). Used only when the exact key finds nothing."""
+    return k.replace("o", "u").replace(" ", "")
+
+
 @dataclass
 class PlaceRef:
     id: int
@@ -57,9 +63,12 @@ class PlaceIndex:
     def __init__(self, refs: list[PlaceRef]):
         self.refs = refs
         self.by_key: dict[str, list[PlaceRef]] = {}
+        self.by_loose: dict[str, list[PlaceRef]] = {}
         for r in refs:
             for k in r.keys:
                 self.by_key.setdefault(k, []).append(r)
+                if r not in self.by_loose.setdefault(loose(k), []):
+                    self.by_loose[loose(k)].append(r)
 
     @classmethod
     async def load(cls, session: AsyncSession) -> "PlaceIndex":
@@ -75,6 +84,8 @@ class PlaceIndex:
         cands = self.by_key.get(key(base), []) or self.by_key.get(key(text), [])
         if not cands and base != to_latin(text.strip()) and base.endswith("i") and len(base) > 4:
             cands = self.by_key.get(key(base[:-1]), [])        # colloquial linking -i-: 'Urganchidan' -> Urganch
+        if not cands and len(key(base)) >= 4:                  # o'/u written either way: 'Kurgon' = Qo'rg'on
+            cands = self.by_loose.get(loose(key(base)), []) or self.by_loose.get(loose(key(text)), [])
         return sorted(cands, key=self._rank)[0] if cands else None
 
     def search(self, text: str, limit: int = 8) -> list[PlaceRef]:
@@ -110,14 +121,25 @@ def ref_of(p: Place) -> PlaceRef:
 async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:
     """Idempotent import of data/*.csv. Returns the number of places created."""
     existing = {(p.kind, key(p.name_uz), p.parent_id): p for p in (await session.execute(select(Place))).scalars()}
+    loose_keys: dict[tuple, list[tuple]] = {}
+    for ek in existing:
+        loose_keys.setdefault((ek[0], loose(ek[1]), ek[2]), []).append(ek)
+    seen: set[tuple] = set()                                  # keys used by this run
     created = 0
 
     async def upsert(kind, name, parent_id=None, code=None, aliases=(), popularity=0):
         nonlocal created
         k = (kind, key(name), parent_id)
+        if k not in existing:                             # restored o' (Kurgon -> Qo'rg'on): the same place, renamed
+            # only a place this run has not used yet: two names in the same data (Turon, To'ron) stay two places
+            same = [ek for ek in loose_keys.get((kind, loose(k[1]), parent_id), []) if ek in existing and ek not in seen]
+            if len(same) == 1:
+                existing[k] = existing.pop(same[0])
+                loose_keys[(kind, loose(k[1]), parent_id)] = [k]
+        seen.add(k)
         if k in existing:
             p = existing[k]
-            if p.name_uz != name:                         # same key, corrected spelling in the data (Kovunchi -> Qovunchi)
+            if p.name_uz != name:                         # corrected spelling in the data (Kovunchi -> Qovunchi)
                 p.name_uz = name
             return p
         p = Place(kind=kind, name_uz=name, parent_id=parent_id, code=code or None, aliases=list(aliases),
@@ -125,6 +147,7 @@ async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:
         session.add(p)
         await session.flush()
         existing[k] = p
+        loose_keys.setdefault((kind, loose(k[1]), parent_id), []).append(k)
         created += 1
         return p
 

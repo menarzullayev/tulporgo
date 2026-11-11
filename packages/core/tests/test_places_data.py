@@ -124,3 +124,14 @@ async def test_suffix_role(idx):
     assert suffix_role("Nurotadan", idx) == "from" and suffix_role("Sebistonda", idx) == "from"
     assert suffix_role("Samarqandga", idx) == "to"
     assert suffix_role("Nurota", idx) is None and suffix_role("ertaga", idx) is None      # negatives
+
+
+async def test_kenjebaev_names_have_their_letters_back(idx):
+    names = {r.name for r in idx.refs if r.kind == "mahalla"}
+    assert {"Jo'sh Ota", "Qo'rg'on", "Qoratosh", "Yangiqishloq", "Navro'z", "Qovunchi"} <= names
+    assert not {"Jush ota", "Kurgon", "Koratosh", "Yangikishlok", "Kovunchi"} & names        # negative: old spellings gone
+    assert idx.exact("Jush otaga").name == "Jo'sh Ota"                                       # people still type it so
+    qosh = idx.exact("Qo'shrabot").id
+    in_qosh = {r.name for r in idx.refs if r.kind == "mahalla" and r.area == qosh}
+    assert "Do'stlik" in in_qosh and "Dustlik" not in in_qosh   # negative: egov's lossy 'Dustlik' never replaced ours
+    assert {"Hazarbobo", "Q.Qarshiev"} <= names and not {"Xazar bobo", "K. Qarshiev"} & names

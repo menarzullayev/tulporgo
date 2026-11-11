@@ -30,6 +30,13 @@ Excluded on purpose:
 
 Official reference counts (stat agency via egov dataset 2-001-1804, 2025-08-01): Samarqand viloyati has 1102 mahallas. The file has 1080 (98 percent).
 
+Spelling (2026-11-11): the kenjebaev rows often drop Uzbek letters (Kurgon, Kushrabot, Jush ota). 53 of the 562 names
+were restored from the official egov list above (Cyrillic, all 787 rows, district labels ignored): a name is replaced
+only when the official one is the same word with letters restored (o'/g', q, h) and loses none, so egov's own lossy
+forms (Dustlik, Urikzor) never replace a correct name. 262 kenjebaev names are not in the egov list and stay as they
+are; Qovunchi was confirmed by the owner. Seed renames such places in place (same id), and matching folds o/u, so
+"Kurgon" still finds Qo'rg'on.
+
 ## Not retrievable
 
 - mahalla.uz and api.mahalla.uz: no connection from this network.
