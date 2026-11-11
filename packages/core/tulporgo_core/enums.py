@@ -98,3 +98,18 @@ class PostStatus(StrEnum):
     SENT = "sent"
     FAILED = "failed"
     SKIPPED = "skipped"
+
+
+class RequestKind(StrEnum):
+    """What a group message asks for (decision 73). A passenger trip may also carry cargo (`Detection.cargo`)."""
+    PASSENGER = "passenger"
+    PARCEL = "parcel"          # pochta / posilka, no people
+    CARGO = "cargo"            # only goods (Damas / Labo)
+    DELIVERY = "delivery"      # buy or fetch something and bring it
+    BAZAAR = "bazaar"          # a trip to a bazaar (Mayiz bozor, Mol bozor, ...)
+
+
+class MessageClass(StrEnum):
+    REQUEST = "request"        # somebody needs a ride / a parcel carried
+    DRIVER_AD = "driver_ad"    # a driver offers seats — never becomes a card
+    OTHER = "other"

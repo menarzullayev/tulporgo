@@ -44,6 +44,11 @@ class PlaceRef:
     kind: str
     keys: list[str] = field(default_factory=list)
     popularity: int = 0
+    area_id: int | None = None          # district/city a mahalla or POI belongs to (decision 73: district-level match)
+
+    @property
+    def area(self) -> int:
+        return self.area_id or self.id
 
 
 class PlaceIndex:
@@ -95,7 +100,8 @@ def strip_suffix(word: str) -> str:
 
 def ref_of(p: Place) -> PlaceRef:
     names = [p.name_uz] + ([p.name_ru] if p.name_ru else []) + list(p.aliases or [])
-    return PlaceRef(p.id, p.name_uz, p.kind, sorted({key(n) for n in names if n}), p.popularity or 0)
+    area = p.parent_id if p.kind in (PlaceKind.MAHALLA, PlaceKind.POI) and p.parent_id else None
+    return PlaceRef(p.id, p.name_uz, p.kind, sorted({key(n) for n in names if n}), p.popularity or 0, area)
 
 
 async def seed(session: AsyncSession, data_dir: Path = DATA) -> int:

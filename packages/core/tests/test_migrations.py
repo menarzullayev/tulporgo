@@ -122,3 +122,34 @@ def test_document_delete_after_is_added_and_dropped_by_0004(tmp_path):
     assert "delete_after" not in columns()
     command.upgrade(c, "head")
     command.check(c)
+
+
+def test_group_reading_schema_is_added_and_dropped_by_0005(tmp_path):
+    from sqlalchemy import create_engine, inspect
+    if os.environ.get("TULPORGO_TEST_DATABASE_URL"):
+        pytest.skip("table inspection below is written for the SQLite file; other databases are covered by `check`")
+    path = tmp_path / "f.db"
+    c = cfg(f"sqlite+aiosqlite:///{path.as_posix()}")
+
+    def schema():
+        eng = create_engine(f"sqlite:///{path.as_posix()}")
+        try:
+            i = inspect(eng)
+            return (set(i.get_table_names()), {col["name"] for col in i.get_columns("drivers")},
+                    {col["name"] for col in i.get_columns("userbot_accounts")})
+        finally:
+            eng.dispose()
+
+    command.upgrade(c, "0004")
+    tables, drivers, accounts = schema()
+    assert not {"driver_filters", "group_readers", "feed_cards"} & tables and "delivery_chat_id" not in drivers
+    command.upgrade(c, "0005")
+    tables, drivers, accounts = schema()
+    assert {"driver_filters", "group_readers", "feed_cards"} <= tables
+    assert {"delivery_chat_id", "feed_paused"} <= drivers and "consent_version" in accounts
+    command.downgrade(c, "0004")                         # negative: the downgrade really removes all of it
+    tables, drivers, accounts = schema()
+    assert not {"driver_filters", "group_readers", "feed_cards"} & tables
+    assert "feed_paused" not in drivers and "consent_version" not in accounts
+    command.upgrade(c, "head")
+    command.check(c)

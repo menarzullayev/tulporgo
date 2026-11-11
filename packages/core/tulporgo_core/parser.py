@@ -74,6 +74,17 @@ def _clean(part: str) -> str:
     return re.sub(r"[^\w' ]", " ", part).strip(" '")
 
 
+def when_and_seats(text: str, now: datetime | None = None) -> tuple[datetime | None, int]:
+    """Departure (naive UTC, None = now / not said) and seats of any text, without needing a route."""
+    now_local = _local_now(now)
+    t = to_latin(text)
+    depart, t = _extract_time(t, now_local)
+    if any(w in t for w in NOW_WORDS) and depart and depart <= (now_local.astimezone(UTC).replace(tzinfo=None)
+                                                                 + timedelta(minutes=5)):
+        depart = None
+    return depart, _extract_seats(t)[0]
+
+
 def parse(text: str, index: PlaceIndex, now: datetime | None = None) -> ParsedRoute | None:
     if not text or not text.strip():
         return None

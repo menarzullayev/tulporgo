@@ -91,6 +91,8 @@ class Driver(Base):
     plan: Mapped[str | None] = mapped_column(String(16))
     subscription_until: Mapped[datetime | None] = mapped_column(DateTime)
     ambassador: Mapped[bool] = mapped_column(Boolean, default=False)          # "Elchi" tag (decision 52)
+    delivery_chat_id: Mapped[int | None] = mapped_column(BigInteger)          # driver's own channel for cards (73)
+    feed_paused: Mapped[bool] = mapped_column(Boolean, default=False)         # "pause all" quick toggle (73)
     created_at: Mapped[datetime] = _now_col()
 
     # eager: bot/API always need the driver's user (tg_id, name) and async sessions cannot lazy-load
@@ -239,6 +241,7 @@ class UserbotAccount(Base):
     tg_user_id: Mapped[int | None] = mapped_column(BigInteger)
     status: Mapped[str] = mapped_column(String(16), default=UserbotStatus.NEEDS_LOGIN)
     consent_at: Mapped[datetime | None] = mapped_column(DateTime)          # risk-consent screen accepted
+    consent_version: Mapped[int] = mapped_column(Integer, default=1)       # 2 = also "may watch groups" (decision 73)
     min_interval_minutes: Mapped[int] = mapped_column(Integer, default=45)  # decision 48
     jitter_minutes: Mapped[int] = mapped_column(Integer, default=15)
     daily_max_posts: Mapped[int | None] = mapped_column(Integer)
@@ -271,3 +274,42 @@ class UserbotPost(Base):
     status: Mapped[str] = mapped_column(String(16), default=PostStatus.SENT)
     error: Mapped[str | None] = mapped_column(String(256))
     created_at: Mapped[datetime] = _now_col()
+
+
+class DriverFilter(Base):
+    """What a driver wants from the groups he is in (decision 73). Empty lists mean "any"."""
+    __tablename__ = "driver_filters"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"), index=True)
+    name: Mapped[str] = mapped_column(String(64))
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    # [{"from": place id | null, "to": place id | null, "on_way": bool}] — matched at district level
+    routes: Mapped[list] = mapped_column(JSON, default=list)
+    time_from: Mapped[str | None] = mapped_column(String(5))                # "18:00" local; None = any time
+    time_to: Mapped[str | None] = mapped_column(String(5))
+    include_asap: Mapped[bool] = mapped_column(Boolean, default=True)       # "hozir" / no time given
+    include_tomorrow: Mapped[bool] = mapped_column(Boolean, default=True)
+    weekdays: Mapped[list] = mapped_column(JSON, default=list)              # 0 = Monday
+    seats_min: Mapped[int | None] = mapped_column(Integer)
+    seats_max: Mapped[int | None] = mapped_column(Integer)
+    kinds: Mapped[list] = mapped_column(JSON, default=list)                 # RequestKind values
+    group_chat_ids: Mapped[list] = mapped_column(JSON, default=list)        # empty = every taxi group he selected
+    created_at: Mapped[datetime] = _now_col()
+
+
+class GroupReader(Base):
+    """The one account that watches a group for everybody (decision 73)."""
+    __tablename__ = "group_readers"
+    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
+    account_id: Mapped[int] = mapped_column(ForeignKey("userbot_accounts.id"), index=True)
+    assigned_at: Mapped[datetime] = _now_col()
+
+
+class FeedCard(Base):
+    """A card the bot sent; deleted after 2 h. No text of the group message is kept (decision 73)."""
+    __tablename__ = "feed_cards"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    driver_id: Mapped[int] = mapped_column(ForeignKey("drivers.id"), index=True)
+    chat_id: Mapped[int] = mapped_column(BigInteger)
+    message_id: Mapped[int] = mapped_column(Integer)
+    delete_at: Mapped[datetime] = mapped_column(DateTime, index=True)
