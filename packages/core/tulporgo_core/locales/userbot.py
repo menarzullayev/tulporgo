@@ -14,8 +14,9 @@ TEXTS = {
               "sizga xabar beradi.\n"
               "4. Standart: har guruhga 30–60 daqiqada bittadan ko'p emas, tasodifiy pauza bilan (hozir: {min} daqiqa). "
               "Tez-tez yuborish xavfni oshiradi va alohida tasdiqni talab qiladi.\n"
-              "5. Faqat siz tanlagan guruhlar bilan ishlaydi. Ro'yxat uchun faqat guruh nomlari o'qiladi; shaxsiy "
-              "chatlar va xabarlar hech qachon o'qilmaydi va saqlanmaydi.\n"
+              "5. Faqat siz tanlagan guruhlar bilan ishlaydi. Hisobingiz shu guruhlardagi yangi xabarlarni TulporGo "
+              "haydovchilari uchun kuzatishi mumkin (yo'lovchi so'rovlarini topish uchun): faqat o'qiydi, hech kim "
+              "nomidan hech narsa yozmaydi, xabarlar saqlanmaydi. Shaxsiy chatlar hech qachon o'qilmaydi.\n"
               "6. Sessiya O'zbekistondagi serverda shifrlangan holda saqlanadi. Telegram kodi va 2FA paroli hech qachon "
               "saqlanmaydi (ular faqat Mini App formasida kiritiladi).\n"
               "7. Faqat o'zingiz a'zo bo'lgan va yozish mumkin bo'lgan guruhlarni tanlang va ularning qoidalariga "
@@ -33,8 +34,9 @@ TEXTS = {
               "вам.\n"
               "4. По умолчанию: не чаще одного поста в группу раз в 30–60 минут со случайной паузой (сейчас: {min} мин). "
               "Более частые публикации повышают риск и требуют отдельного подтверждения.\n"
-              "5. Работает только с выбранными группами. Для списка читаются только названия групп; личные чаты и "
-              "сообщения никогда не читаются и не сохраняются.\n"
+              "5. Работает только с выбранными группами. Ваш аккаунт может следить за новыми сообщениями в этих "
+              "группах для водителей TulporGo (чтобы находить запросы пассажиров): только читает, ничего не пишет "
+              "ни от чьего имени, сообщения не сохраняются. Личные чаты никогда не читаются.\n"
               "6. Сессия хранится в зашифрованном виде на сервере в Узбекистане. Код Telegram и пароль 2FA никогда не "
               "сохраняются (они вводятся только в форме Mini App).\n"
               "7. Выбирайте только группы, в которых вы состоите и где можно писать, и соблюдайте их правила.\n"
@@ -50,8 +52,9 @@ TEXTS = {
               "3. TulporGo never bypasses FloodWait or PEER_FLOOD: it waits or stops and tells you.\n"
               "4. Default: at most one post per group every 30-60 minutes with a random pause (now: {min} min). Posting "
               "more often raises the risk and needs a separate confirmation.\n"
-              "5. Works only with the selected groups. To list groups, only group titles are read; private chats and "
-              "messages are never read or stored.\n"
+              "5. Works only with the selected groups. Your account may watch new messages in these groups for "
+              "TulporGo drivers (to find passenger requests): it only reads, never writes for anyone, and messages "
+              "are not stored. Private chats are never read.\n"
               "6. The session is stored encrypted on a server in Uzbekistan. The login code and the 2FA password are "
               "never stored (they are entered only in the Mini App form).\n"
               "7. Pick only groups you belong to where posting is allowed, and follow their rules.\n"
@@ -259,4 +262,40 @@ TEXTS = {
     "feed.open": {"uz": "💬 {title}", "ru": "💬 {title}", "en": "💬 {title}"},
     "feed.taken": {"uz": "✅ Olindi", "ru": "✅ Взял", "en": "✅ Taken"},
     "feed.pause": {"uz": "⏸ Pauza", "ru": "⏸ Пауза", "en": "⏸ Pause"},
+    "feed.menu": {
+        "uz": "<b>🔎 Yo'lovchi qidirish</b>\n\nGuruhlaringizdagi so'rovlar filtrlaringiz bo'yicha sizga keladi.\n"
+              "Holat: {state}\nKartochkalar: {channel}\nFiltrlar: {count}",
+        "ru": "<b>🔎 Поиск пассажиров</b>\n\nЗапросы из ваших групп приходят вам по вашим фильтрам.\n"
+              "Статус: {state}\nКарточки: {channel}\nФильтры: {count}",
+        "en": "<b>🔎 Passenger search</b>\n\nRequests from your groups come to you by your filters.\n"
+              "Status: {state}\nCards: {channel}\nFilters: {count}",
+    },
+    "feed.state.on": {"uz": "yoqilgan", "ru": "включён", "en": "on"},
+    "feed.state.paused": {"uz": "pauzada", "ru": "на паузе", "en": "paused"},
+    "feed.channel.linked": {"uz": "o'z kanalingizga", "ru": "в ваш канал", "en": "to your channel"},
+    "feed.channel.none": {
+        "uz": "shu chatga. O'z kanalingizga olish uchun @{bot} ni kanalingizga admin qiling",
+        "ru": "в этот чат. Чтобы получать в свой канал, сделайте @{bot} админом канала",
+        "en": "to this chat. To get them in your channel, make @{bot} an admin there",
+    },
+    "feed.channel.ok": {
+        "uz": "✅ TulporGo: yo'lovchi so'rovlari shu yerga keladi.",
+        "ru": "✅ TulporGo: запросы пассажиров будут приходить сюда.",
+        "en": "✅ TulporGo: passenger requests will arrive here.",
+    },
+    "feed.btn.menu": {"uz": "🔎 Yo'lovchi qidirish", "ru": "🔎 Поиск пассажиров", "en": "🔎 Passenger search"},
+    "feed.btn.edit": {"uz": "Filtrlarni sozlash", "ru": "Настроить фильтры", "en": "Edit filters"},
+    "feed.btn.pause_all": {"uz": "⏸ Hammasini pauza", "ru": "⏸ Пауза для всех", "en": "⏸ Pause all"},
+    "feed.btn.resume_all": {"uz": "▶️ Davom ettirish", "ru": "▶️ Продолжить", "en": "▶️ Resume"},
+    "feed.btn.back": {"uz": "⬅️ Orqaga", "ru": "⬅️ Назад", "en": "⬅️ Back"},
+    "feed.not_driver": {"uz": "Bu bo'lim haydovchilar uchun.", "ru": "Раздел для водителей.",
+                        "en": "This is for drivers."},
+    "feed.not_yours": {"uz": "Bu sizning kartochkangiz emas.", "ru": "Это не ваша карточка.",
+                       "en": "This is not your card."},
+    "feed.taken.ok": {"uz": "Olindi ✅", "ru": "Взято ✅", "en": "Taken ✅"},
+    "feed.paused.ok": {
+        "uz": "Yo'lovchi qidirish pauzada. /elon → «Yo'lovchi qidirish» dan davom ettiring.",
+        "ru": "Поиск пассажиров на паузе. Продолжить: /elon → «Поиск пассажиров».",
+        "en": "Passenger search is paused. Resume in /elon → «Passenger search».",
+    },
 }

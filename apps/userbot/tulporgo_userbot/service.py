@@ -67,6 +67,9 @@ def group_limit(driver: Driver, settings: Settings, now: datetime | None = None)
 
 # ---------------------------------------------------------------- consent (decision 8)
 
+CONSENT_VERSION = 2          # 2 = the account may also watch the selected groups for TulporGo drivers (decision 73)
+
+
 async def accept_consent(s: AsyncSession, driver: Driver, settings: Settings) -> UserbotAccount:
     """Creates the account on first consent. Safe defaults come from settings (decision 48)."""
     account = await get_account(s, driver)
@@ -77,6 +80,7 @@ async def accept_consent(s: AsyncSession, driver: Driver, settings: Settings) ->
         account.groups = []
         s.add(account)
     account.consent_at = utcnow()
+    account.consent_version = CONSENT_VERSION
     await s.flush()
     return account
 

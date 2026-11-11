@@ -21,13 +21,14 @@ from tulporgo_core.errors import DomainError
 from tulporgo_core.i18n import t as i18n_t
 from tulporgo_core.models import Driver, User, UserbotAccount
 
-from . import runtime, service, template
+from . import feedbot, runtime, service, template
 from .config import ABSOLUTE_MIN_INTERVAL_MINUTES
 from .errors import Invalid, NotConfigured
 from .sync import refresh_groups
 
 log = logging.getLogger(__name__)
 router = Router(name="userbot")
+router.include_router(feedbot.router)              # decision 73: passenger search
 PAGE = 8
 
 
@@ -110,6 +111,8 @@ def _menu_markup(account: UserbotAccount | None, settings, t) -> InlineKeyboardM
         toggle = (_btn(t("userbot.btn.resume"), "ub:resume", "success") if status == UserbotStatus.PAUSED
                   else _btn(t("userbot.btn.pause"), "ub:pause"))
         rows.append([_btn(t("userbot.btn.template"), "ub:tpl"), toggle])
+    if connected and status != UserbotStatus.STOPPED:
+        rows.append([_btn(t("feed.btn.menu"), "fd:menu")])               # decision 73
     if connected:
         rows.append([_btn(t("userbot.btn.logout"), "ub:logout", "danger")])
     return _kb(*rows) if rows else _kb()
@@ -117,7 +120,8 @@ def _menu_markup(account: UserbotAccount | None, settings, t) -> InlineKeyboardM
 
 async def _menu(target, session, settings, user, t, note: str = "") -> None:
     driver, account = await _ctx(session, user)
-    if account is None or account.consent_at is None:           # no consent -> only the risk screen (decision 8)
+    if account is None or account.consent_at is None or account.consent_version < service.CONSENT_VERSION:
+        # no consent, or consent to an older text (decision 73 added group watching) -> the risk screen first
         text = t("userbot.risk", min=settings.userbot_min_interval_minutes)
         await _show(target, text, _kb([_btn(t("userbot.btn.consent"), "ub:consent", "success"),
                                        _btn(t("common.cancel"), "ub:close")]))

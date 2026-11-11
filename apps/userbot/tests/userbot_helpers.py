@@ -144,6 +144,7 @@ async def make_account(s, settings, driver, *, groups: int = 2, status: str = Us
                        interval: int | None = None, risk: bool = False):
     acc = UserbotAccount(driver_id=driver.id, status=status, session_encrypted=crypto.encrypt_session(settings, SESSION_PLAIN),
                          tg_user_id=777_001, consent_at=utcnow() if consent else None,
+                         consent_version=2 if consent else 1,
                          min_interval_minutes=settings.userbot_min_interval_minutes if interval is None else interval,
                          jitter_minutes=settings.userbot_jitter_minutes, risk_acknowledged=risk)
     if with_template:
