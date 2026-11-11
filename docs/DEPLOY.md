@@ -2,7 +2,7 @@
 
 > **Decision 70 (2026-11-11):** until TulporGo makes a profit it runs on the owner's PC in Uzbekistan; a university
 > server is the later candidate. The same Docker Compose stack runs on either — the VPS steps below apply to a Linux
-> server when one is chosen.
+> server when one is chosen. PC plan and steps: [`RUN-ON-PC.md`](RUN-ON-PC.md).
 
 Everything runs with Docker Compose from `deploy/`. Personal data (database, backups, encrypted userbot sessions)
 stays on the server in Uzbekistan. The only copy abroad is the encrypted monthly backup in Cloudflare R2 (decisions

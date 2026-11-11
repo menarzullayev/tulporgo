@@ -214,6 +214,8 @@ Gotchas (all in MUAMMOLAR.md):
    - **Decision 70 (2026-11-11):** no VPS until TulporGo makes a profit — it runs on the owner's PC; a strong university
      server is the later candidate (to be measured first). YATT/MChJ + Click/Payme not before ~6 months in production.
      Instagram/Facebook names are free (owner checked), to be reserved later.
+   - **PC launch plan: `docs/RUN-ON-PC.md`** (Cloudflare Tunnel, `deploy/docker-compose.pc.yml`, separate production
+     checkout `D:	ulporgo-prod`, nameservers Eskiz → Cloudflare with mail records copied first). Not started yet.
    - **Owner-only, when hosting is chosen:** deploy (`docs/DEPLOY.md`, same compose on PC or server) and the DNS A record;
      legal texts: the owner answered the 9 lawyer questions (decision 67, texts filled) — his full name and postal address
      are in `.secrets/operator.env` (filled 2026-11-11, checked: both pages render them, `secret_scan` catches them);

@@ -1,0 +1,17 @@
+# Decision 70: run on the owner's PC behind a Cloudflare Tunnel (docs/RUN-ON-PC.md).
+# No port is published on the PC; Cloudflare terminates HTTPS and the tunnel reaches Caddy over plain HTTP.
+#   docker compose -f docker-compose.yml -f docker-compose.pc.yml up -d
+services:
+  proxy:
+    environment:
+      TULPORGO_DOMAIN: ":80"            # plain HTTP inside the compose network; no Let's Encrypt on the PC
+    ports: !reset []
+
+  tunnel:
+    image: cloudflare/cloudflared:2026.9.3
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TULPORGO_TUNNEL_TOKEN:?set TULPORGO_TUNNEL_TOKEN in deploy/.env}
+    depends_on: [proxy]
+    restart: unless-stopped
+    profiles: ["web"]
