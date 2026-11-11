@@ -54,7 +54,7 @@
   "err.bad_seats": "Oʻrinlar soni 1 dan 8 gacha boʻlishi kerak.",
   "err.bad_stars": "Baho 1 dan 5 gacha boʻlishi kerak.",
   "err.bad_state": "Kirish muddati tugadi. Qaytadan boshlang.",
-  "err.bad_time": "Vaqt SS:DD koʻrinishida boʻlishi kerak, masalan 08:30.",
+  "err.bad_time": "Vaqt soat:daqiqa koʻrinishida boʻlishi kerak, masalan 08:30.",
   "err.bad_weekday": "Hafta kuni notoʻgʻri tanlangan.",
   "err.blocked": "Hisobingiz bloklangan.",
   "err.code_expired": "Kod eskirgan. Yangi kod soʻrang.",

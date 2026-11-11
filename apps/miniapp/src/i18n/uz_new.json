@@ -54,7 +54,7 @@
   "err.bad_seats": "Örinlar soni 1 dan 8 gaça bölişi kerak.",
   "err.bad_stars": "Baho 1 dan 5 gaça bölişi kerak.",
   "err.bad_state": "Kiriş muddati tugadi. Qaytadan boşlang.",
-  "err.bad_time": "Vaqt SS:DD körinişida bölişi kerak, masalan 08:30.",
+  "err.bad_time": "Vaqt soat:daqiqa körinişida bölişi kerak, masalan 08:30.",
   "err.bad_weekday": "Hafta kuni notöğri tanlangan.",
   "err.blocked": "Hisobingiz bloklangan.",
   "err.code_expired": "Kod eskirgan. Yangi kod sörang.",
