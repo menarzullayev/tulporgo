@@ -22,6 +22,8 @@ SCOPE = "openid profile"
 # decision 65: the user may let the bot write to them after a site login, so trip notices reach people who never
 # opened @tulporgobot. Telegram adds no claim for it; a refused message is still just a 403 in delivery.
 BOT_ACCESS = "telegram:bot_access"
+# decision 66: the user's Telegram-verified phone number (claim `phone_number`), asked with the user's consent
+PHONE = "phone"
 JWKS_TTL = 3600
 JWKS_MIN_REFETCH = 60
 
@@ -42,8 +44,16 @@ def pkce_challenge(verifier: str) -> str:
     return base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
 
 
-def scope(bot_access: bool) -> str:
-    return f"{SCOPE} {BOT_ACCESS}" if bot_access else SCOPE
+def scope(bot_access: bool, phone: bool = False) -> str:
+    return " ".join([SCOPE, *([PHONE] if phone else []), *([BOT_ACCESS] if bot_access else [])])
+
+
+def verified_phone(claims: dict[str, Any]) -> str | None:
+    """The phone number from the id_token, or None when it is absent or Telegram says it is not verified."""
+    phone = claims.get("phone_number")
+    if not isinstance(phone, str) or not phone.strip() or claims.get("phone_number_verified") is False:
+        return None
+    return phone
 
 
 def authorization_url(client_id: str, redirect_uri: str, state: str, nonce: str, verifier: str,

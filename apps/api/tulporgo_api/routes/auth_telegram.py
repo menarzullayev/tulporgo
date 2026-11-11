@@ -15,7 +15,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from tulporgo_core.config import Settings
 from tulporgo_core.errors import DomainError, Invalid, NotFound
-from tulporgo_core.services.users import get_or_create_user
+from tulporgo_core.services.users import get_or_create_user, set_phone
 
 from .. import telegram_oidc as oidc
 from .. import web_session
@@ -141,7 +141,7 @@ async def login_start(return_to: Annotated[str | None, Query(max_length=512)] = 
     state, nonce, verifier = oidc.new_secret(), oidc.new_secret(), oidc.new_secret()
     store.put(state, LoginAttempt(verifier, nonce, target, time.monotonic() + STATE_TTL))
     url = oidc.authorization_url(client_id(settings), redirect_uri(settings), state, nonce, verifier,
-                                 oidc.scope(settings.login_bot_access))
+                                 oidc.scope(settings.login_bot_access, settings.login_phone))
     return RedirectResponse(url, status_code=302, headers={"Cache-Control": "no-store"})
 
 
@@ -168,6 +168,12 @@ async def login_callback(code: Annotated[str | None, Query(max_length=2048)] = N
         return back_to_app(attempt.return_to, login_error=e.code)
     except (KeyError, ValueError, TypeError):
         return back_to_app(attempt.return_to, login_error="bad_token")
-    await get_or_create_user(s, tg_id, claims.get("preferred_username"), claims.get("name"))
+    user = await get_or_create_user(s, tg_id, claims.get("preferred_username"), claims.get("name"))
+    phone = oidc.verified_phone(claims) if settings.login_phone else None
+    if phone and not user.phone:              # decision 66: fill an empty number only, never replace one the user gave
+        try:
+            await set_phone(s, user, phone)
+        except Invalid:                       # not an Uzbek mobile number: log in anyway, keep no number
+            pass
     token = web_session.issue(tg_id, settings.bot_token, settings.web_session_hours)
     return back_to_app(attempt.return_to, tgweb=token)

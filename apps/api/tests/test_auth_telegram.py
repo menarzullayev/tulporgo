@@ -142,17 +142,69 @@ def test_start_redirects_to_telegram_with_pkce_state_and_nonce(login):
     assert q["code_challenge_method"] == "S256" and q["state"] and q["nonce"] and q["code_challenge"]
 
 
-def test_start_asks_to_let_the_bot_write_by_default(login):
-    # decision 65: people who log in on the site can be sent trip notices by @tulporgobot
+def test_start_asks_for_the_phone_and_to_let_the_bot_write_by_default(login):
+    # decisions 65 and 66: trip notices from @tulporgobot, and the Telegram-verified phone number
     _, q = login.start()
-    assert q["scope"].split() == ["openid", "profile", "telegram:bot_access"]
+    assert q["scope"].split() == ["openid", "profile", "phone", "telegram:bot_access"]
 
 
 def test_bot_access_can_be_switched_off(login, env):
-    # negative: with the switch off the request asks for name and photo only
+    # negative: with the switch off the bot permission is not asked for
     env.settings.login_bot_access = False
     _, q = login.start()
+    assert q["scope"].split() == ["openid", "profile", "phone"]
+
+
+def test_phone_can_be_switched_off(login, env):
+    # negative: with both switches off the request asks for name and photo only
+    env.settings.login_bot_access = env.settings.login_phone = False
+    _, q = login.start()
     assert q["scope"].split() == ["openid", "profile"]
+
+
+# ---------- decision 66: the Telegram-verified phone number ----------
+
+def _phone_of(env, tg_id: int = 777001):
+    return env.db(lambda s: _phone(s, tg_id))
+
+
+async def _phone(s, tg_id):
+    from sqlalchemy import select
+    from tulporgo_core.models import User
+    return (await s.execute(select(User.phone).where(User.tg_id == tg_id))).scalar_one_or_none()
+
+
+def test_a_verified_phone_is_stored_for_a_user_without_one(login, env):
+    res = login.run(mint=lambda n: sign_id_token(n, phone_number="+998 90 123-45-67", phone_number_verified=True))
+    assert res.status_code == 302 and "tgweb" in fragment(res)
+    assert _phone_of(env) == "+998901234567"                       # normalised like a number shared in the bot
+
+
+def test_a_phone_the_user_already_gave_is_never_replaced(login, env):
+    # negative: a driver's own work number stays, even if the Telegram account has another one
+    env.make_user(777001, phone="+998977777777")
+    login.run(mint=lambda n: sign_id_token(n, phone_number="+998901234567"))
+    assert _phone_of(env) == "+998977777777"
+
+
+def test_an_unverified_phone_is_ignored(login, env):
+    # negative: Telegram says the number is not verified
+    login.run(mint=lambda n: sign_id_token(n, phone_number="+998901234567", phone_number_verified=False))
+    assert _phone_of(env) is None
+
+
+def test_a_foreign_number_still_logs_in_without_a_phone(login, env):
+    # negative: not an Uzbek mobile number - the login works, no number is kept
+    res = login.run(mint=lambda n: sign_id_token(n, phone_number="+79991234567"))
+    assert "tgweb" in fragment(res) and "login_error" not in fragment(res)
+    assert _phone_of(env) is None
+
+
+def test_the_phone_claim_is_ignored_when_switched_off(login, env):
+    # negative: with the switch off a phone claim in the token is not stored
+    env.settings.login_phone = False
+    login.run(mint=lambda n: sign_id_token(n, phone_number="+998901234567"))
+    assert _phone_of(env) is None
 
 
 def test_happy_path_logs_in_and_the_token_authenticates(login, tg, env):
