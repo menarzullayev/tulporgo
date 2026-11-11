@@ -220,8 +220,9 @@ Gotchas (all in MUAMMOLAR.md):
      document's server copy is purged after 7 days (`rejected_documents_keep_days`, hourly bot job), not at once.
    - **Email (decision 64) — set up 2026-11-11:** Zoho Mail Forever Free, its own Zoho account (not RankWant's),
      login `admin@tulporgo.uz`, `info@tulporgo.uz` an alias of it; MX/SPF/DKIM verified by Zoho; the address is in
-     `docs/legal/privacy.*` and `terms.*`. Two-way test mail confirmed by Saidakbar aka (2026-11-11). Left: 2FA in
-     Zoho (owner). The Zoho web mail list may hang right after sign-up (a calendar request) — reload or use the app.
+     `docs/legal/privacy.*` and `terms.*`. Two-way test mail confirmed by Saidakbar aka (2026-11-11). 2FA on Zoho
+     and Cloudflare: "hozircha kerak emas" (Saidakbar aka, 2026-11-11) — do not ask again unless something changes.
+     The Zoho web mail list may hang right after sign-up (a calendar request) — reload or use the app.
      Lawyer question 9: the mailbox is abroad.
    - **Later:** other regions' mahallas (+22 missing in Samarqand); new-alphabet spelling rules (decision 16); the
      userbot *reading* groups to pick up passenger requests (decision 8 — not built, it only posts); Click/Payme sandbox
