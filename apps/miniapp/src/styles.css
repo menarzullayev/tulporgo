@@ -475,6 +475,32 @@ textarea {
   gap: 12px;
   align-items: flex-start;
 }
+.switch > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* group feed (filters) */
+.filter-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.filter-head strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.filter-head input[type='checkbox'] {
+  flex: none;
+}
+.filter-off {
+  opacity: 0.65;
+}
+.route-box {
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
 .stars {
   display: flex;
   gap: 6px;

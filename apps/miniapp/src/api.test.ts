@@ -48,6 +48,30 @@ describe('request', () => {
     expect(headersOf(upload)['Content-Type']).toBeUndefined() // the browser must set the multipart boundary itself
   })
 
+  it('sends the feed filter calls with the right method, path and body', async () => {
+    const body = {
+      name: 'A', enabled: true, routes: [{ from: 3, to: null, on_way: false }], time_from: null, time_to: null, include_asap: true,
+      include_tomorrow: true, weekdays: [], seats_min: null, seats_max: null, kinds: [], group_chat_ids: [],
+    }
+    const calls: [string, string, unknown][] = []
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
+      calls.push([init.method ?? 'GET', url, init.body ? JSON.parse(init.body as string) : undefined])
+      return new Response(JSON.stringify({}))
+    }))
+    await api.feed()
+    await api.feedCreate(body)
+    await api.feedUpdate(7, body)
+    await api.feedDelete(7)
+    await api.feedPause(true)
+    expect(calls).toEqual([
+      ['GET', '/api/userbot/feed', undefined],
+      ['POST', '/api/userbot/feed/filters', body],
+      ['PUT', '/api/userbot/feed/filters/7', body],
+      ['DELETE', '/api/userbot/feed/filters/7', undefined],
+      ['POST', '/api/userbot/feed/pause', { paused: true }],
+    ])
+  })
+
   it('url-encodes search text and share tokens', async () => {
     const fetch = mockFetch(200, { items: [] })
     await api.searchPlaces("Qo'shrabot & co")

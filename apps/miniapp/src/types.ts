@@ -167,3 +167,53 @@ export interface DriverBody {
   seats: number
   referral_code?: string
 }
+
+// Group feed (decision 73): contract in apps/userbot/tulporgo_userbot/feedapi.py
+export const FEED_KINDS = ['passenger', 'parcel', 'cargo', 'delivery', 'bazaar'] as const
+export type FeedKind = (typeof FEED_KINDS)[number]
+
+export interface FeedPlace {
+  id: number
+  name: string
+}
+
+export interface FeedRoute {
+  from: FeedPlace | null
+  to: FeedPlace | null
+  on_way: boolean
+}
+
+export interface FeedFilter {
+  id: number
+  name: string
+  enabled: boolean
+  routes: FeedRoute[]
+  time_from: string | null
+  time_to: string | null
+  include_asap: boolean
+  include_tomorrow: boolean
+  weekdays: number[] // 0 = Monday .. 6 = Sunday; empty = every day
+  seats_min: number | null
+  seats_max: number | null
+  kinds: FeedKind[] // empty = every kind
+  group_chat_ids: number[] // empty = all of the driver's taxi groups
+}
+
+export interface FeedState {
+  paused: boolean
+  delivery_linked: boolean
+  connected: boolean
+  consent_ok: boolean
+  groups: { chat_id: number; title: string }[]
+  filters: FeedFilter[]
+  kinds: FeedKind[]
+  max_filters: number
+}
+
+export interface FeedRouteBody {
+  from: number | null
+  to: number | null
+  on_way: boolean
+}
+
+export type FeedFilterBody = Omit<FeedFilter, 'id' | 'routes'> & { routes: FeedRouteBody[] }

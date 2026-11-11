@@ -9,6 +9,7 @@ const CODES = [
   'plate_taken', 'request_not_found', 'request_not_open', 'route_required', 'same_place', 'self_referral',
   'storage_not_configured', 'subscription_required', 'too_many_open_requests', 'trip_not_active', 'trip_not_cancellable',
   'consent_required', 'no_pending_login', 'login_expired', 'login_cooldown', 'flood_wait', 'too_many_attempts', 'bad_code', 'code_expired', 'bad_password', 'phone_banned', 'password_not_requested', 'telegram_api_missing', 'userbot_key_missing',
+  'bad_time', 'bad_weekday', 'unknown_place', 'empty_route', 'not_your_group', 'too_many_filters', 'filter_not_found',
   'trip_not_completed', 'trip_not_confirmed', 'trip_not_found', 'unauthorized', 'upload_failed', 'generic',
 ]
 

@@ -145,6 +145,10 @@ export default function Profile() {
           <a className="btn btn-secondary" href={href('/userbot/login')}>
             {t('profile.userbot_open')}
           </a>
+          <p className="hint">{t('profile.feed_hint')}</p>
+          <a className="btn btn-secondary" href={href('/feed')}>
+            {t('profile.feed_open')}
+          </a>
         </Card>
       ) : null}
 

@@ -3,6 +3,9 @@ import type {
   CreateRequestBody,
   DriverBody,
   DriverOffer,
+  FeedFilter,
+  FeedFilterBody,
+  FeedState,
   Me,
   OffersResponse,
   Offer,
@@ -29,7 +32,7 @@ const base = (): string => ((import.meta.env.VITE_API_BASE as string | undefined
 export const apiBase = base
 
 interface Opts {
-  method?: 'GET' | 'POST' | 'PATCH'
+  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
   body?: unknown
   form?: FormData
   auth?: boolean
@@ -119,6 +122,13 @@ export const api = {
   userbotStart: (phone: string) => post<unknown>('/userbot/login/start', { phone }),
   userbotCode: (code: string) => post<unknown>('/userbot/login/code', { code }),
   userbotPassword: (password: string) => post<unknown>('/userbot/login/password', { password }),
+
+  // W5 (apps/userbot feedapi.py): group feed filters
+  feed: () => request<FeedState>('/userbot/feed'),
+  feedCreate: (body: FeedFilterBody) => post<FeedFilter>('/userbot/feed/filters', body),
+  feedUpdate: (id: number, body: FeedFilterBody) => request<FeedFilter>(`/userbot/feed/filters/${id}`, { method: 'PUT', body }),
+  feedDelete: (id: number) => request<{ ok: boolean }>(`/userbot/feed/filters/${id}`, { method: 'DELETE' }),
+  feedPause: (paused: boolean) => post<FeedState>('/userbot/feed/pause', { paused }),
 
   // W4 (packages/payments): configured providers, then checkout -> { payment_id, ..., start: { type, ... } }
   paymentProviders: () => request<{ free_period: boolean; providers: string[] }>('/payments/providers'),

@@ -6,6 +6,7 @@ import { api, ApiError } from '../api'
 import { Button, Card, Field, Icon, Inline, Mascot } from '../components/ui'
 import { useAction } from '../hooks'
 import { useI18n } from '../i18n'
+import { href } from '../router'
 import { haptic } from '../tg'
 
 export type Step = 'consent' | 'phone' | 'code' | 'password' | 'done' | 'unavailable'
@@ -152,6 +153,9 @@ export default function UserbotLogin() {
           <Mascot name="thumbs" size={120} />
           <h2>{t('userbot.done_title')}</h2>
           <p>{t('userbot.done_hint')}</p>
+          <a className="btn btn-secondary" href={href('/feed')}>
+            {t('profile.feed_open')}
+          </a>
         </div>
       ) : null}
     </div>
