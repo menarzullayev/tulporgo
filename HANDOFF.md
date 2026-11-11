@@ -212,7 +212,9 @@ Gotchas (all in MUAMMOLAR.md):
 5. Brand guide; post templates finalisation (decisions 32–37).
 6. Product open work (2026-11-11) — the code is built, see §7 and `PROGRESS.md`:
    - **Owner-only blockers:** VPS purchase + deploy (`docs/DEPLOY.md`) and the DNS A record for tulporgo.uz at Eskiz;
-     lawyer review (`docs/legal/README.md`, 8 questions); legal status (YATT/MChJ) + Click/Payme merchant contracts;
+     legal texts: the owner answered the 9 lawyer questions (decision 67, texts filled) — left: his full name, PINFL
+     and postal address for the `[ega: …]` places, and a licensed lawyer's read before the QORALAMA banner goes;
+     legal status (YATT/MChJ) + Click/Payme merchant contracts;
      after deploy: `TULPORGO_LOGIN_CLIENT_SECRET` from `.secrets/telegram_login.env` into `deploy/.env` (Login Widget is
      set up and was tested end to end on 2026-11-11), R2 values from `.secrets/r2.env` into `deploy/.env` and the
      VPS IP on the R2 token (decision 62; account, bucket and token are ready and verified); BotFather
@@ -224,7 +226,7 @@ Gotchas (all in MUAMMOLAR.md):
      `docs/legal/privacy.*` and `terms.*`. Two-way test mail confirmed by Saidakbar aka (2026-11-11). 2FA on Zoho
      and Cloudflare: "hozircha kerak emas" (Saidakbar aka, 2026-11-11) — do not ask again unless something changes.
      The Zoho web mail list may hang right after sign-up (a calendar request) — reload or use the app.
-     Lawyer question 9: the mailbox is abroad.
+     Lawyer question 9 answered: keep Zoho (decision 67).
    - **Later:** other regions' mahallas (+22 missing in Samarqand); new-alphabet spelling rules (decision 16); the
      userbot *reading* groups to pick up passenger requests (decision 8 — not built, it only posts); Click/Payme sandbox
      consoles; watch blocked driver accounts in the first weeks of auto-posting.

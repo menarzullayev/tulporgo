@@ -1,7 +1,8 @@
 # Deploying TulporGo (decision 43: one VPS in Uzbekistan)
 
 Everything runs with Docker Compose from `deploy/`. Personal data (database, backups, encrypted userbot sessions)
-stays on the server in Uzbekistan — do not copy dumps to storage abroad (Telegram, foreign clouds).
+stays on the server in Uzbekistan. The only copy abroad is the encrypted monthly backup in Cloudflare R2 (decisions
+58, 67) — never copy an unencrypted dump anywhere else (Telegram, other clouds).
 
 ## What runs
 
@@ -96,7 +97,7 @@ Migrations only add (expand first, remove later), so rolling back the code never
   `TULPORGO_BACKUP_ENCRYPTION_KEY`, generate with `docker compose run --rm --no-deps offsite python -m
   tulporgo_core.offsite keygen`) and copies only the ciphertext to Cloudflare R2 (`TULPORGO_R2_*`); R2 keeps the newest
   copy only. **Keep the key offline too** (password manager): without it the R2 copy cannot be read. R2 is outside
-  Uzbekistan — see the lawyer question in `docs/legal/README.md`.
+  Uzbekistan; the owner chose to keep this encrypted copy (decision 67, `docs/legal/README.md`).
   The R2 side is ready (decision 62): Cloudflare account "TulporGo" (separate from the owner's other projects), private
   bucket `tulporgo-backup` (EEUR), token `tulporgo-offsite` = Object Read & Write on that bucket only. The four
   `TULPORGO_R2_*` values are in the owner's git-ignored `.secrets/r2.env`; copy those four lines into `deploy/.env`.

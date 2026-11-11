@@ -1,14 +1,17 @@
 # TulporGo — Foydalanish shartlari
 
 > **QORALAMA, 2026-11-10.** Yurist tekshiruvidan o'tmagan va kuchga kirmagan (51-qaror).
-> `[yurist: …]` belgili joylar yurist bilan aniqlanadi va to'ldiriladi.
+> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror). `[ega: …]` belgili joylarni
+> Operator to'ldiradi.
 
 ## 1. Umumiy qoidalar
 
 1.1. TulporGo — Telegram'dagi [@tulporgobot](https://t.me/tulporgobot) boti, uning Mini App ilovasi
 (`tulporgo.uz/app`) va haydovchilar uchun avto-e'lon xizmatidan iborat axborot servisi (bundan keyin — «Servis»).
 
-1.2. Servis egasi va operatori: `[yurist: F.I.Sh. yoki yuridik shaxs nomi, STIR, manzil]` (bundan keyin — «Operator»).
+1.2. Servis egasi va operatori — Servis asoschisi, jismoniy shaxs `[ega: F.I.Sh., JShShIR, manzil]` (bundan
+keyin — «Operator»). MChJ yoki YATT tashkil etilgach, Operator sifatida o'sha yuridik shaxs ko'rsatiladi. To'lovlar
+uchinchi tomon to'lov provayderlari (Telegram Stars, Click, Payme) orqali qabul qilinadi.
 
 1.3. Servisdan foydalanishni boshlash orqali siz ushbu shartlarga va [Maxfiylik siyosati](privacy.uz.md)ga
 rozilik bildirasiz. Rozi bo'lmasangiz, Servisdan foydalanmang.
@@ -38,8 +41,8 @@ orqali o'zingiz ulashasiz.
 
 3.2. Bergan ma'lumotlaringiz to'g'ri bo'lishi kerak. Boshqa shaxs nomidan ro'yxatdan o'tish taqiqlanadi.
 
-3.3. Yosh chegarasi: `[yurist: yo'lovchilar uchun eng kichik yosh]`. Haydovchi — amaldagi haydovchilik guvohnomasiga
-ega shaxs.
+3.3. Yosh chegarasi: 16 yosh; 16 yoshga to'lmagan shaxslar Servisdan foydalanmaydi. Haydovchi — amaldagi
+haydovchilik guvohnomasiga ega shaxs.
 
 ## 4. Yo'lovchilar uchun
 
@@ -59,7 +62,8 @@ ismi va qatnov holatini ko'radi — telefon raqamlari ko'rsatilmaydi.
 
 5.1. Haydovchi amaldagi haydovchilik guvohnomasiga, avtomobilni boshqarish huquqiga va texnik soz avtomobilga ega
 bo'lishi, yo'lovchi tashishga oid qonun talablariga rioya qilishi shart
-`[yurist: yo'lovchi tashish uchun ruxsatnoma, litsenziya va sug'urta talablari]`.
+(jumladan, yo'lovchi tashish uchun qonunchilikda talab qilinadigan ruxsatnoma, litsenziya va sug'urta). Servis
+axborot vositachisi (67-qaror): bu hujjatlar uchun haydovchi o'zi javob beradi.
 
 5.2. Ro'yxatdan o'tish uchun: telefon raqami, avtomobil rusumi, rangi, davlat raqami va rasmi.
 «Tasdiqlangan» belgisi uchun haydovchilik guvohnomasi va texnik pasport rasmlari yuboriladi; Operator ularni tekshiradi.
@@ -90,10 +94,10 @@ Click, Payme. Click va Payme orqali to'lov ular bilan shartnoma tuzilgandan keyi
 
 6.6. To'lovdan oldin siz ushbu shartlarga roziligingizni alohida tugma bilan tasdiqlaysiz.
 
-6.7. Qaytarish: `[yurist: obuna to'lovini qaytarish shartlari va muddati]`. To'lov bo'yicha savollar uchun botda
-`/paysupport` buyrug'i bor.
+6.7. Qaytarish: to'langan obuna puli qaytarilmaydi, qonunchilikda nazarda tutilgan hollar bundan mustasno;
+qaytarilganda obuna muddati mos ravishda qisqaradi. To'lov bo'yicha savollar uchun botda `/paysupport` buyrug'i bor.
 
-6.8. Tarif narxi o'zgarsa, bu kamida `[yurist: N]` kun oldin e'lon qilinadi; allaqachon to'langan davrga ta'sir
+6.8. Tarif narxi o'zgarsa, bu kamida 7 kun oldin e'lon qilinadi; allaqachon to'langan davrga ta'sir
 qilmaydi.
 
 6.9. **Referal.** Har haydovchining shaxsiy taklif havolasi bor. Taklif qilingan haydovchi «Tasdiqlangan» bo'lsa,
@@ -134,7 +138,8 @@ Qoidabuzar foydalanuvchi ogohlantirilishi, vaqtincha yoki butunlay bloklanishi (
 internet uzilishlari uchun javob bermaydi.
 
 9.2. Operator tashish sifati, kechikish, yo'lovchi yoki haydovchi xatti-harakati, yo'qolgan buyum yoki zarar uchun
-javobgar emas — qonun yo'l qo'ygan darajada `[yurist: chegara va istisnolar]`.
+javobgar emas — qonun yo'l qo'ygan darajada; qonunda Operatorning javobgarligi bevosita nazarda tutilgan hollar bundan
+mustasno.
 
 ## 10. Hisobni to'xtatish
 
@@ -154,11 +159,11 @@ davom ettirish — yangi shartlarga rozilik.
 ## 13. Qo'llaniladigan huquq
 
 O'zbekiston Respublikasi qonunchiligi qo'llaniladi. Nizolar avval muzokara yo'li bilan hal qilinadi, kelishilmasa —
-`[yurist: sud yoki boshqa tartib]`.
+O'zbekiston Respublikasi qonunchiligida belgilangan tartibda, vakolatli sudda.
 
 ## 14. Aloqa
 
 - Bot: [@tulporgobot](https://t.me/tulporgobot) (to'lov savollari — `/paysupport`)
 - Kanal: [@tulporgo](https://t.me/tulporgo)
 - Email: info@tulporgo.uz
-- `[yurist: rasmiy pochta manzili]`
+- `[ega: rasmiy pochta manzili]`

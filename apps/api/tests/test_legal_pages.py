@@ -1,4 +1,5 @@
 """Public legal pages at /legal/<doc>?lang=uz|ru (the bot's /terms link points here)."""
+import re
 from urllib.parse import urlsplit
 
 import pytest
@@ -53,3 +54,31 @@ def test_the_bot_terms_link_lands_here():
 
 def test_not_part_of_the_api_contract(client):
     assert not any(p.startswith("/legal") for p in client.get("/openapi.json").json()["paths"])
+
+
+LAWYER_PLACEHOLDER = re.compile(r"\[(yurist|юрист):")
+
+
+@pytest.mark.parametrize("doc", legal.DOCS)
+@pytest.mark.parametrize("lang", legal.LANGS)
+def test_no_lawyer_placeholder_is_left(client, doc, lang):
+    page = client.get(f"/legal/{doc}", params={"lang": lang}).text
+    assert not LAWYER_PLACEHOLDER.search(page)                           # decision 67: all nine questions answered
+
+
+def test_placeholder_check_catches_a_leftover(client, tmp_path, monkeypatch):
+    (tmp_path / "terms.uz.md").write_text("# T\n\nQaytarish: `[yurist: N]` kun.\n", encoding="utf-8")
+    monkeypatch.setenv("TULPORGO_LEGAL_DIR", str(tmp_path))
+    assert LAWYER_PLACEHOLDER.search(client.get("/legal/terms").text)    # negative: a leftover is caught
+    assert LAWYER_PLACEHOLDER.search("[юрист: N]")
+
+
+@pytest.mark.parametrize(("doc", "lang", "facts"), [
+    ("terms", "uz", ["16 yosh", "kamida 7 kun oldin", "axborot vositachisi", "qonunchilikda nazarda tutilgan hollar"]),
+    ("terms", "ru", ["16 лет", "не менее чем за 7 дней", "информационный посредник", "кроме случаев, предусмотренных"]),
+    ("privacy", "uz", ["Javob muddati — 10 kun", "16 yoshga to'lmagan", "O'zbekistondan tashqarida"]),
+    ("privacy", "ru", ["Срок ответа — 10 дней", "младше 16 лет", "за пределами Узбекистана"]),
+])
+def test_owner_answers_are_in_the_pages(client, doc, lang, facts):
+    page = client.get(f"/legal/{doc}", params={"lang": lang}).text
+    assert [f for f in facts if f not in page] == []                     # decision 67 values, as published

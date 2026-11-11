@@ -1,16 +1,17 @@
 # TulporGo — Maxfiylik siyosati
 
 > **QORALAMA, 2026-11-10.** Yurist tekshiruvidan o'tmagan va kuchga kirmagan (51-qaror).
-> `[yurist: …]` belgili joylar yurist bilan aniqlanadi va to'ldiriladi.
+> Yuristga qo'yilgan 9 ta savol bo'yicha Operator qarorlari kiritildi (67-qaror). `[ega: …]` belgili joylarni
+> Operator to'ldiradi.
 
 ## 1. Kim va qaysi qonun asosida
 
-1.1. Shaxsga doir ma'lumotlaringizni `[yurist: Operator — F.I.Sh. yoki yuridik shaxs, STIR, manzil]` («Operator»)
+1.1. Shaxsga doir ma'lumotlaringizni Servis asoschisi `[ega: F.I.Sh., JShShIR, manzil]` («Operator»)
 TulporGo servisi (@tulporgobot, Mini App, avto-e'lon) orqali qayta ishlaydi.
 
 1.2. Asos: O'zbekiston Respublikasining «Shaxsga doir ma'lumotlar to'g'risida»gi Qonuni (O'RQ-547, 2019-yil
-2-iyul) va unga kiritilgan o'zgartishlar `[yurist: tekshirish; ma'lumotlar bazasini davlat reyestrida ro'yxatdan
-o'tkazish talabi]`.
+2-iyul) va unga kiritilgan o'zgartishlar. Shaxsga doir ma'lumotlar bazasi Operator MChJ yoki YATT sifatida ro'yxatdan
+o'tgach, davlat reyestrida ro'yxatdan o'tkaziladi (67-qaror).
 
 ## 2. Qanday ma'lumotlar yig'iladi
 
@@ -69,15 +70,18 @@ nusxasi 7 kun saqlanadi (e'tiroz yoki qayta ko'rib chiqish uchun), so'ng avtomat
 Ma'lumotlarni o'chirishni so'rasangiz, server nusxasi darhol o'chiriladi.
 
 Oylik zaxira nusxa serverda shifrlanib, Cloudflare R2'ga ham ko'chiriladi; shifr kaliti O'zbekistonda qoladi
-(58-qaror). `[yurist: Telegram nusxasi va shifrlangan xorijiy zaxira lokalizatsiya talabiga mosmi]`
+(58-qaror). Demak, ma'lumotlarning bir qismi O'zbekistondan tashqarida ham turadi: haydovchi hujjatlari
+nusxasi — Telegram serverlarida, zaxira nusxa — faqat shifrlangan holda R2'da (67-qaror).
 
 ## 6. Qancha saqlanadi
 
-- Hisob ma'lumotlari — hisob faol ekan; o'chirish so'ralsa — `[yurist: N]` kun ichida o'chiriladi.
+- Hisob ma'lumotlari — hisob faol ekan; o'chirish so'ralsa — bot orqali (`/malumotlarim`) darhol, boshqa yo'l bilan
+  10 kun ichida o'chiriladi.
 - Zaxira nusxa — oyiga bitta, faqat oxirgisi saqlanadi (serverda va shifrlangan holda R2'da).
 - Avto-e'lon sessiyasi — «Hisobni uzish» bosilganda darhol o'chiriladi.
-- To'lov yozuvlari — `[yurist: buxgalteriya va soliq qonunchiligidagi muddat]`.
-- Shikoyat va bloklash yozuvlari — `[yurist: muddat]` (qayta ro'yxatdan o'tib qoidani chetlab o'tishning oldini olish uchun).
+- To'lov yozuvlari — buxgalteriya va soliq qonunchiligida belgilangan muddat davomida.
+- Shikoyat yozuvlari — qonunchilik va nizoning xususiyatiga qarab; bloklash yozuvlari — qonuniy zarurat
+  mavjud bo'lgan muddat davomida (qayta ro'yxatdan o'tib qoidani chetlab o'tishning oldini olish uchun).
 
 ## 7. Qanday himoya qilinadi
 
@@ -96,11 +100,12 @@ Siz quyidagilarni so'rashingiz mumkin:
 - avto-e'lonni istalgan vaqtda «Hisobni uzish» orqali to'xtatish.
 
 So'rovni bot orqali yuboring: botdagi `/malumotlarim` buyrug'i (yuklab olish va o'chirish) yoki
-info@tulporgo.uz (pochta manzili: `[yurist: pochta manzili]`). Javob muddati — `[yurist: N]` kun.
+info@tulporgo.uz (pochta manzili: `[ega: pochta manzili]`). Javob muddati — 10 kun.
 
 ## 9. Bolalar
 
-`[yurist: yosh chegarasi va ota-ona roziligi tartibi]`.
+Servis 16 yoshga to'lmagan shaxslar uchun mo'ljallanmagan va ularning ma'lumotlarini ataylab yig'maydi.
+Bunday foydalanuvchi aniqlansa, hisobi va ma'lumotlari o'chiriladi.
 
 ## 10. O'zgarishlar
 
@@ -110,4 +115,4 @@ Siyosat o'zgarsa, yangi matn bot va @tulporgo kanalida e'lon qilinadi.
 
 - Bot: [@tulporgobot](https://t.me/tulporgobot)
 - Email: info@tulporgo.uz
-- `[yurist: Operator manzili]`
+- `[ega: Operator manzili]`
