@@ -71,7 +71,8 @@ class BotCardSender:
                                             disable_web_page_preview=True)
             return m.message_id
         except Exception as e:                                  # noqa: BLE001
-            log.warning("card not sent to %s: %s", chat_id, type(e).__name__)
+            # Telegram's reason ("chat not found" = the driver never opened the bot) — never contains the token
+            log.warning("card not sent to %s: %s %s", chat_id, type(e).__name__, str(getattr(e, "message", ""))[:200])
             return None
 
     async def edit(self, chat_id: int, message_id: int, text: str, buttons: list[list[dict]]) -> None:

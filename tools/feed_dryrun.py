@@ -195,7 +195,32 @@ def cmd_groups(a) -> None:
     asyncio.run(_groups(a.name))
 
 
-async def _run(minutes: float) -> None:
+OWNER_CHAT = ROOT / ".secrets" / "owner_chat_id"
+
+
+async def _preflight(bot, maker, to_owner: bool) -> bool:
+    """Every driver's card target must be a chat the bot can write to. A Telegram bot cannot open a chat: the account
+    has to press /start in @tulporgobot first ("chat not found" otherwise — the 2026-11-12 night run lost its card)."""
+    from tulporgo_core.models import Driver
+    owner = int(OWNER_CHAT.read_text().strip()) if to_owner else None
+    ok = True
+    async with session_scope(maker) as s:
+        for d in (await s.execute(select(Driver))).scalars():
+            if owner is not None:
+                d.delivery_chat_id = owner                       # local dry-run copy only
+            target = d.delivery_chat_id or d.user.tg_id
+            try:
+                await bot.get_chat(target)
+                print(f"preflight: driver {d.id} -> chat ...{str(target)[-3:]} OK")
+            except Exception as e:                               # noqa: BLE001
+                ok = False
+                print(f"preflight: driver {d.id} -> chat ...{str(target)[-3:]}: {getattr(e, 'message', e)}\n"
+                      "  Bu hisobdan @tulporgobot ni ochib /start bosing, yoki `run --to-owner` bilan "
+                      "kartochkalarni o'z chatingizga yuboring.")
+    return ok
+
+
+async def _run(minutes: float, to_owner: bool = False) -> None:
     from aiogram import Bot
     from aiogram.client.default import DefaultBotProperties
     from aiogram.enums import ParseMode
@@ -209,6 +234,9 @@ async def _run(minutes: float) -> None:
     st = settings()
     maker = make_sessionmaker(make_engine(URL))
     bot = Bot(st.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    if not await _preflight(bot, maker, to_owner):
+        await bot.session.close()
+        sys.exit("run: kartochka yuboriladigan chat ochilmagan — yuqoridagi ko'rsatmaga qarang.")
     stats = {"messages": 0, "cards": 0, "latency": []}
     current: dict = {}
     # Passengers delete their post once they find a taxi (owner, 2026-11-11): how long does a request live?
@@ -287,7 +315,7 @@ async def _run(minutes: float) -> None:
 
 def cmd_run(a) -> None:
     logging.basicConfig(level=logging.WARNING)
-    asyncio.run(_run(a.minutes))
+    asyncio.run(_run(a.minutes, a.to_owner))
 
 
 async def _cleanup() -> None:
@@ -339,6 +367,7 @@ def main() -> None:
         sp.set_defaults(fn=fn)
     sp = sub.add_parser("run")
     sp.add_argument("--minutes", type=float, default=30)
+    sp.add_argument("--to-owner", action="store_true", help="send cards to the owner chat (.secrets/owner_chat_id)")
     sp.set_defaults(fn=cmd_run)
     sp = sub.add_parser("cleanup")
     sp.add_argument("--yes", action="store_true")
